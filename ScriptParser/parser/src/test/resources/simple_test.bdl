@@ -1,0 +1,16 @@
+{
+    Master: robot robot[1]
+}
+
+service {
+    action()
+}
+
+Mode.DEF {
+    services:
+        service
+}
+
+Main.Master{
+    default: mode = DEF
+}

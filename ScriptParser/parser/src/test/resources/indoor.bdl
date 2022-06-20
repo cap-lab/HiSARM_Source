@@ -1,0 +1,202 @@
+{
+  Robot: Robot robot[10]
+}
+
+# 이건 GUI가 생성한다고 생각하는 서비스이다. (이유: 항상 형태가 같고 항상 쓰임, 혹은 아래 이벤트를 initialize 해야할 수 있음)
+Initialize {
+    initialize()
+    throw INITIALIZED broadcast
+}
+
+# 이건 GUI가 생성한다고 생각하는 서비스이다. (이유: 이벤트가 시나리오마다 달라지기 때문에)
+DoCommand(cmd) {
+    if (cmd == "DIVIDE") {
+        throw DIVIDE broadcast
+    } else if (cmd == "JOIN"){
+        throw JOIN broadcast
+    } else if (cmd == "RETURN") {
+        throw RETURN broadcast
+    } else if (cmd == "RESUME") {
+        throw RESUME broadcast
+    }
+}
+
+# 이건 GUI가 생성한다고 생각하는 서비스이다. (이유: 항상 형태가 같고 항상 쓰임)
+ReceiveCommand {
+    cmd = group_get_cmd()
+    DoCommand(cmd)
+} repeat(500 MSEC)
+
+FormationMoveTo(formation, point, radius) {
+    group_formation_move_to(formation, point, radius)
+    throw ARRIVED
+}
+
+Search(method) {
+    group_search(method)
+    throw SEARCHED broadcast
+}
+
+RemoteControlGroup {
+    direction = group_remote_control()
+    group_move(direction)
+} repeat(1 SEC)
+
+SendVideoGroup {
+    group_video()
+}
+
+MoveTo(point) {
+    move_to(point)
+    throw ARRIVED
+}
+
+ReceiveStandByCommand {
+    cmd = group_get_standby_command()
+    if (cmd == "CORRECT_POSITION") {
+        correct_position()
+    } else if (cmd == "REMOTE_CONTROL"){
+        direction = group_remote_control()
+        group_move(direction)
+    } else if (cmd == "RESUME") {
+        throw RESUME broadcast
+    } else if (cmd == "RECON") {
+        FormationRemote("square")
+    } else if (cmd == "MOVE") {
+        FormationMoveToRemote("line")
+    }
+} repeat(500 MSEC)
+
+Mode.INITIALIZE {
+    services:
+        Initialize
+}
+
+Mode.REMOTE_CONTROL {
+    services:
+        RemoteControlGroup
+        ReceiveCommand
+        SendVideoGroup
+}
+
+Mode.ON_THE_MOVE(formation, point, radius) {
+    services:
+        FormationMoveTo(formation, point, radius)
+        SendVideoGroup
+        ReceiveCommand
+}
+
+Mode.SEARCH(method) {
+    services:
+        Search(method)
+        SendVideoGroup
+        ReceiveCommand
+}
+
+Mode.RETURN(location) {
+    services:
+        MoveTo(location)
+}
+
+Mode.STAND_BY {
+    services:
+        ReceiveStandByCommand
+        SendVideoGroup
+}
+
+Mode.REMOTE_CONTROL_SEARCH(method) {
+    group(Searcher, proper = 3):
+        ModeTransition.REMOTE_CONTROL
+    others(Remain):
+        ModeTransition.SEARCH(method)
+    services:
+        ReceiveCommand
+}
+
+Mode.REMOTE_CONTROL_MOVE(formation, point, radius) {
+    group(Searcher, proper = 3):
+        ModeTransition.REMOTE_CONTROL
+    others(Remain):
+        ModeTransition.ON_THE_MOVE(formation, point, radius)
+    services:
+        ReceiveCommand
+}
+
+Mode.ON_THE_MOVE: ON_THE_MOVE1, ON_THE_MOVE3, ON_THE_MOVE5, ON_THE_MOVE7, ON_THE_MOVE9
+Mode.SEARCH: SEARCH2, SEARCH4, SEARCH6, SEARCH8, SEARCH10
+
+ModeTransition.REMOTE_CONTROL {
+    default: mode = REMOTE_CONTROL
+}
+
+ModeTransition.ON_THE_MOVE(formation, point, radius) {
+    default: mode = ON_THE_MOVE(formation, point, radius)
+}
+
+ModeTransition.SEARCH(method) {
+    default: mode = SEARCH(method)
+}
+
+Main.Robot {
+    case(INITIALIZE):
+        catch(INITIALIZED): mode = ON_THE_MOVE1("line", "point of 2", "radius")
+    case(STAND_BY):
+        catch(RESUME): mode = PREVIOUS_MODE 
+    case(REMOTE_CONTROL_MOVE):
+        catch(JOIN): mode = PREVIOUS_MODE 
+    case(REMOTE_CONTROL_SEARCH):
+        catch(JOIN): mode = PREVIOUS_MODE 
+    case(RETURN):
+        catch(ARRIVED): mode = FINISH
+    case(ON_THE_MOVE1):
+        catch(ARRIVED): mode = SEARCH2("radial")
+        catch(DIVIDE): mode = REMOTE_CONTROL_MOVE("line", "point of 2", "radius") 
+        catch(RETURN): mode = RETURN("point of base camp")
+        catch(DEFAULT): mode = STAND_BY 
+    case(SEARCH2):
+        catch(SEARCHED): mode = ON_THE_MOVE3("line", "point of 4", "radius")
+        catch(DIVIDE): mode = REMOTE_CONTROL_SEARCH("radial") 
+        catch(RETURN): mode = RETURN("point of base camp")
+        catch(DEFAULT): mode = STAND_BY 
+    case(ON_THE_MOVE3):
+        catch(ARRIVED): mode = SEARCH4("left_to_right")
+        catch(DIVIDE): mode = REMOTE_CONTROL_MOVE("line", "point of 4", "radius") 
+        catch(RETURN): mode = RETURN("point of base camp")
+        catch(DEFAULT): mode = STAND_BY 
+    case(SEARCH4):
+        catch(SEARCHED): mode = ON_THE_MOVE5("line", "point of 6", "radius")
+        catch(DIVIDE): mode = REMOTE_CONTROL_SEARCH("left_to_right") 
+        catch(RETURN): mode = RETURN("point of base camp")
+        catch(DEFAULT): mode = STAND_BY 
+    case(ON_THE_MOVE5):
+        catch(ARRIVED): mode = SEARCH6("zigzag")
+        catch(DIVIDE): mode = REMOTE_CONTROL_MOVE("line", "point of 6", "radius") 
+        catch(RETURN): mode = RETURN("point of base camp")
+        catch(DEFAULT): mode = STAND_BY 
+    case(SEARCH6):
+        catch(SEARCHED): mode = ON_THE_MOVE7("line", "point of 8", "radius")
+        catch(DIVIDE): mode = REMOTE_CONTROL_SEARCH("zigzag") 
+        catch(RETURN): mode = RETURN("point of base camp")
+        catch(DEFAULT): mode = STAND_BY 
+    case(ON_THE_MOVE7):
+        catch(ARRIVED): mode = SEARCH8("radial")
+        catch(DIVIDE): mode = REMOTE_CONTROL_MOVE("line", "point of 8", "radius") 
+        catch(RETURN): mode = RETURN("point of base camp")
+        catch(DEFAULT): mode = STAND_BY 
+    case(SEARCH8):
+        catch(SEARCHED): mode = ON_THE_MOVE9("line", "point of 10", "radius")
+        catch(DIVIDE): mode = REMOTE_CONTROL_SEARCH("radial") 
+        catch(RETURN): mode = RETURN("point of base camp")
+        catch(DEFAULT): mode = STAND_BY 
+    case(ON_THE_MOVE9):
+        catch(ARRIVED): mode = SEARCH10("forward")
+        catch(DIVIDE): mode = REMOTE_CONTROL_MOVE("line", "point of 10", "radius") 
+        catch(RETURN): mode = RETURN("point of base camp")
+        catch(DEFAULT): mode = STAND_BY 
+    case(SEARCH10):
+        catch(SEARCHED): mode = FINISH
+        catch(DIVIDE): mode = REMOTE_CONTROL_SEARCH("forward") 
+        catch(RETURN): mode = RETURN("point of base camp")
+        catch(DEFAULT): mode = STAND_BY 
+    default: mode = INITIALIZE
+}

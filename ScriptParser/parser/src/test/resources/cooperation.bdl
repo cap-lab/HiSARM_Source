@@ -1,0 +1,243 @@
+# 공중과 지상에 있는 이기종 로봇이 일자대형으로 이동하는 것은 이상하다고 생각해서 1번의 1자대형 이동은 그냥 이동으로 하며, 각 로봇은 탐색 또는 통신 중계를 수행할 각 위치로 이동한다.
+{
+    RelayMesh: Cockroach cockroach
+    GroundWatcher: Beetle beetle
+    Scouter: Bird bird
+}
+
+# 이건 GUI가 생성한다고 생각하는 서비스이다. (이유: 항상 형태가 같고 항상 쓰임, 혹은 아래 이벤트를 initialize 해야할 수 있음)
+Initialize {
+    initialize()
+    throw INITIALIZED broadcast
+}
+
+# 이건 GUI가 생성한다고 생각하는 서비스이다. (이유: 이벤트가 시나리오마다 달라지기 때문에)
+DoCommand(cmd) {
+    if (cmd == "REMOTE_CONTROL"){
+        throw REMOTE_CONTROL broadcast
+    } else if (cmd == "RESUME") {
+        throw RESUME broadcast
+    }  else if (cmd == "RETURN") {
+        throw RETURN broadcast
+    } else if (cmd == "FINISH") {
+        throw FINISH broadcast
+    }
+}
+
+# 이건 GUI가 생성한다고 생각하는 서비스이다. (이유: 항상 형태가 같고 항상 쓰임)
+ReceiveCommand {
+    cmd = group_get_cmd()
+    DoCommand(cmd)
+} repeat(500 MSEC)
+
+MoveTo(point) {
+    move_to(point)
+    throw ARRIVED
+}
+
+# 공중 탐색과 지상 탐색 방법이 공유가능한 것인지는 모르겠지만, 일단은 하나의 서비스로 수행이 가능하다고 생각하고 기술하였음
+Search(radius, method) {
+    result = search(method, radius)
+    throw SEARCHED
+}
+
+SendFrameToOtherTeam(team, quality) {
+    frame = takeFrame(quality)
+    publish(team, frame)
+} repeat(500 MSEC)
+
+FrameRelay(team) {
+    receivedFrame = subscribe(team, frame)
+    report_frame(receivedFrame)
+} repeat(100 MSEC)
+
+ReceiveStandByCommandForSingleRobot {
+	cmd = get_standby_command()
+    if (cmd == "CORRECT_POSITION") {
+        correct_position()
+    } else if (cmd == "REMOTE_CONTROL"){
+		direction = get_direction()
+		move(direction)
+    } else if (cmd == "RESUME") {
+        throw RESUME
+	}
+} repeat(500 MSEC)
+
+RelayStandByCommandForSingleRobot {
+    team, standbyCmd = get_standby_command_team()
+    publish(team, standbyCmd)
+} repeat(500 MSEC)
+
+ReceiveStandByCommandForSingleRobotFromOtherTeam(team) {
+    receivedCmd = subscribe(team, standbyCmd)
+    if (receivedCmd == "CORRECT_POSITION") {
+        correct_position()
+    } else if (receivedCmd == "REMOTE_CONTROL"){
+		direction = get_direction()
+		move(direction)
+    } else if (receivedCmd == "RESUME") {
+        throw RESUME
+	}
+} repeat(100 MSEC)
+
+RelayReceiveCommandForSingleRobot {
+    team, cmd = get_cmd_team()
+    publish(team, cmd)
+} repeat(500 MSEC)
+
+ReceiveCommandFromOtherTeam(team) {
+    receivedCmd = subscribe(team, cmd)
+    DoCommand(receivedCmd)
+} repeat(100 MSEC)
+
+RelayRemoteControlForSingleRobot {
+    team, direction = remote_control_team()
+    publish(team, direction)
+} repeat(1 SEC)
+
+RemoteControlFromOtherTeam(team) {
+    direction = subscribe(team, direction)
+    move(direction)
+} repeat(1 SEC)
+
+RemoteControl {
+    direction = remote_control()
+    move(direction)
+} repeat(1 SEC)
+
+SendVideo(quality) {
+    video(quality)
+}
+
+Mode.INITIALIZE {
+    services:
+        Initialize
+}
+
+Mode.MOVE(location, quality) {
+    services:
+        MoveTo(location)
+        ReceiveCommand
+        SendVideo(quality)
+}
+
+Mode.REMOTE_CONTROL(quality) {
+    services:
+        RemoteControl
+        ReceiveCommand
+        SendVideo(quality)
+}
+
+Mode.RETURN(location) {
+    services:
+        MoveTo(location)
+}
+
+Mode.STAND_BY(quality) {
+    services:
+        ReceiveStandByCommandForSingleRobot
+        SendVideo(quality)
+}
+
+Mode.COMMUNICATION_RELAY {
+    services:
+        FrameRelay(GroundWatcher)
+        FrameRelay(Scouter)
+        RelayStandByCommandForSingleRobot(GroundWatcher)
+        RelayStandByCommandForSingleRobot(Scouter)
+        RelayReceiveCommandForSingleRobot(GroundWatcher)
+        RelayReceiveCommandForSingleRobot(Scouter)
+        RelayRemoteControlForSingleRobot(GroundWatcher)
+        RelayRemoteControlForSingleRobot(Scouter)
+        ReceiveCommand
+}
+
+Mode.SEARCH(radius, method) {
+    services:
+        Search(radius, method)
+        SendFrameToOtherTeam(RelayMesh, "middle")
+        ReceiveCommandFromOtherTeam(RelayMesh)
+}
+
+Mode.REMOTE_CONTROL_BY_RELAY(quality) {
+    services:
+        RemoteControlFromOtherTeam(RelayMesh)
+        ReceiveCommandFromOtherTeam(RelayMesh)
+        SendFrameToOtherTeam(RelayMesh, "middle")
+}
+
+Mode.STAND_BY_RELAY(quality) {
+    services:
+        ReceiveStandByCommandForSingleRobotFromOtherTeam(RelayMesh)
+        SendFrameToOtherTeam(RelayMesh, "middle")
+}
+
+# 그림 상으로는 통신 중개할 때에는 아예 이동이 안 되는 것처럼 보여서 스크립트에서도 통신 중개는 종료 외에 다른 transition이 발생하지 않음
+Main.RelayMesh {
+    case(INITIALIZE):
+        catch(INITIALIZED): mode = MOVE("point of A_2", "middle")
+    case(MOVE):
+        catch(ARRIVED): mode = COMMUNICATION_RELAY
+        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL("middle")
+        catch(RETURN): mode = RETURN("location of base camp")
+        catch(DEFAULT): mode = STAND_BY("middle")
+    case(REMOTE_CONTROL):
+        catch(RESUME): mode = PREVIOUS_MODE
+    case(COMMUNICATION_RELAY):
+        catch(FINISH): mode = FINISH
+    case(STAND_BY):
+        catch(RESUME): mode = PREVIOUS_MODE
+    case(RETURN):
+        catch(ARRIVED): mode = FINISH
+    default: mode = INITIALIZE
+}
+
+Main.GroundWatcher{
+    case(INITIALIZE):
+        catch(INITIALIZED): mode = MOVE("point of B_1", "middle")
+    case(MOVE):
+        catch(ARRIVED): mode = SEARCH("radius", "method")
+        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL("middle")
+        catch(RETURN): mode = RETURN("location of base camp")
+        catch(DEFAULT): mode = STAND_BY("middle")
+    case(SEARCH):
+        catch(SEARCHED): mode = FINISH
+        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL_BY_RELAY("middle")
+        catch(DEFAULT): mode = STAND_BY_RELAY("middle")
+    case(REMOTE_CONTROL):
+        catch(RESUME): mode = PREVIOUS_MODE
+    case(REMOTE_CONTROL_BY_RELAY):
+        catch(RESUME): mode = PREVIOUS_MODE
+    case(STAND_BY):
+        catch(RESUME): mode = PREVIOUS_MODE
+    case(STAND_BY_RELAY):
+        catch(RESUME): mode = PREVIOUS_MODE
+    case(RETURN):
+        catch(ARRIVED): mode = FINISH
+    default: mode = INITIALIZE
+}
+
+Main.Scouter{
+    case(INITIALIZE):
+        catch(INITIALIZED): mode = MOVE("point of C_1", "middle")
+    case(MOVE):
+        catch(ARRIVED): mode = SEARCH("radius", "method")
+        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL("middle")
+        catch(RETURN): mode = RETURN("location of base camp")
+        catch(DEFAULT): mode = STAND_BY("middle")
+    case(SEARCH):
+        catch(SEARCHED): mode = FINISH
+        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL_BY_RELAY("middle")
+        catch(DEFAULT): mode = STAND_BY_RELAY("middle")
+    case(REMOTE_CONTROL):
+        catch(RESUME): mode = PREVIOUS_MODE
+    case(REMOTE_CONTROL_BY_RELAY):
+        catch(RESUME): mode = PREVIOUS_MODE
+    case(STAND_BY):
+        catch(RESUME): mode = PREVIOUS_MODE
+    case(STAND_BY_RELAY):
+        catch(RESUME): mode = PREVIOUS_MODE
+    case(RETURN):
+        catch(ARRIVED): mode = FINISH
+    default: mode = INITIALIZE
+}

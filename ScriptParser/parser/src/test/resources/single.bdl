@@ -1,0 +1,102 @@
+# 이건 주석이야()
+{
+    Robot: robot robot
+}
+
+# 이건 GUI가 생성한다고 생각하는 서비스이다. (이유: 항상 형태가 같고 항상 쓰임, 혹은 아래 이벤트를 initialize 해야할 수 있음)
+Initialize {
+    initialize()
+    throw INITIALIZED broadcast
+}
+
+# 이건 GUI가 생성한다고 생각하는 서비스이다. (이유: 이벤트가 시나리오마다 달라지기 때문에)
+DoCommand(cmd) {
+    if (cmd == WATCH) {
+        throw WATCH broadcast
+    } else if (cmd == "REMOTE_CONTROL"){
+        throw REMOTE_CONTROL broadcast
+    } else if (cmd == "RETURN") {
+        throw RETURN broadcast
+    } else if (cmd == "FINISH") {
+        throw FINISH broadcast
+    } else if (cmd == "RESUME") {
+        throw RESUME broadcast
+    }
+}
+
+# 이건 GUI가 생성한다고 생각하는 서비스이다. (이유: 항상 형태가 같고 항상 쓰임)
+ReceiveCommand {
+    cmd = group_get_cmd()
+    DoCommand(cmd)
+} repeat(500 MSEC)
+
+ReceiveStandByCommandForSingleRobot {
+	cmd = get_standby_command()
+    if (cmd == "CORRECT_POSITION") {
+        correct_position()
+    } else if (cmd == "REMOTE_CONTROL"){
+		direction = get_direction()
+		move(direction)
+    } else if (cmd == "RESUME") {
+        throw RESUME
+	}
+} repeat(500 MSEC)
+
+RemoteControl {
+    direction = remote_control()
+    move(direction)
+} repeat(1 SEC)
+
+SendVideo(quality) {
+    video(quality)
+}
+
+MoveTo(point) {
+    move_to(point)
+    throw ARRIVED
+}
+
+Mode.INITIALIZE {
+    services:
+        Initialize
+}
+
+Mode.REMOTE_CONTROL(quality) {
+    services:
+        ReceiveCommand
+        RemoteControl
+        SendVideo(quality)
+}
+
+Mode.WATCH(quality) {
+    services:
+        ReceiveCommand
+        SendVideo(quality)
+}
+
+Mode.RETURN(location) {
+    services:
+        MoveTo(location)
+}
+
+Mode.STAND_BY {
+    services:
+        ReceiveStandByCommandForSingleRobot
+}
+
+Main.Robot {
+    case(INITIALIZE):
+        catch(INITIALIZED): mode = REMOTE_CONTROL("middle")
+    case(REMOTE_CONTROL):
+        catch(WATCH): mode = WATCH("high")
+        catch(RETURN): mode = RETURN("location of base camp")
+        catch(DEFAULT): mode = STAND_BY
+        catch(FINISH): mode = FINISH
+    case(WATCH):
+        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
+    case(STAND_BY):
+        catch(RESUME): mode = PREVIOUS_MODE
+    default: mode = INITIALIZE
+}
+
+

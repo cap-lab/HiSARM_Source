@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.scriptparser.parser</groupId>
+  <parent>
+    <groupId>com.scriptparser</groupId>
+    <artifactId>scriptparser</artifactId>
+    <version>${project.version}</version>
+    <relativePath>..</relativePath>
+  </parent>
+
+  <groupId>com.scriptparser</groupId>
   <artifactId>parser</artifactId>
-  <version>1.0-SNAPSHOT</version>
 
   <name>parser</name>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-  </properties>
-
   <dependencies>
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-core</artifactId>
+      <version>2.2-M1-groovy-4.0</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
+      <version>4.13.2</version>
     </dependency>
     <dependency>
       <groupId>org.antlr</groupId>
@@ -33,18 +37,16 @@
       <artifactId>antlr4</artifactId>
       <version>4.9.3</version>
     </dependency>
+    <dependency>
+      <groupId>com.scriptparser</groupId>
+      <artifactId>parserdatastructure</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
-    <resources>
-      <resource>
-        <directory>src/main/grammar</directory>
-      </resource>
-      <resource>
-        <directory>src/main/java/com/scriptparser/grammar</directory>
-      </resource>
-    </resources>
-    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+    <pluginManagement>
+      <!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
         <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
         <plugin>
@@ -53,7 +55,7 @@
           <configuration>
             <filesets>
               <fileset>
-                <directory>src/main/java/com/scriptparser/grammar</directory>
+                <directory>src/main/java/com/scriptparser/grammar/generated</directory>
               </fileset>
             </filesets>
           </configuration>
@@ -95,23 +97,55 @@
       </plugins>
     </pluginManagement>
     <plugins>
-        <plugin>
-          <groupId>org.antlr</groupId>
-          <artifactId>antlr4-maven-plugin</artifactId>
-          <version>4.9.3</version>
-          <executions>
-            <execution>
-              <phase>generate-sources</phase>
-              <goals>
-                <goal>antlr4</goal>
-              </goals>
-              <configuration>
-                <sourceDirectory>src/main/grammar</sourceDirectory>
-                <outputDirectory>src/main/java/com/scriptparser/grammar</outputDirectory>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
+      <plugin>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-maven-plugin</artifactId>
+        <version>4.9.3</version>
+        <configuration>
+          <sourceDirectory>src/main/grammar</sourceDirectory>
+          <outputDirectory>src/main/java/com/scriptparser/grammar/generated</outputDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>antlr4</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.gmavenplus</groupId>
+        <artifactId>gmavenplus-plugin</artifactId>
+        <version>1.13.1</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>3.0.9</version>
+            <type>pom</type>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>addTestSources</goal>
+              <goal>compileTests</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0-M5</version>
+        <configuration>
+          <includes>
+            <include>**/*Test.class</include>
+          </includes>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>

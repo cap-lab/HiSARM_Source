@@ -1,0 +1,170 @@
+{
+  Robot: Robot robot[10]
+}
+
+# 이건 GUI가 생성한다고 생각하는 서비스이다. (이유: 항상 형태가 같고 항상 쓰임)
+Initialize {
+    initialize() # 여기서 나오는 이벤트들 remote control에 전달하든가 해야 함, 뭔가 LIG에서 하고 싶은 것 하시면 됨
+    throw INITIALIZED broadcast
+}
+
+# 이건 GUI가 생성한다고 생각하는 서비스이다. (이유: 이벤트가 시나리오마다 달라지기 때문에)
+DoCommand(cmd) {
+   if (cmd == "DIVIDE") {
+        throw DIVIDE broadcast
+    } else if (cmd == "JOIN"){
+        throw JOIN broadcast
+    } else if (cmd == "RETURN") {
+        throw RETURN broadcast
+    } else if (cmd == "FINISH") {
+        throw FINISH broadcast
+    } else if (cmd == "RESUME") {
+        throw RESUME broadcast
+    }
+}
+
+# 이건 GUI가 생성한다고 생각하는 서비스이다. (이유: 항상 형태가 같고 항상 쓰임)
+ReceiveCommand {
+    cmd = group_get_cmd()
+    DoCommand(cmd)
+} repeat(500 MSEC)
+
+ReceiveStandByCommand {
+    cmd = group_get_standby_command()
+    if (cmd == "CORRECT_POSITION") {
+        correct_position()
+    } else if (cmd == "REMOTE_CONTROL"){
+        direction = group_remote_control()
+        group_move(direction)
+    } else if (cmd == "RESUME") {
+        throw RESUME broadcast
+    } else if (cmd == "RECON") {
+        FormationRemote("square")
+    } else if (cmd == "MOVE") {
+        FormationMoveToRemote("line")
+    }
+} repeat(500 MSEC)
+
+FormationMoveTo (formation, point, radius) {
+    group_formation_move_to(formation, point, radius)
+    throw ARRIVED
+}
+
+Formation (formation, radius) {
+    group_formation(formation, radius)
+    throw FORMATIONED
+}
+
+RemoteControlGroup {
+    direction = group_remote_control()
+    group_move(direction)
+} repeat(1 SEC)
+
+SendVideoGroup {
+    group_video()
+}
+
+MoveTo(point) {
+    move_to(point)
+    throw ARRIVED
+}
+
+Mode.INITIALIZE {
+    services:
+        Initialize
+}
+
+Mode.CONTROL_CELL_ROBOT {
+    services:
+        RemoteControlGroup
+        ReceiveCommand
+}
+
+Mode.ON_THE_MOVE(formation, point, radius) {
+    services:
+        FormationMoveTo(formation, point, radius)
+        SendVideoGroup
+        ReceiveCommand
+}
+
+Mode.CONTROL_CELL_MOVE(formation, point, radius) {
+    group(Searcher, proper=3):
+        ModeTransition.CONTROL_CELL_ROBOT
+    others(Remain):
+        ModeTransition.ON_THE_MOVE(formation, point, radius)
+    services:
+        ReceiveCommand
+}
+
+
+Mode.WATCH_OUT(formation, radius) {
+    services:
+        Formation(formation, radius)
+        SendVideoGroup
+        ReceiveCommand
+}
+
+Mode.CONTROL_CELL_WATCH(formation, radius) {
+    group(Searcher, proper=3):
+        ModeTransition.CONTROL_CELL_ROBOT
+    others(Remain):
+        ModeTransition.WATCH_OUT(formation, radius)
+    services:
+        ReceiveCommand
+}
+
+Mode.RETURN(location) {
+    services:
+        MoveTo(location)
+}
+
+Mode.STAND_BY {
+    services:
+        ReceiveStandByCommand
+        SendVideoGroup
+}
+
+Mode.ON_THE_MOVE: ON_THE_MOVE1, ON_THE_MOVE2, ON_THE_MOVE3
+
+ModeTransition.CONTROL_CELL_ROBOT {
+    default: mode = CONTROL_CELL_ROBOT
+}
+
+ModeTransition.ON_THE_MOVE(formation, point, radius) {
+    default: mode = ON_THE_MOVE(formation, point, radius)
+}
+
+ModeTransition.WATCH_OUT(formation, radius) {
+    default: mode = WATCH_OUT(formation, radius)
+}
+
+Main.Robot {
+    case(INITIALIZE):
+        catch(INITIALIZED): mode = ON_THE_MOVE1("line", "point of 1", "radius")
+    case(ON_THE_MOVE1):
+        catch(ARRIVED): mode = ON_THE_MOVE2("line", "point of 2", "radius")
+        catch(DIVIDE): mode = CONTROL_CELL_MOVE("line", "point of 1", "radius")
+        catch(RETURN): mode = RETURN("location of base camp")
+        catch(DEFAULT): mode = STAND_BY
+    case(ON_THE_MOVE2):
+        catch(ARRIVED): mode = ON_THE_MOVE3("line", "point of 3", "radius")
+        catch(DIVIDE): mode = CONTROL_CELL_MOVE("line", "point of 2", "radius")
+        catch(RETURN): mode = RETURN("location of base camp")
+        catch(DEFAULT): mode = STAND_BY
+    case(ON_THE_MOVE3):
+        catch(ARRIVED): mode = WATCH_OUT("square", "radius")
+        catch(DIVIDE): mode = CONTROL_CELL_MOVE("line", "point of 3", "radius")
+        catch(RETURN): mode = RETURN("location of base camp")
+        catch(DEFAULT): mode = STAND_BY
+    case(CONTROL_CELL_MOVE):
+        catch(JOIN): mode = PREVIOUS_MODE
+    case(WATCH_OUT):
+        catch(DIVIDE): mode = CONTROL_CELL_WATCH("square", "radius")
+        catch(FINISH): mode = FINISH
+        catch(DEFAULT): mode = STAND_BY
+    case(CONTROL_CELL_WATCH):
+        catch(JOIN): mode = PREVIOUS_MODE
+    case(STAND_BY):
+        catch(RESUME): mode = PREVIOUS_MODE
+    default: mode = INITIALIZE
+}
