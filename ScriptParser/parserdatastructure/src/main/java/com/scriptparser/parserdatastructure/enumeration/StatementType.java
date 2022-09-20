@@ -5,8 +5,8 @@ import lombok.Getter;
 @Getter
 public enum StatementType {
     IF("if"), LOOP("loop"), REPEAT("repeat"), SEND("send"), RECEIVE("receive"), PUBLISH(
-            "publish"), SUBSCRIBE("subscribe"), THROW(
-                    "throw"), ACTION("action"), ELSE("else"), COMPOUND_IN("."), COMPOUND_OUT(".");
+            "publish"), SUBSCRIBE("subscribe"), THROW("throw"), ACTION(
+                    "action"), ELSE("else"), COMPOUND_IN("."), COMPOUND_OUT("."), FINISH("finish");
 
     private final String value;
 

@@ -1,0 +1,72 @@
+{
+    Robot: Burger burger[6]
+}
+
+RemoteControlGroup {
+    direction = group_remote_control()
+    group_move(direction)
+} repeat(100 MSEC)
+
+DoCommand(cmd) {
+    if (cmd == "REMOTE_CONTROL"){
+        throw REMOTE_CONTROL broadcast
+    } else if (cmd == "START") {
+        throw START broadcast
+    } else if (cmd == "FINISH") {
+        throw FINISH broadcast
+    }
+}
+
+ReceiveCommand {
+    cmd = group_get_cmd()
+    DoCommand(cmd)
+} repeat(500 MSEC)
+
+
+Search(target) {
+    search(target)
+}
+
+MoveTo(area) {
+    move_to(area)
+    throw ARRIVED
+}
+
+Mode.REMOTE_CONTROL {
+    services:
+        ReceiveCommand
+        RemoteControlGroup
+}
+
+Mode.SEARCH_GROUPING(target) {
+    group(groupA, min=2):
+        ModeTransition.SEARCH("room1",target)
+    group(groupB, min=2, proper=4):
+        ModeTransition.SEARCH("room2",target)
+    services:
+        ReceiveCommand
+}
+
+Mode.MOVE_TO_MISSION_AREA(area) {
+    services:
+        MoveTo(area)
+}
+
+Mode.SEARCH(target) {
+    services:
+        search(target), timeout = 10 MINUTE
+}
+
+ModeTransition.SEARCH(area, target) {
+    case(MOVE_TO_MISSION_AREA):
+        catch(ARRIVED): mode = SEARCH(target)
+    default: mode = MOVE_TO_MISSION_AREA(area)
+}
+
+Main.Robot {
+    case(REMOTE_CONTROL):
+        catch(START): mode = SEARCH_GROUPING(target)
+    case(SEARCH_GROUPING):
+        catch(FINISH): mode = FINISH
+    default: mode = REMOTE_CONTROL
+}

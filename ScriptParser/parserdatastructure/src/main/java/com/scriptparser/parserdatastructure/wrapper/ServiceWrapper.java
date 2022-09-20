@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class ServiceWrapper {
     private Service service;
-    private List<StatementWrapper> statement = new ArrayList<>();
+    private List<StatementWrapper> statementList = new ArrayList<>();
     private List<Identifier> parameterList = new ArrayList<>();
 
     public ServiceWrapper(Service service) {

@@ -111,6 +111,10 @@ public class StatementFactory {
         return DummyStatement.builder().statementType(StatementType.COMPOUND_OUT).build();
     }
 
+    private static DummyStatement finishStatement(KeyValueList<Integer, Object> infoMap) {
+        return DummyStatement.builder().statementType(StatementType.FINISH).build();
+    }
+
     public static StatementWrapper makeStatement(StatementType type,
             KeyValueList<Integer, Object> infoList) {
         StatementWrapper statement = new StatementWrapper();
@@ -150,6 +154,9 @@ public class StatementFactory {
                 break;
             case COMPOUND_OUT:
                 statement.setStatement(compoundOutStatement(infoList));
+                break;
+            case FINISH:
+                statement.setStatement(finishStatement(infoList));
                 break;
             default:
                 statement.setStatement(null);

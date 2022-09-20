@@ -1,5 +1,5 @@
 package com.scriptparser.parserdatastructure.enumeration;
 
 public enum TransitionCondition {
-    TRUE, FALSE
+    PREVIOUS, TRUE, FALSE
 }

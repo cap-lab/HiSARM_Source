@@ -137,6 +137,11 @@ public class ScriptListenerApp extends ScriptBaseListener {
     }
 
     @Override
+    public void enterRepeat_statement(ScriptParser.Repeat_statementContext ctx) {
+        objectStack.push(null);
+    }
+
+    @Override
     public void exitEvent(ScriptParser.EventContext ctx) {
         objectStack.push(makeInfo(ctx, Event.builder().name(ctx.getText()).build()));
     }
@@ -332,6 +337,7 @@ public class ScriptListenerApp extends ScriptBaseListener {
 
     @Override
     public void exitCompound_statement(ScriptParser.Compound_statementContext ctx) {
+        objectStack.push(null);
         pushStatement(StatementType.COMPOUND_OUT);
     }
 
@@ -346,7 +352,8 @@ public class ScriptListenerApp extends ScriptBaseListener {
                 new ServiceWrapper(Service.builder().name(ctx.service_name().getText()).build());
         KeyValueList<Integer, Object> infoList = extractInfoUntilNull();
         service.setParameterList(infoList.popFirst(ScriptParser.RULE_parameter_list, List.class));
-        service.setStatement(infoList.values(ScriptParser.RULE_statement, StatementWrapper.class));
+        service.setStatementList(
+                infoList.values(ScriptParser.RULE_statement, StatementWrapper.class));
         serviceList.add(service);
     }
 
