@@ -4,7 +4,7 @@ public class Main {
 
     private static void parsingScript(String scriptFile) {
         Parser executer = new Parser();
-        executer.ParseScript(scriptFile);
+        executer.parseScript(scriptFile);
     }
 
     public static void main(String[] args) {

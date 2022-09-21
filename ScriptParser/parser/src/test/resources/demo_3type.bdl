@@ -121,7 +121,7 @@ Main.Cover {
 Main.Checker {
     case(REMOTE_CONTROL):
         catch(START): mode = CHECK("Searcher")
-    case(CEHCK):
+    case(CHECK):
         catch(FINISH): mode = FINISH
         catch(HIDE): mode = HIDE
     default: mode = REMOTE_CONTROL

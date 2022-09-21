@@ -454,11 +454,6 @@ public class ScriptListenerApp extends ScriptBaseListener {
     }
 
     @Override
-    public void enterParallel_behavior(ScriptParser.Parallel_behaviorContext ctx) {
-        objectStack.push(null);
-    }
-
-    @Override
     public void enterService_mapping(ScriptParser.Service_mappingContext ctx) {
         objectStack.push(null);
     }
