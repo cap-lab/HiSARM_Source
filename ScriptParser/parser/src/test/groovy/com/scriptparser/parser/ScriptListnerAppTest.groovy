@@ -11,7 +11,7 @@ class ScriptListnerAppTest extends spock.lang.Specification {
         Parser parser = new Parser()
 
         when:
-        MissionWrapper mission = parser.ParseScript(prefix + "simple_test.bdl")
+        MissionWrapper mission = parser.parseScript(prefix + "simple_test.bdl")
 
         then:
         mission != null 
@@ -27,7 +27,7 @@ class ScriptListnerAppTest extends spock.lang.Specification {
             Parser parser = new Parser()
 
         expect:
-            MissionWrapper mission = parser.ParseScript(prefix + script)
+            MissionWrapper mission = parser.parseScript(prefix + script)
             mission.getTeamList().size()       == teamNum
             mission.getServiceList().size()    == serviceNum
             mission.getModeList().size()       == modeNum
