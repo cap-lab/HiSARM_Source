@@ -1,0 +1,73 @@
+package com.strategy.strategymaker;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import com.dbmanager.commonlibraries.DBService;
+import com.dbmanager.datastructure.robot.RobotImpl;
+import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
+import com.scriptparser.parserdatastructure.wrapper.RobotWrapper;
+import com.scriptparser.parserdatastructure.wrapper.TeamWrapper;
+import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
+import com.strategy.strategydatastructure.wrapper.RobotTypeWrapper;
+import com.strategy.strategymaker.additionalinfo.AdditionalInfo;
+
+public class RobotInfoMaker {
+    private static List<RobotTypeWrapper> robotTypeList;
+
+    public static List<RobotImplWrapper> makeRobotImplList(MissionWrapper mission,
+            AdditionalInfo additionalInfo) {
+        return allocateRealRobot(makeRobotMap(mission),
+                makeRobotImplList(additionalInfo.getRobotList()));
+    }
+
+    private static RobotTypeWrapper getRobotType(String type) {
+        for (RobotTypeWrapper t : robotTypeList) {
+            if (t.getRobotType().getRobotClass().equals(type)) {
+                return t;
+            }
+        }
+        RobotTypeWrapper newType = new RobotTypeWrapper();
+        newType.setRobotType(DBService.getRobot(type));
+        return newType;
+    }
+
+    private static List<RobotImplWrapper> allocateRealRobot(
+            Map<String, List<RobotWrapper>> robotList, List<RobotImpl> robotCandidateList) {
+        List<RobotImplWrapper> robotImplList = new ArrayList<>();
+        for (String teamName : robotList.keySet()) {
+            for (RobotWrapper robot : robotList.get(teamName)) {
+                RobotImplWrapper robotImpl = new RobotImplWrapper();
+                robotImpl.getGroupList().add(teamName);
+                robotImpl.setRobotType(getRobotType(robot.getRobot().getType()));
+                for (int index = 0; index < robotCandidateList.size(); index++) {
+                    if (robotCandidateList.get(index).getRobotClass()
+                            .equals(robot.getRobot().getType())) {
+                        robotImpl.setRobot(robotCandidateList.get(index));
+                        robotCandidateList.remove(index);
+                        break;
+                    }
+                }
+                robotImplList.add(robotImpl);
+            }
+        }
+        return robotImplList;
+    }
+
+    private static List<RobotImpl> makeRobotImplList(List<String> robotIdList) {
+        List<RobotImpl> robotCandidateList = new ArrayList<>();
+        for (String robotId : robotIdList) {
+            robotCandidateList.add(DBService.getRobotImpl(robotId));
+        }
+        return robotCandidateList;
+    }
+
+    private static Map<String, List<RobotWrapper>> makeRobotMap(MissionWrapper mission) {
+        Map<String, List<RobotWrapper>> result = new HashMap<>();
+        for (TeamWrapper team : mission.getTeamList()) {
+            result.put(team.getTeam().getName(), team.getRobotList());
+        }
+        return result;
+    }
+}
