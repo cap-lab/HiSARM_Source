@@ -4,7 +4,6 @@
   <modelVersion>4.0.0</modelVersion>
 
   <properties>
-    <project.version>0.1-SNAPSHOT</project.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>13</maven.compiler.source>
     <maven.compiler.target>13</maven.compiler.target>
@@ -12,7 +11,7 @@
 
   <groupId>com.dbmanager</groupId>
   <artifactId>dbmanager</artifactId>
-  <version>${project.version}</version>
+  <version>0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
