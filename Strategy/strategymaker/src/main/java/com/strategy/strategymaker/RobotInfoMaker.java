@@ -39,7 +39,7 @@ public class RobotInfoMaker {
         for (String teamName : robotList.keySet()) {
             for (RobotWrapper robot : robotList.get(teamName)) {
                 RobotImplWrapper robotImpl = new RobotImplWrapper();
-                robotImpl.getGroupList().add(teamName);
+                robotImpl.getGroupMap().put("DEFAULT", teamName);
                 robotImpl.setRobotType(getRobotType(robot.getRobot().getType()));
                 for (int index = 0; index < robotCandidateList.size(); index++) {
                     if (robotCandidateList.get(index).getRobotClass()

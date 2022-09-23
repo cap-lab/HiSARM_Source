@@ -1,19 +1,9 @@
 package com.strategy.strategymaker;
 
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import com.dbmanager.commonlibraries.DBService;
-import com.dbmanager.datastructure.robot.RobotImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
-import com.scriptparser.parserdatastructure.wrapper.RobotWrapper;
-import com.scriptparser.parserdatastructure.wrapper.TeamWrapper;
-import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
-import com.strategy.strategydatastructure.wrapper.RobotTypeWrapper;
 import com.strategy.strategydatastructure.wrapper.StrategyWrapper;
 import com.strategy.strategymaker.additionalinfo.AdditionalInfo;
 
