@@ -25,5 +25,6 @@ public class StrategyMaker {
         AdditionalInfo additionalInfo = parsingAdditionalInfo(additionalInfoFile);
 
         strategy.setRobotList(RobotInfoMaker.makeRobotImplList(mission, additionalInfo));
+        ActionTypeInfoMaker.makeActionTypeList(mission, strategy.getRobotList());
     }
 }

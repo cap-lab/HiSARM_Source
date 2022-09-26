@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 public class ActionImplWrapper {
     private ActionImpl actionImpl;
-    private ActonTypeWrapper action;
+    private ActionTypeWrapper action;
     private Task task;
 }

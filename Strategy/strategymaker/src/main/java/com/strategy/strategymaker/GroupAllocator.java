@@ -15,7 +15,6 @@ import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 public class GroupAllocator {
     private static List<String> exploredList = new ArrayList<>();
 
-
     private static boolean robotMatchWithGroupConstraint(RobotImplWrapper robot,
             GroupWrapper group) {
         return true;
@@ -31,59 +30,73 @@ public class GroupAllocator {
         return false;
     }
 
+    private static int a(Map<GroupWrapper, List<RobotImplWrapper>> allocationMap,
+            List<RobotImplWrapper> candidateRobotList, List<RobotImplWrapper> allocatedList,
+            GroupWrapper group, String modeId, int count) {
+        for (RobotImplWrapper robot : candidateRobotList) {
+            if (robotAlreadyAllocated(allocationMap, robot)) {
+                continue;
+            }
+            if (robotMatchWithGroupConstraint(robot, group)) {
+                robot.getGroupMap().put(modeId, group.getGroup().getName());
+                allocatedList.add(robot);
+                count = count - 1;
+                if (count == 0) {
+                    break;
+                }
+            }
+        }
+        return count;
+    }
+
+    private static void allocateRequired(Map<GroupWrapper, List<RobotImplWrapper>> allocationMap,
+            List<RobotImplWrapper> candidateRobotList, ModeWrapper mode, String modeId)
+            throws Exception {
+        for (GroupWrapper group : mode.getGroupList()) {
+            int count = group.getGroup().getMin();
+            List<RobotImplWrapper> allocatedList = new ArrayList<>();
+            allocationMap.put(group, allocatedList);
+            count = a(allocationMap, candidateRobotList, allocatedList, group, modeId, count);
+            if (count != 0) {
+                throw new Exception("not enough robot for group");
+            }
+        }
+    }
+
+    private static void allocateAdditional(Map<GroupWrapper, List<RobotImplWrapper>> allocationMap,
+            List<RobotImplWrapper> candidateRobotList, ModeWrapper mode, String modeId) {
+        for (GroupWrapper group : mode.getGroupList()) {
+            int count = group.getGroup().getProper() - group.getGroup().getMin();
+            List<RobotImplWrapper> allocatedList = allocationMap.get(group);
+            a(allocationMap, candidateRobotList, allocatedList, group, modeId, count);
+        }
+    }
+
+    public static String makeGroupKeyForTransition(String previousKey,
+            TransitionWrapper transition) {
+        return previousKey + transition.getTransition().getName();
+    }
+
+    public static String makeGroupKeyForMode(String previousKey, ModeWrapper mode) {
+        return previousKey + mode.getMode().getName();
+    }
+
     private static void traverseMode(String modeId, ModeWrapper mode,
             List<RobotImplWrapper> robotList) throws Exception {
-        List<RobotImplWrapper> tmpRobotList = new ArrayList<>(robotList);
+        List<RobotImplWrapper> candidateRobotList = new ArrayList<>(robotList);
         if (mode.getGroupList().size() <= 0 || exploredList.contains(modeId)) {
             return;
         }
         exploredList.add(modeId);
 
         Map<GroupWrapper, List<RobotImplWrapper>> allocationMap = new HashMap<>();
-        for (GroupWrapper group : mode.getGroupList()) {
-            int count = group.getGroup().getMin();
-            List<RobotImplWrapper> allocatedList = new ArrayList<>();
-            allocationMap.put(group, allocatedList);
-            for (RobotImplWrapper robot : tmpRobotList) {
-                if (robotAlreadyAllocated(allocationMap, robot)) {
-                    continue;
-                }
-                if (robotMatchWithGroupConstraint(robot, group)) {
-                    robot.getGroupMap().put(modeId, group.getGroup().getName());
-                    allocatedList.add(robot);
-                    count = count - 1;
-                    if (count == 0) {
-                        break;
-                    }
-                }
-            }
-            if (count != 0) {
-                throw new Exception("not enough robot for group");
-            }
-        }
-        for (GroupWrapper group : mode.getGroupList()) {
-            int count = group.getGroup().getProper() - group.getGroup().getMin();
-            List<RobotImplWrapper> allocatedList = allocationMap.get(group);
-            for (RobotImplWrapper robot : tmpRobotList) {
-                if (robotAlreadyAllocated(allocationMap, robot)) {
-                    continue;
-                }
-                if (robotMatchWithGroupConstraint(robot, group)) {
-                    robot.getGroupMap().put(modeId, group.getGroup().getName());
-                    allocatedList.add(robot);
-                    count = count - 1;
-                    if (count == 0) {
-                        break;
-                    }
-                }
-            }
-        }
-
+        allocateRequired(allocationMap, candidateRobotList, mode, modeId);
+        allocateAdditional(allocationMap, candidateRobotList, mode, modeId);
 
         for (GroupWrapper group : allocationMap.keySet()) {
             traverseTransition(
-                    modeId + group.getModeTransition().getModeTransition().getTransition()
-                            .getName(),
+                    makeGroupKeyForTransition(modeId,
+                            group.getModeTransition().getModeTransition()),
                     group.getModeTransition().getModeTransition(), allocationMap.get(group));
         }
     }
@@ -95,11 +108,10 @@ public class GroupAllocator {
         for (ModeWrapper key : transition.getTransitionMap().keySet()) {
             traverseMode(transitionId + key.getMode().getName(), key, robotList);
             for (CatchEventWrapper catchEvent : transition.getTransitionMap().get(key)) {
-                traverseMode(transitionId + catchEvent.getMode().getMode().getMode().getName(),
+                traverseMode(makeGroupKeyForMode(transitionId, catchEvent.getMode().getMode()),
                         catchEvent.getMode().getMode(), robotList);
             }
         }
-
     }
 
     public static void allocateGroup(MissionWrapper mission, List<RobotImplWrapper> robotList) {
