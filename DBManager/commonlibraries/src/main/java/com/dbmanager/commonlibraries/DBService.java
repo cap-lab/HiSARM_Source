@@ -52,6 +52,14 @@ public class DBService {
         return dbDao.getVariable(variableName) != null;
     }
 
+    public static Action getAction(String actionName) {
+        return ActionMapper.mapToAction(dbDao.getAction(actionName));
+    }
+
+    public static GroupAction getGroupAction(String actionName) {
+        return GroupActionMapper.mapToGroupAction(dbDao.getAction(actionName));
+    }
+
     public static ActionImpl getActionImpl(String actionImplId) {
         return ActionImplMapper.mapToActionImpl(dbDao.getActionImpl(actionImplId));
     }
