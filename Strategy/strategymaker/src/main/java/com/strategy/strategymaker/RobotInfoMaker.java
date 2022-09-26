@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import com.dbmanager.commonlibraries.DBService;
+import com.dbmanager.datastructure.architecture.Architecture;
 import com.dbmanager.datastructure.robot.RobotImpl;
 import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
 import com.scriptparser.parserdatastructure.wrapper.RobotWrapper;
@@ -15,11 +17,29 @@ import com.strategy.strategymaker.additionalinfo.AdditionalInfo;
 
 public class RobotInfoMaker {
     private static List<RobotTypeWrapper> robotTypeList;
+    private static Set<Architecture> architectureStore;
 
     public static List<RobotImplWrapper> makeRobotImplList(MissionWrapper mission,
             AdditionalInfo additionalInfo) {
         return allocateRealRobot(makeRobotMap(mission),
                 makeRobotImplList(additionalInfo.getRobotList()));
+    }
+
+    private static Architecture getArchitecture(String architectureName) {
+        for (Architecture architecture : architectureStore) {
+            if (architecture.getDeviceName().equals(architectureName)) {
+                return architecture;
+            }
+        }
+        return null;
+    }
+
+    private static boolean containArchitecture(String architectureName) {
+        if (getArchitecture(architectureName) == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     private static RobotTypeWrapper getRobotType(String type) {
@@ -30,6 +50,16 @@ public class RobotInfoMaker {
         }
         RobotTypeWrapper newType = new RobotTypeWrapper();
         newType.setRobotType(DBService.getRobot(type));
+        for (String architectureName : newType.getRobotType().getArchitectureList()) {
+            if (containArchitecture(architectureName)) {
+                newType.getDeviceList().add(getArchitecture(architectureName));
+            } else {
+                Architecture architecture = DBService.getArchitecture(architectureName);
+                newType.getDeviceList().add(architecture);
+                architectureStore.add(architecture);
+            }
+        }
+
         return newType;
     }
 
