@@ -18,6 +18,7 @@ import com.scriptparser.parserdatastructure.wrapper.TransitionWrapper;
 import com.strategy.strategydatastructure.wrapper.ActionTypeWrapper;
 import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 import com.strategy.strategydatastructure.wrapper.VariableTypeWrapper;
+import com.strategy.strategymaker.constant.StrategyConstant;
 
 public class ActionTypeInfoMaker {
     private static Set<ActionTypeWrapper> actionTypeStore = new HashSet<>();
@@ -36,7 +37,8 @@ public class ActionTypeInfoMaker {
     private static Set<ActionTypeWrapper> makeActionTypeList(MissionWrapper mission,
             RobotImplWrapper robot) throws Exception {
         Set<ActionTypeWrapper> actionTypeSet = new HashSet<>();
-        String team = robot.getGroup("DEFAULT");
+        String team = robot.getGroup(StrategyConstant.GROUP_DEFAULT);
+        actionTypeSet.addAll(traverseTransition(mission.getTransition(team), robot, team));
         return actionTypeSet;
     }
 
@@ -115,6 +117,7 @@ public class ActionTypeInfoMaker {
                         throw new Exception("no action in DB :" + action.getActionName());
                     }
                     actionTypeSet.add(actionType);
+                    actionTypeStore.add(actionType);
                 }
             }
         }
