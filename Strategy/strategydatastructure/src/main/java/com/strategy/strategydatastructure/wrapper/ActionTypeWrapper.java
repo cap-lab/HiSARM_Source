@@ -11,5 +11,7 @@ import lombok.Setter;
 public class ActionTypeWrapper {
     private Action action;
     private boolean groupAction;
-    private List<VariableTypeWrapper> variableList = new ArrayList<>();
+    private List<VariableTypeWrapper> variableInputList = new ArrayList<>();
+    private List<VariableTypeWrapper> variableOutputList = new ArrayList<>();
+    private List<VariableTypeWrapper> variableSharedputList = new ArrayList<>();
 }

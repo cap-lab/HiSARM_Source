@@ -82,12 +82,12 @@ public class ActionTypeInfoMaker {
 
     }
 
-    private static void getVariableType(ActionTypeWrapper actionType,
-            List<String> variableNameList) {
+    private static void getVariableType(ActionTypeWrapper actionType, List<String> variableNameList,
+            List<VariableTypeWrapper> store) {
         for (String variableName : variableNameList) {
             VariableTypeWrapper variableType = new VariableTypeWrapper();
             variableType.setVariableType(DBService.getVariable(variableName));
-            actionType.getVariableList().add(variableType);
+            store.add(variableType);
         }
     }
 
@@ -104,15 +104,20 @@ public class ActionTypeInfoMaker {
                     } else if (DBService.isExistentAction(action.getActionName())) {
                         actionType.setAction(DBService.getAction(action.getActionName()));
                         actionType.setGroupAction(false);
-                        getVariableType(actionType, actionType.getAction().getInputList());
-                        getVariableType(actionType, actionType.getAction().getOutputList());
+                        getVariableType(actionType, actionType.getAction().getInputList(),
+                                actionType.getVariableInputList());
+                        getVariableType(actionType, actionType.getAction().getOutputList(),
+                                actionType.getVariableOutputList());
                     } else if (DBService.isExistentGroupAction(action.getActionName())) {
                         actionType.setAction(DBService.getGroupAction(action.getActionName()));
                         actionType.setGroupAction(true);
-                        getVariableType(actionType, actionType.getAction().getInputList());
-                        getVariableType(actionType, actionType.getAction().getOutputList());
+                        getVariableType(actionType, actionType.getAction().getInputList(),
+                                actionType.getVariableInputList());
+                        getVariableType(actionType, actionType.getAction().getOutputList(),
+                                actionType.getVariableOutputList());
                         getVariableType(actionType,
-                                ((GroupAction) (actionType.getAction())).getSharedDataList());
+                                ((GroupAction) (actionType.getAction())).getSharedDataList(),
+                                actionType.getVariableSharedputList());
                     } else {
                         throw new Exception("no action in DB :" + action.getActionName());
                     }

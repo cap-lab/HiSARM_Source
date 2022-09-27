@@ -26,5 +26,7 @@ public class StrategyMaker {
 
         strategy.setRobotList(RobotInfoMaker.makeRobotImplList(mission, additionalInfo));
         ActionTypeInfoMaker.makeActionTypeList(mission, strategy.getRobotList());
+        ControlStrategyInfoMaker.makeControlStrategyList(additionalInfo, strategy.getRobotList());
+        VariableInfoMaker.makeVariableInfoList(mission, additionalInfo, strategy.getRobotList());
     }
 }
