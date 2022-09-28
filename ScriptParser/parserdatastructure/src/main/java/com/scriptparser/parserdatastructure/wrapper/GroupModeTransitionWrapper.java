@@ -1,7 +1,7 @@
 package com.scriptparser.parserdatastructure.wrapper;
 
 import java.util.List;
-import com.scriptparser.parserdatastructure.entity.common.Identifier;
+import com.scriptparser.parserdatastructure.entity.common.IdentifierSet;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class GroupModeTransitionWrapper {
     private TransitionWrapper modeTransition;
-    private List<Identifier> inputList;
+    private List<IdentifierSet> inputList;
 
     public GroupModeTransitionWrapper(TransitionWrapper modeTransitionWrapper) {
         setModeTransition(modeTransitionWrapper);

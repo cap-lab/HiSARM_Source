@@ -6,6 +6,7 @@ import java.util.Stack;
 import com.scriptparser.grammar.StatementFactory;
 import com.scriptparser.parserdatastructure.enumeration.StatementType;
 import com.scriptparser.parserdatastructure.enumeration.TransitionCondition;
+import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
 import com.scriptparser.parserdatastructure.wrapper.ServiceWrapper;
 import com.scriptparser.parserdatastructure.wrapper.StatementWrapper;
 
@@ -70,7 +71,7 @@ public class StatementConnector {
         expressionStack.push(statement);
     }
 
-    public static void ConnectStatement(ServiceWrapper service) {
+    private static void connectStatementTransition(ServiceWrapper service) {
         Stack<StatementWrapper> expressionStack = new Stack<>();
         Stack<Object> compoundStack = new Stack<>();
         Stack<Object> elseStack = new Stack<>();
@@ -130,5 +131,12 @@ public class StatementConnector {
             service.getStatementList().add(statement);
         }
         dealWithCommonType(statement, expressionStack.size(), 0, expressionStack);
+
+    }
+
+    public static void connectStatement(MissionWrapper mission) {
+        for (ServiceWrapper service : mission.getServiceList()) {
+            connectStatementTransition(service);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.scriptparser.grammar;
 
+import java.util.ArrayList;
 import java.util.List;
 import com.scriptparser.grammar.generated.ScriptParser;
 import com.scriptparser.parserdatastructure.entity.common.Condition;
@@ -78,7 +79,7 @@ public class StatementFactory {
         Identifier output = infoList.findFirst(ScriptParser.RULE_output, Identifier.class);;
 
         return CommunicationalStatement.builder().counterTeam(targetTeam).message(variable)
-                .output(output).statementType(StatementType.PUBLISH).build();
+                .output(output).statementType(StatementType.RECEIVE).build();
     }
 
     private static CommunicationalStatement subscribeStatement(
@@ -88,7 +89,7 @@ public class StatementFactory {
         Identifier output = infoList.findFirst(ScriptParser.RULE_output, Identifier.class);;
 
         return CommunicationalStatement.builder().counterTeam(targetTeam).message(variable)
-                .output(output).statementType(StatementType.PUBLISH).build();
+                .output(output).statementType(StatementType.SUBSCRIBE).build();
     }
 
     private static ActionStatement actionStatement(KeyValueList<Integer, Object> infoMap) {
@@ -99,8 +100,10 @@ public class StatementFactory {
                 infoMap.findFirst(ScriptParser.RULE_item_set_list, List.class);
         Time deadline = infoMap.findFirst(ScriptParser.RULE_time, Time.class);
 
-        return ActionStatement.builder().outputList(outputList).actionName(actionName)
-                .inputList(inputList).deadline(deadline).build();
+        return ActionStatement.builder()
+                .outputList(outputList == null ? new ArrayList<>() : outputList)
+                .inputList(inputList == null ? new ArrayList<>() : inputList).actionName(actionName)
+                .deadline(deadline).statementType(StatementType.ACTION).build();
     }
 
     private static DummyStatement compoundInStatement(KeyValueList<Integer, Object> infoMap) {

@@ -1,6 +1,8 @@
 package com.scriptparser.parser;
 
+import com.scriptparser.connector.CommunicationConnector;
 import com.scriptparser.connector.StatementConnector;
+import com.scriptparser.connector.VariableConnector;
 import com.scriptparser.grammar.ScriptListenerApp;
 import com.scriptparser.grammar.generated.ScriptLexer;
 import com.scriptparser.grammar.generated.ScriptParser;
@@ -10,6 +12,7 @@ import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
 import com.scriptparser.parserdatastructure.wrapper.ModeWrapper;
 import com.scriptparser.parserdatastructure.wrapper.ParallelServiceWrapper;
 import com.scriptparser.parserdatastructure.wrapper.ServiceWrapper;
+import com.scriptparser.parserdatastructure.wrapper.StatementWrapper;
 import com.scriptparser.parserdatastructure.wrapper.TransitionWrapper;
 import java.io.IOException;
 import java.util.HashMap;
@@ -39,9 +42,11 @@ public class Parser {
     }
 
     private void connectStatements(MissionWrapper mission) {
-        for (ServiceWrapper service : mission.getServiceList()) {
-            StatementConnector.ConnectStatement(service);
-        }
+        StatementConnector.connectStatement(mission);
+    }
+
+    private void connectVariables(MissionWrapper mission) {
+        VariableConnector.connectVariables(mission);
     }
 
     private void connectServiceToMode(MissionWrapper mission) throws Exception {
@@ -83,13 +88,28 @@ public class Parser {
         }
     }
 
+    private void connectCommunication(MissionWrapper mission) throws Exception {
+        CommunicationConnector.connectCommunication(mission);
+    }
+
+    private void connectServiceToStatement(MissionWrapper mission) throws Exception {
+        for (ServiceWrapper service : mission.getServiceList()) {
+            for (StatementWrapper statement : service.getStatementList()) {
+                statement.setService(service);
+            }
+        }
+    }
+
     public MissionWrapper parseScript(String fileName) {
         try {
             MissionWrapper mission = walkthrough(fileName, true).returnMission();
             connectStatements(mission);
+            connectServiceToStatement(mission);
             connectServiceToMode(mission);
             connectTransitionToMode(mission);
             connectModeToTransition(mission);
+            connectCommunication(mission);
+            connectVariables(mission);
             return mission;
         } catch (Exception e) {
             e.printStackTrace();

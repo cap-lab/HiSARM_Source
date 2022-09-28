@@ -102,7 +102,7 @@ receive_statement:
 	output ASSIGN RECEIVE LPAREN target_team COMMA variable RPAREN;
 
 subscribe_statement:
-	output ASSIGN SUBSCRIBE LPAREN target_team COMMA IDENTIFIER RPAREN;
+	output ASSIGN SUBSCRIBE LPAREN target_team COMMA variable RPAREN;
 
 output: IDENTIFIER;
 

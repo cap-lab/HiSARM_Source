@@ -1,7 +1,7 @@
 {
     Searcher: Burger burger
     Cover: Tank tank
-    Checker: Waffle waffle
+    Guard: Waffle waffle
 }
 
 RemoteControlGroup {
@@ -9,7 +9,8 @@ RemoteControlGroup {
     group_move(direction)
 } repeat(100 MSEC)
 
-DoCommand(cmd) {
+ReceiveCommand {
+    cmd = group_get_cmd()
     if (cmd == "REMOTE_CONTROL"){
         throw REMOTE_CONTROL broadcast
     } else if (cmd == "START") {
@@ -17,11 +18,6 @@ DoCommand(cmd) {
     } else if (cmd == "FINISH") {
         throw FINISH broadcast
     }
-}
-
-ReceiveCommand {
-    cmd = group_get_cmd()
-    DoCommand(cmd)
 } repeat(500 MSEC)
 
 Search(target) {
@@ -37,28 +33,23 @@ Follow {
 }
 
 Attack {
-    position = check_enemy()
-    attack(position)
+    attack()
 }
 
 GetAlarm(team_name) {
-    alarm = receive(team_name, ALARM)
-    if (alarm == TRUE) {
+    ALARM = receive(team_name, ALERT)
+    if (ALARM == "TRUE") {
         throw HIDE broadcast
     }
-    if (alarm == FALSE) {
+    if (ALARM == "FALSE") {
         throw RESTART broadcast
     }
 }
 
-Check(team_name) {
-    ALARM = check(FALSE)
-    if (ALARM == TRUE) {
-        send(team_name, ALARM)
-    }
-    ALARM = check(TRUE)
-    if (ALARM == FALSE) {
-        send(team_name, ALARM)
+Watch(team_name, signal) {
+    ALERT = monitor(signal)
+    if (ALERT != signal) {
+        send(team_name, ALERT)
     }
 }
 
@@ -82,47 +73,65 @@ Mode.HIDE(team_name) {
         ReceiveCommand
 }
 
-Mode.COVER {
+
+Mode.FOLLOW {
     services:
         Follow
+        ReceiveCommand
+}
+
+Mode.COVER {
+    services:
         Attack
         ReceiveCommand
 }
 
-Mode.CHECK {
+Mode.WATCH(team_name) {
     services:
-        Check
+        Watch(team_name, "FALSE")
+        ReceiveCommand
+}
+
+Mode.GUARD(team_name) {
+    services:
+        Watch(team_name, "TRUE")
+        Attack
         ReceiveCommand
 }
 
 Main.Searcher {
     case(REMOTE_CONTROL):
-        catch(START): mode = SEARCH(target, "Checker")
+        catch(START): mode = SEARCH(target, "Guard")
     case(SEARCH):
         catch(FINISH): mode = FINISH
-        catch(HIDE): mode = HIDE("Checker")
+        catch(HIDE): mode = HIDE("Guard")
         catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
     case(HIDE):
         catch(RESTART): mode = PREVIOUS_MODE
-        catch(START): mode = SEARCH(target, "Checker")
+        catch(START): mode = SEARCH(target, "Guard")
         catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
     default: mode = REMOTE_CONTROL
 }
 
 Main.Cover {
     case(REMOTE_CONTROL):
-        catch(START): mode = SEARCH(target)
-    case(COVER):
+        catch(START): mode = FOLLOW
+    case(FOLLOW):
         catch(FINISH): mode = FINISH
         catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
+        catch(HIDE): mode = COVER
+    case(COVER):
+        catch(RESTART): mode = PREVIOUS_MODE
     default: mode = REMOTE_CONTROL
 }
 
-Main.Checker {
+Main.Guard {
     case(REMOTE_CONTROL):
-        catch(START): mode = CHECK("Searcher")
-    case(CHECK):
+        catch(START): mode = WATCH("Searcher")
+    case(WATCH):
         catch(FINISH): mode = FINISH
-        catch(HIDE): mode = HIDE
+        catch(HIDE): mode = GUARD("Searcher")
+    case(GUARD):
+        catch(RESTART): mode = PREVIOUS_MODE
     default: mode = REMOTE_CONTROL
 }
