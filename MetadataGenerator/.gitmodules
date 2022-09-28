@@ -1,0 +1,4 @@
+[submodule "CodeGeneration"]
+	path = CodeGeneration
+    url = https://github.com/cap-lab/CodeGeneration.git
+    branch = 1.3.0_enhanced_communication
