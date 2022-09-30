@@ -1,0 +1,3 @@
+xmlparser/src/schemas/*
+xmlparser/src/xsd/*
+xmlparser/target/*

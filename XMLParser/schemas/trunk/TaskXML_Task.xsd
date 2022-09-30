@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<xs:schema id="TaskXML_Task" targetNamespace="http://iris.snu.ac.kr/UEM_Schema" elementFormDefault="qualified" xmlns="http://iris.snu.ac.kr/UEM_Schema" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:include schemaLocation="./UEMCommon.xsd" />
+
+	<xs:element name="TaskXMLTask" type="TaskXMLTaskType" />
+
+	<xs:complexType name="TaskXMLTaskType">
+		<xs:sequence>
+			<xs:element name="config" type="ConfigType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="inport_list" type="TaskXMLPortListType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="outport_list" type="TaskXMLPortListType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="portMap_list" type="TaskXMLPortMapListType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="libraryPort_list" type="TaskXMLLibraryPortListType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="multicast_port_list" type="TaskXMLMulticastPortListType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="control" type="TaskXMLControlType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="extraSetting_list" type="extraSettingListType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="variable_list" type="VariableListType" minOccurs="0" maxOccurs="1" />
+			<xs:element name="faultTolerance" type="FaultToleranceType" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="name" type="NameType" use="required" />
+		<xs:attribute name="type" type="TaskXMLCategoryType" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLPortListType">
+		<xs:sequence>
+			<xs:element name="port" type="TaskXMLPortType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLPortType">
+		<xs:attribute name="id" type="xs:integer" use="required" />
+		<xs:attribute name="name" type="NameType" use="required" />
+		<xs:attribute name="export" type="xs:boolean" use="required" />
+		<xs:attribute name="type" type="PortCategoryType" use="required" />
+		<xs:attribute name="sample_size" type="xs:integer" use="required" />
+		<xs:attribute name="sample_rate" type="TaskXMLPortSampleRateType" use="required" />
+		<xs:attribute name="description" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:simpleType name="TaskXMLPortSampleRateType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Fixed" />
+			<xs:enumeration value="Variable" />
+			<xs:enumeration value="Multiple" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="TaskXMLPortMapListType">
+		<xs:sequence>
+			<xs:element name="portMap" type="TaskXMLPortMapType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLPortMapType">
+		<xs:attribute name="macroNode" type="NameType" use="required" />
+		<xs:attribute name="macroNodePort" type="NameType" use="required" />
+		<xs:attribute name="direction" type="TaskXMLPortDirectionType" use="required" />
+		<xs:attribute name="insideTask" type="NameType" use="required" />
+		<xs:attribute name="insideTaskPort" type="NameType" use="required" />
+		<xs:attribute name="portType" type="PortCategoryType" use="required" />
+	</xs:complexType>
+
+
+	<xs:complexType name="TaskXMLLibraryPortListType">
+		<xs:sequence>
+			<xs:element name="libraryPort" type="TaskXMLLibraryPortType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLLibraryPortType">
+		<xs:attribute name="id" type="xs:integer" use="required" />
+		<xs:attribute name="export" type="xs:boolean" use="required" />
+		<xs:attribute name="name" type="NameType" use="required" />
+		<xs:attribute name="type" type="NameType" use="required" />
+		<xs:attribute name="description" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLMulticastPortListType">
+		<xs:sequence>
+			<xs:element name="multicast_port" type="TaskXMLMulticastPortType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLMulticastPortType">
+		<xs:attribute name="id" type="xs:integer" use="required" />
+		<xs:attribute name="name" type="NameType" use="optional" />
+		<xs:attribute name="groupName" type="NameType" use="required" />
+		<xs:attribute name="direction" type="Direction" use="required" />
+		<xs:attribute name="description" type="xs:string" use="required" />
+	</xs:complexType>
+
+
+	<xs:complexType name="TaskXMLControlType">
+		<xs:sequence>
+			<xs:element name="control_params" type="TaskXMLControlParamListType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="slaves" type="TaskXMLControlSlaveListType" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="priority" type="xs:integer" use="required" />
+		<xs:attribute name="controller" type="TrueFalseType" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLControlParamListType">
+		<xs:sequence>
+			<xs:element name="parameter" type="TaskXMLControlParamType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLControlParamType">
+		<xs:attribute name="name" type="NameType" use="required" />
+		<xs:attribute name="type" type="ParameterVariableType" use="required" />
+		<xs:attribute name="value" type="xs:string" use="required" />
+		<xs:attribute name="desc" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:simpleType name="ParameterVariableType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="int" />
+			<xs:enumeration value="float" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="TaskXMLControlSlaveListType">
+		<xs:sequence>
+			<xs:element name="slave" type="TaskXMLControlSlaveType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLControlSlaveType">
+		<xs:attribute name="name" type="NameType" use="required" />
+		<xs:attribute name="description" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="extraSettingListType">
+		<xs:sequence>
+			<xs:element name="extraSetting" type="extraSettingType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="extraSettingType">
+		<xs:attribute name="type" type="ExtraSettingCategoryType" use="required" />
+		<xs:attribute name="name" type="NameType" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="VariableListType">
+		<xs:sequence>
+			<xs:element name="variable" type="VariableType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="VariableType">
+		<!-- FIX ME -->
+		<xs:attribute name="name" type="NameType" use="required" />
+		<xs:attribute name="type" type="NameType" use="required" />
+		<xs:attribute name="default" type="NameType" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="FaultToleranceType">
+		<xs:attribute name="enable" type="YesNoType" use="required" />
+		<xs:attribute name="type" type="NameType" use="required" />
+		<xs:attribute name="taskType" type="xs:string" use="required" />
+		<xs:attribute name="path" type="xs:string" use="required" />
+		<xs:attribute name="reexecutionNumber" type="xs:nonNegativeInteger" use="required" />
+		<xs:attribute name="activeReplicationNumber" type="xs:nonNegativeInteger" use="required" />
+	</xs:complexType>
+
+	<xs:simpleType name="ExtraSettingCategoryType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Extra Header" />
+			<xs:enumeration value="Extra Source" />
+			<xs:enumeration value="Extra CIC" />
+			<xs:enumeration value="Extra File" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="TaskXMLCategoryType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Computational" />
+			<xs:enumeration value="Control" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="TaskXMLPortDirectionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Out" />
+			<xs:enumeration value="In" />
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
