@@ -8,7 +8,9 @@ public class MetadataConstant {
         public static final Path RESOURCE_DIRECTORY =
                         Paths.get(PROJECT_DIRECTORY.toString(), "resources");
         public static final Path GENERATE_DIRECTORY =
-                        Paths.get(PROJECT_DIRECTORY.toString(), "generates");
+                        Paths.get(PROJECT_DIRECTORY.toString(), "generated");
         public static final String CONFIGURATION_XML = "configuration.xml";
         public static final String CONFIGURATION_SUFFIX = "_" + CONFIGURATION_XML;
+
+        public static final String LINUX = "linux";
 }
