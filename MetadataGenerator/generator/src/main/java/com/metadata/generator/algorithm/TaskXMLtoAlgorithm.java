@@ -29,10 +29,8 @@ import hopes.cic.xml.LibraryFunctionArgumentType;
 import hopes.cic.xml.LibraryFunctionType;
 import hopes.cic.xml.LibraryMasterPortType;
 import hopes.cic.xml.PortDirectionType;
-import hopes.cic.xml.PortMapType;
 import hopes.cic.xml.PortTypeType;
 import hopes.cic.xml.RunConditionType;
-import hopes.cic.xml.TaskLibraryConnectionType;
 import hopes.cic.xml.TaskParameterType;
 import hopes.cic.xml.TaskRateType;
 import hopes.cic.xml.YesNoType;
@@ -41,7 +39,7 @@ public class TaskXMLtoAlgorithm {
     private TaskXMLTaskGraphHandler taskXMLHandler;
 
     public TaskXMLtoAlgorithm() {
-
+        taskXMLHandler = new TaskXMLTaskGraphHandler();
     }
 
     private YesNoType convertYesNoString(String bool) {
@@ -378,7 +376,7 @@ public class TaskXMLtoAlgorithm {
         for (UEMPortMap portMap : portMapList) {
             if (portMap.getNotFlattenedTask().equals(taskName)
                     && portMap.getPort().equals(portName)) {
-                connection.setMasterTask(portName);
+                connection.setMasterTask(portMap.getTask());
             }
         }
     }
