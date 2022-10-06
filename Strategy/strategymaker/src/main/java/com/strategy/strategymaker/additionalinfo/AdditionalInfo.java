@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 public class AdditionalInfo {
     private String projectName;
-    private String script;
+    private String taskServerPrefix;
     private List<String> robotList;
     private List<ControlStrategyInfo> strategyList;
     private List<ConnectionInfo> connectionList;
@@ -29,12 +29,12 @@ public class AdditionalInfo {
         this.projectName = projectName;
     }
 
-    public String getScript() {
-        return script;
+    public String getTaskServerPrefix() {
+        return taskServerPrefix;
     }
 
-    public void setScript(String script) {
-        this.script = script;
+    public void setTaskServerPrefix(String taskServerPrefix) {
+        this.taskServerPrefix = taskServerPrefix;
     }
 
     public List<String> getRobotList() {

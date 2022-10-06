@@ -117,7 +117,7 @@ public class ActionTypeInfoMaker {
                                 actionType.getVariableOutputList());
                         getVariableType(actionType,
                                 ((GroupAction) (actionType.getAction())).getSharedDataList(),
-                                actionType.getVariableSharedputList());
+                                actionType.getVariableSharedList());
                     } else {
                         throw new Exception("no action in DB :" + action.getActionName());
                     }
@@ -134,12 +134,10 @@ public class ActionTypeInfoMaker {
         Set<ActionTypeWrapper> actionTypeSet = makeActionTypeSet(mode, robot);
         if (robot.getGroupMap().containsKey(currentKey)) {
             for (GroupWrapper group : mode.getGroupList()) {
-                if (group.getGroup().getName().equals(robot.getGroupMap().get(currentKey))) {
-                    actionTypeSet.addAll(
-                            traverseTransition(group.getModeTransition().getModeTransition(), robot,
-                                    GroupAllocator.makeGroupKeyForTransition(currentKey,
-                                            group.getModeTransition().getModeTransition())));
-                }
+                actionTypeSet
+                        .addAll(traverseTransition(group.getModeTransition().getModeTransition(),
+                                robot, GroupAllocator.makeGroupKeyForTransition(currentKey,
+                                        group.getModeTransition().getModeTransition())));
             }
         }
         return actionTypeSet;

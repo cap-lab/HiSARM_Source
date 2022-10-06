@@ -14,6 +14,7 @@ import lombok.Setter;
 @Setter
 public class RobotImplWrapper {
     private RobotImpl robot;
+    private int robotIndex;
     private RobotTypeWrapper robotType;
     private Map<String, String> groupMap = new HashMap<>();
     private List<ControlStrategyWrapper> controlStrategyList = new ArrayList<>();

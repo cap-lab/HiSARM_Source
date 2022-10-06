@@ -56,6 +56,11 @@
     </dependency>
     <dependency>
       <groupId>com.scriptparser</groupId>
+      <artifactId>parser</artifactId>
+      <version>${project.scriptparser.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.scriptparser</groupId>
       <artifactId>parserdatastructure</artifactId>
       <version>${project.scriptparser.version}</version>
     </dependency>

@@ -12,6 +12,7 @@ import com.scriptparser.parserdatastructure.entity.statement.ActionStatement;
 import com.scriptparser.parserdatastructure.enumeration.IdentifierType;
 import com.scriptparser.parserdatastructure.enumeration.StatementType;
 import com.scriptparser.parserdatastructure.wrapper.CatchEventWrapper;
+import com.scriptparser.parserdatastructure.wrapper.GroupWrapper;
 import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
 import com.scriptparser.parserdatastructure.wrapper.ModeWrapper;
 import com.scriptparser.parserdatastructure.wrapper.ParallelServiceWrapper;
@@ -195,10 +196,8 @@ public class VariableInfoMaker {
             referAdditionalInfo(additionalInfo, service.getService(), figuredVariables,
                     notFiguredVariables);
         }
-        if (robot.getGroupMap().containsKey(currentKey)) {
-            TransitionWrapper transition = mission.getMode(mode.getMode().getName())
-                    .getGroup(robot.getGroupMap().get(currentKey)).getModeTransition()
-                    .getModeTransition();
+        for (GroupWrapper group : mode.getGroupList()) {
+            TransitionWrapper transition = group.getModeTransition().getModeTransition();
             traverseTransition(GroupAllocator.makeGroupKeyForTransition(currentKey, transition),
                     transition, robot, additionalInfo, mission);
         }

@@ -8,7 +8,6 @@ import com.strategy.strategydatastructure.wrapper.StrategyWrapper;
 import com.strategy.strategymaker.additionalinfo.AdditionalInfo;
 
 public class StrategyMaker {
-    private StrategyWrapper strategy = new StrategyWrapper();
 
 
     private AdditionalInfo parsingAdditionalInfo(String additionalInfoFile) {
@@ -21,12 +20,14 @@ public class StrategyMaker {
         }
     }
 
-    public void strategyMake(MissionWrapper mission, String additionalInfoFile) {
+    public StrategyWrapper strategyMake(MissionWrapper mission, String additionalInfoFile) {
+        StrategyWrapper strategy = new StrategyWrapper();
         AdditionalInfo additionalInfo = parsingAdditionalInfo(additionalInfoFile);
 
         strategy.setRobotList(RobotInfoMaker.makeRobotImplList(mission, additionalInfo));
         ActionTypeInfoMaker.makeActionTypeList(mission, strategy.getRobotList());
         ControlStrategyInfoMaker.makeControlStrategyList(additionalInfo, strategy.getRobotList());
         VariableInfoMaker.makeVariableInfoList(mission, additionalInfo, strategy.getRobotList());
+        return strategy;
     }
 }

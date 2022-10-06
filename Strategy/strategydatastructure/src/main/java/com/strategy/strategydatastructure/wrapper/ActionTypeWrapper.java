@@ -13,5 +13,5 @@ public class ActionTypeWrapper {
     private boolean groupAction;
     private List<VariableTypeWrapper> variableInputList = new ArrayList<>();
     private List<VariableTypeWrapper> variableOutputList = new ArrayList<>();
-    private List<VariableTypeWrapper> variableSharedputList = new ArrayList<>();
+    private List<VariableTypeWrapper> variableSharedList = new ArrayList<>();
 }

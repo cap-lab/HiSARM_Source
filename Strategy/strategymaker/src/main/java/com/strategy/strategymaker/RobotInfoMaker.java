@@ -14,6 +14,7 @@ import com.scriptparser.parserdatastructure.wrapper.TeamWrapper;
 import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 import com.strategy.strategydatastructure.wrapper.RobotTypeWrapper;
 import com.strategy.strategymaker.additionalinfo.AdditionalInfo;
+import com.strategy.strategymaker.constant.StrategyConstant;
 
 public class RobotInfoMaker {
     private static List<RobotTypeWrapper> robotTypeList;
@@ -66,10 +67,12 @@ public class RobotInfoMaker {
     private static List<RobotImplWrapper> allocateRealRobot(
             Map<String, List<RobotWrapper>> robotList, List<RobotImpl> robotCandidateList) {
         List<RobotImplWrapper> robotImplList = new ArrayList<>();
+        int robotIndex = 0;
         for (String teamName : robotList.keySet()) {
             for (RobotWrapper robot : robotList.get(teamName)) {
                 RobotImplWrapper robotImpl = new RobotImplWrapper();
-                robotImpl.getGroupMap().put("DEFAULT", teamName);
+                robotImpl.setRobotIndex(robotIndex);
+                robotImpl.getGroupMap().put(StrategyConstant.GROUP_DEFAULT, teamName);
                 robotImpl.setRobotType(getRobotType(robot.getRobot().getType()));
                 for (int index = 0; index < robotCandidateList.size(); index++) {
                     if (robotCandidateList.get(index).getRobotClass()
@@ -80,6 +83,7 @@ public class RobotInfoMaker {
                     }
                 }
                 robotImplList.add(robotImpl);
+                robotIndex = robotIndex + 1;
             }
         }
         return robotImplList;
