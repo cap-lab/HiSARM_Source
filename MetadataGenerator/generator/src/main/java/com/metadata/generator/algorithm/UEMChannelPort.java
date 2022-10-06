@@ -11,6 +11,7 @@ import hopes.cic.xml.TaskRateType;
 
 public class UEMChannelPort extends TaskPortType {
     private boolean export;
+    private int index;
 
     public UEMChannelPort() {
         super();
@@ -21,6 +22,7 @@ public class UEMChannelPort extends TaskPortType {
         setDirection(convertPortDirection(port.getDirection()));
         setType(PortTypeType.OVERWRITABLE);
         setName(port.getName());
+        setIndex(port.getIndex());
         setRate();
     }
 
@@ -43,6 +45,14 @@ public class UEMChannelPort extends TaskPortType {
 
     public boolean getExport() {
         return export;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 
 }

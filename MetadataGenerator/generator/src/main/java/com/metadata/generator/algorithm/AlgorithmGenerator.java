@@ -10,9 +10,11 @@ import com.metadata.generator.constant.AlgorithmConstant;
 import com.metadata.generator.util.LocalFileCopier;
 import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
 import com.strategy.strategydatastructure.wrapper.ActionImplWrapper;
+import com.strategy.strategydatastructure.wrapper.ActionTypeWrapper;
 import com.strategy.strategydatastructure.wrapper.ControlStrategyWrapper;
 import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 import com.strategy.strategydatastructure.wrapper.StrategyWrapper;
+import com.strategy.strategydatastructure.wrapper.VariableTypeWrapper;
 import com.strategy.strategymaker.additionalinfo.AdditionalInfo;
 import hopes.cic.xml.ChannelPortType;
 import hopes.cic.xml.handler.CICAlgorithmXMLHandler;
@@ -25,23 +27,22 @@ public class AlgorithmGenerator {
             AdditionalInfo additionalInfo, Path targetDir) {
         try {
             for (RobotImplWrapper robot : strategy.getRobotList()) {
-                UEMRobotTask robotTask =
-                        new UEMRobotTask(algorithm.getTaskNum(), robot.getRobot().getRobotId());
+                UEMRobotTask robotTask = new UEMRobotTask(algorithm.getTaskNum(),
+                        robot.getRobot().getRobotId(), robot);
                 algorithm.addTask(robotTask);
-                makeRobotInerGraph(mission, robot, additionalInfo, targetDir);
+                makeRobotInerGraph(mission, robotTask, additionalInfo, targetDir);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void makeRobotInerGraph(MissionWrapper mission, RobotImplWrapper robot,
+    private static void makeRobotInerGraph(MissionWrapper mission, UEMRobotTask robot,
             AdditionalInfo additionalInfo, Path targetDir) throws Exception {
-        List<UEMActionTask> actionTaskList =
-                makeActionTask(robot.getRobot().getRobotId(), robot.getControlStrategyList(),
-                        Paths.get(additionalInfo.getTaskServerPrefix()), targetDir);
-        makeLibraryTask(mission, actionTaskList);
-        makeCommunicationTask(mission, actionTaskList);
+        makeActionTask(robot, robot.getRobot().getControlStrategyList(),
+                Paths.get(additionalInfo.getTaskServerPrefix()), targetDir);
+        makeLibraryTask(robot);
+        makeCommunicationTask(robot);
         makeControlTask();
 
     }
@@ -159,16 +160,14 @@ public class AlgorithmGenerator {
         return taskGraphList;
     }
 
-    private static List<UEMActionTask> makeActionTask(String robotName,
+    private static void makeActionTask(UEMRobotTask robot,
             List<ControlStrategyWrapper> controlStrategyList, Path taskServerPrefix, Path targetDir)
             throws Exception {
-        List<UEMActionTask> actionTaskList = new ArrayList<>();
-
         for (ControlStrategyWrapper controlStrategy : controlStrategyList) {
             for (ActionImplWrapper action : controlStrategy.getActionList()) {
                 Task task = action.getTask();
                 UEMActionTask actionTask =
-                        new UEMActionTask(algorithm.getTaskNum(), robotName, action);
+                        new UEMActionTask(algorithm.getTaskNum(), robot.getName(), action);
                 copyFiles(task, taskServerPrefix, targetDir);
                 if (task.isHasSubGraph()) {
                     List<UEMTaskGraph> taskGraphList =
@@ -181,20 +180,45 @@ public class AlgorithmGenerator {
                                 .addAll(taskGraph.getLibraryConnectionList());
                     }
                 }
-                actionTaskList.add(actionTask);
+                robot.getActionTaskList().add(actionTask);
                 algorithm.addTask(actionTask);
             }
         }
-
-        return actionTaskList;
     }
 
-    private static void makeCommunicationTask(MissionWrapper mission,
-            List<UEMActionTask> actionTasks) {
+    private static void makeLibraryTask(UEMRobotTask robot) {
+        for (UEMActionTask actionTask : robot.getActionTaskList()) {
+            if (actionTask.getAction().getAction().isGroupAction()) {
+                ActionTypeWrapper actionType = actionTask.getAction().getAction();
+                for (int i = 0; i < actionType.getVariableSharedList().size(); i++) {
+                    VariableTypeWrapper variable = actionType.getVariableSharedList().get(i);
+                    UEMLibraryPort libPort = actionTask.getLibraryPort(i);
+                    String libName =
+                            UEMLibrary.makeName(robot.getName(), actionType.getAction().getName()
+                                    + variable.getVariableType().getName());
+                    UEMLibrary library = robot.getLibraryTask(libName);
+                    if (library == null) {
+                        library = new UEMLibrary();
+                        library.makeGeneratedLibrary(libName);
+                        algorithm.getLibraries().getLibrary().add(library);
+                        robot.getLibraryTaskList().add(library);
+                    }
+                    UEMLibraryConnection connection = new UEMLibraryConnection();
+                    connection.setMasterPort(libPort.getName());
+                    connection.setMasterTask(actionTask.getName());
+                    connection.setSlaveLibrary(library.getName());
+                    algorithm.getLibraryConnections().getTaskLibraryConnection().add(connection);
+                }
+            }
+        }
 
     }
 
-    private static void makeLibraryTask(MissionWrapper mission, List<UEMActionTask> actionTasks) {
+    private static void makeListenTask(UEMRobotTask robot) {
+
+    }
+
+    private static void makeCommunicationTask(UEMRobotTask robot) {
 
     }
 

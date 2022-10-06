@@ -39,6 +39,12 @@
       <artifactId>jackson-dataformat-yaml</artifactId>
       <version>2.13.0</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/com.jcraft/jsch -->
+    <dependency>
+      <groupId>com.jcraft</groupId>
+      <artifactId>jsch</artifactId>
+      <version>0.1.55</version>
+    </dependency>
     <dependency>
       <groupId>com.scriptparser</groupId>
       <artifactId>parser</artifactId>
@@ -58,6 +64,11 @@
       <groupId>com.strategy</groupId>
       <artifactId>strategymaker</artifactId>
       <version>${project.strategy.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.xmlparser</groupId>
+      <artifactId>xmlparser</artifactId>
+      <version>${project.xmlparser.version}</version>
     </dependency>
     <dependency>
       <groupId>hopes.cic.xml</groupId>

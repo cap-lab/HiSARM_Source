@@ -5,6 +5,7 @@ import com.dbmanager.datastructure.task.LibraryPort;
 import com.dbmanager.datastructure.task.Task;
 import com.metadata.generator.constant.AlgorithmConstant;
 import com.strategy.strategydatastructure.wrapper.ActionImplWrapper;
+import hopes.cic.xml.LibraryMasterPortType;
 
 public class UEMActionTask extends UEMTask {
     private ActionImplWrapper action;
@@ -43,11 +44,29 @@ public class UEMActionTask extends UEMTask {
 
     private void setLibraryPorts(Task task) {
         for (LibraryPort port : task.getLibraryPortSet()) {
-            UEMLibraryPort actionPort = new UEMLibraryPort();
-            actionPort.setName(port.getName());
-            actionPort.setType(port.getName());
-            getLibraryMasterPort().add(null);
+            UEMLibraryPort libraryPort = new UEMLibraryPort();
+            libraryPort.setName(port.getName());
+            libraryPort.setType(port.getName());
+            libraryPort.setIndex(port.getIndex());
+            getLibraryMasterPort().add(libraryPort);
         }
+    }
+
+    public ActionImplWrapper getAction() {
+        return action;
+    }
+
+    public void setAction(ActionImplWrapper action) {
+        this.action = action;
+    }
+
+    public UEMLibraryPort getLibraryPort(int index) {
+        for (LibraryMasterPortType libPort : getLibraryMasterPort()) {
+            if (((UEMLibraryPort) libPort).getIndex() == index) {
+                return (UEMLibraryPort) libPort;
+            }
+        }
+        return null;
     }
 
 }
