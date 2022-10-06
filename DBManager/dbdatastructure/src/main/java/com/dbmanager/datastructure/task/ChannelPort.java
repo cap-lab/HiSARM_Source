@@ -4,6 +4,7 @@ public class ChannelPort implements Communication {
     private String name;
     private PortDirection direction;
     private int sampleSize;
+    private int index;
 
     public String getName() {
         return name;
@@ -33,4 +34,13 @@ public class ChannelPort implements Communication {
     public void setSampleSize(int sampleSize) {
         this.sampleSize = sampleSize;
     }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
 }

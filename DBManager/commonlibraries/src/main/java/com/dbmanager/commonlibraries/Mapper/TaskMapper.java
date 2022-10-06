@@ -26,6 +26,7 @@ public class TaskMapper {
         channelPort
                 .setDirection(PortDirection.valueOf(document.getString("direction").toUpperCase()));
         channelPort.setSampleSize(document.getInteger("sampleSize"));
+        channelPort.setIndex(document.getInteger("index"));
 
         return channelPort;
     }
@@ -40,6 +41,7 @@ public class TaskMapper {
         LibraryPort libraryPort = new LibraryPort();
 
         libraryPort.setName(document.getString("name"));
+        libraryPort.setIndex(document.getInteger("index"));
 
         return libraryPort;
     }
