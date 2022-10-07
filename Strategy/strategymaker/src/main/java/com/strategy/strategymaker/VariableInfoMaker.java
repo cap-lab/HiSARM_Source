@@ -25,7 +25,6 @@ import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 import com.strategy.strategydatastructure.wrapper.VariableTypeWrapper;
 import com.strategy.strategymaker.additionalinfo.AdditionalInfo;
 import com.strategy.strategymaker.additionalinfo.CustomVariableInfo;
-import com.strategy.strategymaker.constant.StrategyConstant;
 
 public class VariableInfoMaker {
     private static Map<String, VariableTypeWrapper> variableStore = new HashMap<>();
@@ -42,31 +41,30 @@ public class VariableInfoMaker {
             List<RobotImplWrapper> robotList) {
         try {
             for (RobotImplWrapper robot : robotList) {
-                String team = robot.getGroup(StrategyConstant.GROUP_DEFAULT);
+                String team = robot.getGroupList().get(0);
                 TransitionWrapper mainTransition = mission.getTransition(team);
-                traverseTransition(team, mainTransition, robot, additionalInfo, mission);
+                traverseTransition(mainTransition, robot, additionalInfo, mission);
             }
             for (RobotImplWrapper robot : robotList) {
-                String team = robot.getGroup(StrategyConstant.GROUP_DEFAULT);
+                String team = robot.getGroupList().get(0);
                 TransitionWrapper mainTransition = mission.getTransition(team);
-                traverseTransition(team, mainTransition, robot, additionalInfo, mission);
+                traverseTransition(mainTransition, robot, additionalInfo, mission);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static Map<String, VariableTypeWrapper> traverseTransition(String currentKey,
-            TransitionWrapper transition, RobotImplWrapper robot, AdditionalInfo additionalInfo,
-            MissionWrapper mission) throws Exception {
+    private static Map<String, VariableTypeWrapper> traverseTransition(TransitionWrapper transition,
+            RobotImplWrapper robot, AdditionalInfo additionalInfo, MissionWrapper mission)
+            throws Exception {
         Map<String, VariableTypeWrapper> variableMap = new HashMap<>();
         ModeWrapper defaultMode = transition.getDefaultMode().getMode();
-        variableMap.putAll(visitMode(GroupAllocator.makeGroupKeyForMode(currentKey, defaultMode),
-                defaultMode, robot, additionalInfo, mission));
+        variableMap.putAll(visitMode(defaultMode, robot, additionalInfo, mission));
         for (List<CatchEventWrapper> ceList : transition.getTransitionMap().values()) {
             for (CatchEventWrapper ce : ceList) {
                 variableMap.putAll(visitMode(
-                        GroupAllocator.makeGroupKeyForMode(currentKey, ce.getMode().getMode()),
+
                         ce.getMode().getMode(), robot, additionalInfo, mission));
             }
         }
@@ -183,7 +181,7 @@ public class VariableInfoMaker {
         }
     }
 
-    private static Map<String, VariableTypeWrapper> visitMode(String currentKey, ModeWrapper mode,
+    private static Map<String, VariableTypeWrapper> visitMode(ModeWrapper mode,
             RobotImplWrapper robot, AdditionalInfo additionalInfo, MissionWrapper mission)
             throws Exception {
         Map<String, VariableTypeWrapper> figuredVariables = new HashMap<>();
@@ -198,8 +196,7 @@ public class VariableInfoMaker {
         }
         for (GroupWrapper group : mode.getGroupList()) {
             TransitionWrapper transition = group.getModeTransition().getModeTransition();
-            traverseTransition(GroupAllocator.makeGroupKeyForTransition(currentKey, transition),
-                    transition, robot, additionalInfo, mission);
+            traverseTransition(transition, robot, additionalInfo, mission);
         }
         return figuredVariables;
     }

@@ -16,20 +16,11 @@ public class RobotImplWrapper {
     private RobotImpl robot;
     private int robotIndex;
     private RobotTypeWrapper robotType;
-    private Map<String, String> groupMap = new HashMap<>();
+    private List<String> groupList = new ArrayList<>();
     private List<ControlStrategyWrapper> controlStrategyList = new ArrayList<>();
     private List<ActionTypeWrapper> actionTypeList = new ArrayList<>();
     private List<Task> additionalTaskList = new ArrayList<>();
     private Map<String, VariableTypeWrapper> variableList = new HashMap<>();
-
-    public String getGroup(String groupKey) throws Exception {
-        if (!groupMap.containsKey(groupKey)) {
-            throw new Exception(
-                    "No group whose a key is " + groupKey + " in the robot " + robot.getRobotId());
-        } else {
-            return groupMap.get(groupKey);
-        }
-    }
 
     public ActionTypeWrapper getActionType(String actionType) throws Exception {
         Optional<ActionTypeWrapper> team = getActionTypeList().stream()

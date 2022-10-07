@@ -37,13 +37,13 @@ public class ActionTypeInfoMaker {
     private static Set<ActionTypeWrapper> makeActionTypeList(MissionWrapper mission,
             RobotImplWrapper robot) throws Exception {
         Set<ActionTypeWrapper> actionTypeSet = new HashSet<>();
-        String team = robot.getGroup(StrategyConstant.GROUP_DEFAULT);
-        actionTypeSet.addAll(traverseTransition(mission.getTransition(team), robot, team));
+        String team = robot.getGroupList().get(0);
+        actionTypeSet.addAll(traverseTransition(mission.getTransition(team), robot));
         return actionTypeSet;
     }
 
     private static Set<ActionTypeWrapper> traverseTransition(TransitionWrapper transition,
-            RobotImplWrapper robot, String currentKey) throws Exception {
+            RobotImplWrapper robot) throws Exception {
         Set<ModeWrapper> modeSet = new HashSet<>();
         modeSet.add(transition.getDefaultMode().getMode());
         for (List<CatchEventWrapper> ceList : transition.getTransitionMap().values()) {
@@ -58,8 +58,7 @@ public class ActionTypeInfoMaker {
 
         Set<ActionTypeWrapper> actionTypeSet = new HashSet<>();
         for (ModeWrapper mode : modeSet) {
-            actionTypeSet.addAll(
-                    visitMode(mode, robot, GroupAllocator.makeGroupKeyForMode(currentKey, mode)));
+            actionTypeSet.addAll(visitMode(mode, robot));
         }
         return actionTypeSet;
     }
@@ -129,16 +128,12 @@ public class ActionTypeInfoMaker {
         return actionTypeSet;
     }
 
-    private static Set<ActionTypeWrapper> visitMode(ModeWrapper mode, RobotImplWrapper robot,
-            String currentKey) throws Exception {
+    private static Set<ActionTypeWrapper> visitMode(ModeWrapper mode, RobotImplWrapper robot)
+            throws Exception {
         Set<ActionTypeWrapper> actionTypeSet = makeActionTypeSet(mode, robot);
-        if (robot.getGroupMap().containsKey(currentKey)) {
-            for (GroupWrapper group : mode.getGroupList()) {
-                actionTypeSet
-                        .addAll(traverseTransition(group.getModeTransition().getModeTransition(),
-                                robot, GroupAllocator.makeGroupKeyForTransition(currentKey,
-                                        group.getModeTransition().getModeTransition())));
-            }
+        for (GroupWrapper group : mode.getGroupList()) {
+            actionTypeSet.addAll(
+                    traverseTransition(group.getModeTransition().getModeTransition(), robot));
         }
         return actionTypeSet;
     }

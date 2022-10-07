@@ -24,7 +24,7 @@ public class ControlStrategyInfoMaker {
             List<RobotImplWrapper> robotList) {
         try {
             for (RobotImplWrapper robot : robotList) {
-                String team = robot.getGroup(StrategyConstant.GROUP_DEFAULT);
+                String team = robot.getGroupList().get(0);
                 Set<ControlStrategyWrapper> controlStrategySet = new HashSet<>();
                 for (ActionTypeWrapper action : robot.getActionTypeList()) {
                     String controlStrategyId = StrategyConstant.CONTROL_STRATEGY_DEFAULT;
