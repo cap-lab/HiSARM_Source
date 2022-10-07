@@ -4,19 +4,41 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import com.metadata.generator.constant.AlgorithmConstant;
+import hopes.cic.xml.MulticastPortType;
 import hopes.cic.xml.RunConditionType;
+import hopes.cic.xml.TaskPortType;
 import hopes.cic.xml.TaskType;
 import hopes.cic.xml.YesNoType;
 
 public class UEMTask extends TaskType {
     UEMModeTask mode;
-    List<UEMPortMap> portMapList;
+    List<UEMPortMap> portMapList = new ArrayList<>();
 
-    public UEMTask(int taskIndex) {
+    public UEMTask() {
         super();
-        portMapList = new ArrayList<>();
         setHasInternalStates(YesNoType.YES);
-        setId(BigInteger.valueOf(taskIndex));
+    }
+
+    public void setId(int index) {
+        setId(BigInteger.valueOf(index));
+    }
+
+    protected boolean existChannelPort(String portName) {
+        for (TaskPortType port : getPort()) {
+            if (port.getName().equals(portName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean existMulticastPort(String portName) {
+        for (MulticastPortType port : getMulticastPort()) {
+            if (port.getName().equals(portName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected RunConditionType runCondition(String runCondition) throws Exception {
@@ -53,5 +75,10 @@ public class UEMTask extends TaskType {
 
     public List<UEMPortMap> getPortMapList() {
         return portMapList;
+    }
+
+    public void setExtraCommonCode(String robotName) {
+        getExtraHeader().add(AlgorithmConstant.COMMON_HEADER);
+        getExtraHeader().add(robotName + AlgorithmConstant.ROBOT_COMMON_HEADER_SUFFIX);
     }
 }

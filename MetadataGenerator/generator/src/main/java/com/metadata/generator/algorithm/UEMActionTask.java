@@ -1,5 +1,6 @@
 package com.metadata.generator.algorithm;
 
+import java.util.List;
 import com.dbmanager.datastructure.task.ChannelPort;
 import com.dbmanager.datastructure.task.LibraryPort;
 import com.dbmanager.datastructure.task.Task;
@@ -9,10 +10,14 @@ import hopes.cic.xml.LibraryMasterPortType;
 
 public class UEMActionTask extends UEMTask {
     private ActionImplWrapper action;
+    private String scope;
+    private List<UEMTaskGraph> subTaskGraphs;
 
-    public UEMActionTask(int taskIndex, String robotTask, ActionImplWrapper action) {
-        super(taskIndex);
-        setName(robotTask, action.getActionImpl().getActionImplId());
+    public UEMActionTask(String robotTask, String groupId, String serviceId,
+            ActionImplWrapper action) {
+        super();
+        this.scope = groupId + "_" + serviceId;
+        setName(robotTask, scope + "_" + action.getActionImpl().getActionImplId());
         this.action = action;
         setParentTask(robotTask);
         setTaskInfo(action.getTask());
@@ -67,6 +72,18 @@ public class UEMActionTask extends UEMTask {
             }
         }
         return null;
+    }
+
+    public List<UEMTaskGraph> getSubTaskGraphs() {
+        return subTaskGraphs;
+    }
+
+    public void setSubTaskGraphs(List<UEMTaskGraph> subTaskGraphs) {
+        this.subTaskGraphs = subTaskGraphs;
+    }
+
+    public String getScope() {
+        return scope;
     }
 
 }

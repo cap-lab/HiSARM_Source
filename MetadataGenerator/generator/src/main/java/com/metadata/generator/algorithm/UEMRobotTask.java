@@ -11,9 +11,11 @@ public class UEMRobotTask extends UEMTask {
     private RobotImplWrapper robot;
     private List<UEMActionTask> actionTaskList = new ArrayList<>();
     private List<UEMLibrary> libraryTaskList = new ArrayList<>();
+    private UEMListenTask listenTask;
+    private UEMReportTask reportTask;
 
-    public UEMRobotTask(int taskIndex, String name, RobotImplWrapper robot) {
-        super(taskIndex);
+    public UEMRobotTask(String name, RobotImplWrapper robot) {
+        super();
         setName(name);
         setRunCondition(RunConditionType.TIME_DRIVEN);
         setTaskType(AlgorithmConstant.COMPUTATION_TASK);
@@ -51,6 +53,22 @@ public class UEMRobotTask extends UEMTask {
             }
         }
         return null;
+    }
+
+    public UEMListenTask getListenTask() {
+        return listenTask;
+    }
+
+    public void setListenTask(UEMListenTask listenTask) {
+        this.listenTask = listenTask;
+    }
+
+    public UEMReportTask getReportTask() {
+        return reportTask;
+    }
+
+    public void setReportTask(UEMReportTask reportTask) {
+        this.reportTask = reportTask;
     }
 
 }

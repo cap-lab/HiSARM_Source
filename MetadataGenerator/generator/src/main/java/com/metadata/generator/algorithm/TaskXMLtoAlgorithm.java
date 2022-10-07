@@ -93,6 +93,7 @@ public class TaskXMLtoAlgorithm {
 
     private void convertConfig(UEMTask after, TaskXMLTaskType before) throws Exception {
         UEMModeTask mode = new UEMModeTask();
+        mode.setName(after.getName());
         after.setMode(mode);
         for (TaskXMLParameterType param : before.getConfig().getParameter()) {
             switch (param.getName()) {
@@ -220,7 +221,7 @@ public class TaskXMLtoAlgorithm {
     }
 
     private UEMTask convertTask(String parentTasks, TaskXMLTaskType before) throws Exception {
-        UEMTask after = new UEMTask(0);
+        UEMTask after = new UEMTask();
         after.setName(parentTasks, before.getName());
         after.setHasInternalStates(YesNoType.YES);
         after.setHasSubGraph(before.getType().value());

@@ -39,6 +39,14 @@ public class UEMChannelPort extends TaskPortType {
 
     }
 
+    public void makePortInfo(String name, PortDirectionType direction, int sampleSize) {
+        setSampleSize(BigInteger.valueOf(sampleSize));
+        setDirection(direction);
+        setType(PortTypeType.FIFO);
+        setName(name);
+        setRate();
+    }
+
     public void setExport(boolean export) {
         this.export = export;
     }

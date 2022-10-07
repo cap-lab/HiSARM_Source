@@ -8,7 +8,6 @@ import hopes.cic.xml.TimeType;
 public class UEMModeTask extends ModeTaskType {
 
     public UEMModeTask() {
-        setName("default");
         setPeriod(new TimeType());
         setDeadline(new TimeType());
     }

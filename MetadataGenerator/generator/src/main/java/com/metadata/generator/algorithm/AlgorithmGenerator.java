@@ -3,18 +3,26 @@ package com.metadata.generator.algorithm;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import com.dbmanager.datastructure.task.Task;
 import com.dbmanager.datastructure.task.TaskFile;
 import com.metadata.generator.constant.AlgorithmConstant;
 import com.metadata.generator.util.LocalFileCopier;
+import com.scriptparser.parserdatastructure.entity.Transition;
+import com.scriptparser.parserdatastructure.entity.statement.ActionStatement;
+import com.scriptparser.parserdatastructure.enumeration.StatementType;
 import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
+import com.scriptparser.parserdatastructure.wrapper.ModeWrapper;
+import com.scriptparser.parserdatastructure.wrapper.TransitionWrapper;
 import com.strategy.strategydatastructure.wrapper.ActionImplWrapper;
 import com.strategy.strategydatastructure.wrapper.ActionTypeWrapper;
 import com.strategy.strategydatastructure.wrapper.ControlStrategyWrapper;
 import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 import com.strategy.strategydatastructure.wrapper.StrategyWrapper;
 import com.strategy.strategydatastructure.wrapper.VariableTypeWrapper;
+import com.strategy.strategymaker.GroupAllocator;
 import com.strategy.strategymaker.additionalinfo.AdditionalInfo;
 import hopes.cic.xml.ChannelPortType;
 import hopes.cic.xml.handler.CICAlgorithmXMLHandler;
@@ -27,8 +35,7 @@ public class AlgorithmGenerator {
             AdditionalInfo additionalInfo, Path targetDir) {
         try {
             for (RobotImplWrapper robot : strategy.getRobotList()) {
-                UEMRobotTask robotTask = new UEMRobotTask(algorithm.getTaskNum(),
-                        robot.getRobot().getRobotId(), robot);
+                UEMRobotTask robotTask = new UEMRobotTask(robot.getRobot().getRobotId(), robot);
                 algorithm.addTask(robotTask);
                 makeRobotInerGraph(mission, robotTask, additionalInfo, targetDir);
             }
@@ -39,12 +46,11 @@ public class AlgorithmGenerator {
 
     private static void makeRobotInerGraph(MissionWrapper mission, UEMRobotTask robot,
             AdditionalInfo additionalInfo, Path targetDir) throws Exception {
-        makeActionTask(robot, robot.getRobot().getControlStrategyList(),
+        makeActionTask(mission, robot, robot.getRobot().getControlStrategyList(),
                 Paths.get(additionalInfo.getTaskServerPrefix()), targetDir);
         makeLibraryTask(robot);
-        makeCommunicationTask(robot);
+        makeCommunicationTask(mission, robot);
         makeControlTask();
-
     }
 
     private static void copyFiles(Task task, Path taskServerPrefix, Path targetDir)
@@ -160,30 +166,79 @@ public class AlgorithmGenerator {
         return taskGraphList;
     }
 
-    private static void makeActionTask(UEMRobotTask robot,
-            List<ControlStrategyWrapper> controlStrategyList, Path taskServerPrefix, Path targetDir)
-            throws Exception {
-        for (ControlStrategyWrapper controlStrategy : controlStrategyList) {
-            for (ActionImplWrapper action : controlStrategy.getActionList()) {
-                Task task = action.getTask();
-                UEMActionTask actionTask =
-                        new UEMActionTask(algorithm.getTaskNum(), robot.getName(), action);
-                copyFiles(task, taskServerPrefix, targetDir);
-                if (task.isHasSubGraph()) {
-                    List<UEMTaskGraph> taskGraphList =
-                            exploreSubGraph(actionTask, taskServerPrefix);
-                    for (UEMTaskGraph taskGraph : taskGraphList) {
-                        algorithm.getTasks().getTask().addAll(taskGraph.getTaskList());
-                        algorithm.getChannels().getChannel().addAll(taskGraph.getChannelList());
-                        algorithm.getLibraries().getLibrary().addAll(taskGraph.getLibraryList());
-                        algorithm.getLibraryConnections().getTaskLibraryConnection()
-                                .addAll(taskGraph.getLibraryConnectionList());
+    private static void visitModeForAction(ModeWrapper mode, UEMRobotTask robot,
+            String currentGroup, List<ControlStrategyWrapper> controlStrategyList,
+            Path taskServerPrefix, Path targetDir, Set<String> visitedMode) {
+        if (visitedMode.contains(currentGroup + mode.getMode().getName())) {
+            return;
+        }
+        mode.getServiceList().forEach(s -> s.getService().getStatementList().forEach(statement -> {
+            if (statement.getStatement().getStatementType().equals(StatementType.ACTION)) {
+                ActionStatement actionStatement = (ActionStatement) statement.getStatement();
+                for (ControlStrategyWrapper controlStrategy : controlStrategyList) {
+                    if (controlStrategy.getControlStrategy().getActionName()
+                            .equals(actionStatement.getActionName())) {
+                        for (ActionImplWrapper action : controlStrategy.getActionList()) {
+                            Task task = action.getTask();
+                            UEMActionTask actionTask = new UEMActionTask(robot.getName(),
+                                    currentGroup, s.getService().getService().getName(), action);
+                            try {
+                                copyFiles(task, taskServerPrefix, targetDir);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            if (task.isHasSubGraph()) {
+                                actionTask.setSubTaskGraphs(
+                                        exploreSubGraph(actionTask, taskServerPrefix));
+                                for (UEMTaskGraph taskGraph : actionTask.getSubTaskGraphs()) {
+                                    algorithm.getTasks().getTask().addAll(taskGraph.getTaskList());
+                                    algorithm.getChannels().getChannel()
+                                            .addAll(taskGraph.getChannelList());
+                                    algorithm.getLibraries().getLibrary()
+                                            .addAll(taskGraph.getLibraryList());
+                                    algorithm.getLibraryConnections().getTaskLibraryConnection()
+                                            .addAll(taskGraph.getLibraryConnectionList());
+                                }
+                            }
+                            robot.getActionTaskList().add(actionTask);
+                            algorithm.addTask(actionTask);
+                        }
+                        break;
                     }
                 }
-                robot.getActionTaskList().add(actionTask);
-                algorithm.addTask(actionTask);
             }
-        }
+        }));
+        visitedMode.add(currentGroup + mode.getMode().getName());
+        mode.getGroupList()
+                .forEach(g -> traverseTransitionForAction(g.getModeTransition().getModeTransition(),
+                        robot, GroupAllocator.makeGroupKey(currentGroup, g.getGroup().getName()),
+                        controlStrategyList, taskServerPrefix, targetDir, visitedMode));
+    }
+
+    private static void traverseTransitionForAction(TransitionWrapper transition,
+            UEMRobotTask robot, String currentGroup,
+            List<ControlStrategyWrapper> controlStrategyList, Path taskServerPrefix, Path targetDir,
+            Set<String> visitedMode) {
+        Set<ModeWrapper> modeSet = new HashSet<>();
+        modeSet.add(transition.getDefaultMode().getMode());
+        transition.getTransitionMap().values().forEach(list -> list.forEach(ce -> {
+            ModeWrapper m = ce.getMode().getMode();
+            if (!m.getMode().getName().equals("FINISH")
+                    && !m.getMode().getName().equals("PREVIOUS_MODE")) {
+                modeSet.add(m);
+            }
+        }));
+        modeSet.forEach(m -> visitModeForAction(m, robot, currentGroup, controlStrategyList,
+                taskServerPrefix, targetDir, visitedMode));
+    }
+
+    private static void makeActionTask(MissionWrapper mission, UEMRobotTask robot,
+            List<ControlStrategyWrapper> controlStrategyList, Path taskServerPrefix, Path targetDir)
+            throws Exception {
+        String team = robot.getRobot().getGroupList().get(0);
+        TransitionWrapper transition = mission.getTransition(team);
+        traverseTransitionForAction(transition, robot, team, controlStrategyList, taskServerPrefix,
+                targetDir, new HashSet<>());
     }
 
     private static void makeLibraryTask(UEMRobotTask robot) {
@@ -193,15 +248,15 @@ public class AlgorithmGenerator {
                 for (int i = 0; i < actionType.getVariableSharedList().size(); i++) {
                     VariableTypeWrapper variable = actionType.getVariableSharedList().get(i);
                     UEMLibraryPort libPort = actionTask.getLibraryPort(i);
-                    String libName =
-                            UEMLibrary.makeName(robot.getName(), actionType.getAction().getName()
-                                    + variable.getVariableType().getName());
+                    String libName = UEMLibrary.makeName(robot.getName(), actionTask.getScope(),
+                            actionType.getAction().getName() + "_" + String.valueOf(i));
                     UEMLibrary library = robot.getLibraryTask(libName);
                     if (library == null) {
                         library = new UEMLibrary();
                         library.makeGeneratedLibrary(libName);
                         algorithm.getLibraries().getLibrary().add(library);
                         robot.getLibraryTaskList().add(library);
+                        library.setVariableType(variable);
                     }
                     UEMLibraryConnection connection = new UEMLibraryConnection();
                     connection.setMasterPort(libPort.getName());
@@ -211,15 +266,63 @@ public class AlgorithmGenerator {
                 }
             }
         }
-
     }
 
-    private static void makeListenTask(UEMRobotTask robot) {
-
+    private static void visitModeForCommunication(ModeWrapper mode, UEMRobotTask robot,
+            String currentGroup) {
+        mode.getServiceList().forEach(s -> s.getService().getStatementList().forEach(statement -> {
+            try {
+                if (statement.getStatement().getStatementType().equals(StatementType.RECEIVE)) {
+                    robot.getListenTask().addReceive(statement, robot);
+                } else if (statement.getStatement().getStatementType()
+                        .equals(StatementType.SUBSCRIBE)) {
+                    robot.getListenTask().addSubscribe(statement, robot);
+                } else if (statement.getStatement().getStatementType().equals(StatementType.SEND)) {
+                    robot.getReportTask().addSend(statement, robot);
+                } else if (statement.getStatement().getStatementType()
+                        .equals(StatementType.PUBLISH)) {
+                    robot.getReportTask().addPublish(statement, robot);
+                } else if (statement.getStatement().getStatementType()
+                        .equals(StatementType.THROW)) {
+                    robot.getListenTask().addThrow(statement, currentGroup);
+                    robot.getReportTask().addThrow(statement, currentGroup);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }));
+        mode.getGroupList()
+                .forEach(g -> traverseTransitionForCommunication(
+                        g.getModeTransition().getModeTransition(), robot,
+                        GroupAllocator.makeGroupKey(currentGroup, g.getGroup().getName())));
     }
 
-    private static void makeCommunicationTask(UEMRobotTask robot) {
+    private static void traverseTransitionForCommunication(TransitionWrapper transition,
+            UEMRobotTask robot, String currentGroup) {
+        Set<ModeWrapper> modeSet = new HashSet<>();
+        modeSet.add(transition.getDefaultMode().getMode());
+        transition.getTransitionMap().values().forEach(list -> list.forEach(ce -> {
+            ModeWrapper m = ce.getMode().getMode();
+            if (!m.getMode().getName().equals("FINISH")
+                    && !m.getMode().getName().equals("PREVIOUS_MODE")) {
+                modeSet.add(m);
+            }
+        }));
+        modeSet.forEach(m -> visitModeForCommunication(m, robot, currentGroup));
+    }
 
+    private static void makeCommunicationTask(MissionWrapper mission, UEMRobotTask robot)
+            throws Exception {
+        UEMListenTask listen = new UEMListenTask(robot.getName(), AlgorithmConstant.LISTEN);
+        UEMCommTask report = new UEMCommTask(robot.getName(), AlgorithmConstant.REPORT);
+        algorithm.addTask(listen);
+        algorithm.addTask(report);
+        String team = robot.getRobot().getGroupList().get(0);
+        TransitionWrapper transition = mission.getTransition(team);
+        traverseTransitionForCommunication(transition, robot, team);
+        for (UEMLibrary library : robot.getLibraryTaskList()) {
+            listen.addSharedData(library.getName());
+        }
     }
 
     private static void makeControlTask() {}
