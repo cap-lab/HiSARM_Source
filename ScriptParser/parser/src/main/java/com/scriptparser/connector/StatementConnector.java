@@ -62,9 +62,11 @@ public class StatementConnector {
                     previous.getConnectedStatements().add(TransitionCondition.TRUE, statement);
                 }
             } else {
-                previous.getConnectedStatements().add(TransitionCondition.TRUE, statement);
+                if (!previous.getConnectedStatements().containKey(TransitionCondition.TRUE)) {
+                    previous.getConnectedStatements().add(TransitionCondition.TRUE, statement);
+                }
             }
-            if (isComplete(previous)) {
+            if (isComplete(previous) && index - 1 != 0) {
                 expressionStack.removeElementAt(index - 1);
             }
         }

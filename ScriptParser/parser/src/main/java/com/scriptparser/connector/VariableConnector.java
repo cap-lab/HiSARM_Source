@@ -188,7 +188,8 @@ public class VariableConnector {
             StatementWrapper statement, Set<VariableWrapper> figuredVariables) {
         CommunicationalStatement cStatement = (CommunicationalStatement) statement.getStatement();
         VariableWrapper variable = new VariableWrapper();
-        if (statement.getVariableList().size() > 0) {
+        if (statement.getVariableList().size() > 0
+                && statement.getCounterStatements().get(0).getVariableList().size() > 0) {
             variable = statement.getVariableList().get(0);
             variable.setCreator(new KeyValue<ServiceWrapper, VariableWrapper>(
                     statement.getCounterStatements().get(0).getService(),
