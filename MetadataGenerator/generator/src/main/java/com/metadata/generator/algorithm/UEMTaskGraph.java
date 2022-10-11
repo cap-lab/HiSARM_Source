@@ -2,6 +2,7 @@ package com.metadata.generator.algorithm;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.metadata.generator.algorithm.task.UEMTask;
 
 public class UEMTaskGraph {
     int level;

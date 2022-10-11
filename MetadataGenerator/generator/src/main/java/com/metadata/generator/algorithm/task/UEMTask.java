@@ -1,8 +1,10 @@
-package com.metadata.generator.algorithm;
+package com.metadata.generator.algorithm.task;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import com.metadata.generator.algorithm.UEMModeTask;
+import com.metadata.generator.algorithm.UEMPortMap;
 import com.metadata.generator.constant.AlgorithmConstant;
 import hopes.cic.xml.MulticastPortType;
 import hopes.cic.xml.RunConditionType;

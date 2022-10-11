@@ -1,9 +1,12 @@
-package com.metadata.generator.algorithm;
+package com.metadata.generator.algorithm.task;
 
 import java.util.List;
 import com.dbmanager.datastructure.task.ChannelPort;
 import com.dbmanager.datastructure.task.LibraryPort;
 import com.dbmanager.datastructure.task.Task;
+import com.metadata.generator.algorithm.UEMChannelPort;
+import com.metadata.generator.algorithm.UEMLibraryPort;
+import com.metadata.generator.algorithm.UEMTaskGraph;
 import com.metadata.generator.constant.AlgorithmConstant;
 import com.strategy.strategydatastructure.wrapper.ActionImplWrapper;
 import hopes.cic.xml.LibraryMasterPortType;

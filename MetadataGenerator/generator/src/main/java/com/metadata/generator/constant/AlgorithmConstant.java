@@ -24,9 +24,18 @@ public class AlgorithmConstant {
     public static final String ROBOT_VARIABLE_HEADER_SUFFIX = "_variable.h";
     public static final String ROBOT_PORT_SOURCE_SUFFIX = "_port.c";
     public static final String ROBOT_VARIABLE_SOURCE_SUFFIX = "_variable.c";
+    public static final String ROBOT_EVENT_HEADER_SUFFIX = "_event.h";
+    public static final String ROBOT_EVENT_SOURCE_SUFFIX = "_event.c";
+    public static final String ROBOT_SERVICE_HEADER_SUFFIX = "_service.h";
+    public static final String ROBOT_SERVICE_SOURCE_SUFFIX = "_service.c";
+    public static final String ROBOT_TIMER_HEADER_SUFFIX = "_timer.h";
+    public static final String ROBOT_TIMER_SOURCE_SUFFIX = "_timer.c";
+    public static final String ROBOT_MODE_SOURCE_SUFFIX = "_mode.c";
     public static final String COMMON_HEADER = "common.h";
     public static final String COMMON_PORT_HEADER = "port.h";
     public static final String COMMON_PORT_SOURCE = "port.c";
+    public static final String COMMON_TIMER_SOURCE = "timer.c";
+    public static final String COMMON_SERVICE_SOURCE = "service.c";
     public static final String COMMUNICATION_HEADER = "communication.h";
     public static final String COMMUNICATION_SOURCE = "communication.c";
 

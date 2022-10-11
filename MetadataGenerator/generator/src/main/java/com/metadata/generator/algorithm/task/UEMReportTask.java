@@ -1,5 +1,9 @@
-package com.metadata.generator.algorithm;
+package com.metadata.generator.algorithm.task;
 
+import com.metadata.generator.algorithm.UEMChannelPort;
+import com.metadata.generator.algorithm.UEMCommPort;
+import com.metadata.generator.algorithm.UEMLibraryPort;
+import com.metadata.generator.algorithm.UEMMulticastPort;
 import com.metadata.generator.constant.AlgorithmConstant;
 import com.scriptparser.parserdatastructure.entity.statement.CommunicationalStatement;
 import com.scriptparser.parserdatastructure.entity.statement.ThrowStatement;
@@ -26,10 +30,14 @@ public class UEMReportTask extends UEMCommTask {
                     portSize);
             inPort.setExport(false);
             getPort().add(inPort);
-            UEMChannelPort outPort = new UEMChannelPort();
+            getControlPortList().add(inPort);
+            UEMCommPort outPort = new UEMCommPort();
             outPort.makePortInfo(portName, PortDirectionType.OUTPUT, portSize);
             outPort.setExport(true);
+            outPort.setCounterTeam(statement.getCounterTeam());
+            outPort.setVariableName(statement.getMessage().getId());
             getPort().add(outPort);
+            getExportPortList().add(outPort);
         }
     }
 
@@ -46,6 +54,7 @@ public class UEMReportTask extends UEMCommTask {
                     portSize);
             inPort.setExport(false);
             getPort().add(inPort);
+            getControlPortList().add(inPort);
             UEMMulticastPort outPort = new UEMMulticastPort();
             outPort.setName(portName);
             outPort.setGroup(robot.getRobot().getGroupList().get(0));
@@ -63,9 +72,25 @@ public class UEMReportTask extends UEMCommTask {
                     4);
             inPort.setExport(false);
             getPort().add(inPort);
+            getControlPortList().add(inPort);
             UEMMulticastPort outPort = new UEMMulticastPort();
             outPort.setName(portName);
             outPort.setGroup(group);
+            outPort.setDirection(PortDirectionType.OUTPUT);
+            getMulticastPort().add(outPort);
+        }
+    }
+
+    public void addSharedData(String dataId) {
+        String portName = dataId;
+        if (!existMulticastPort(portName)) {
+            UEMLibraryPort inPort = new UEMLibraryPort();
+            inPort.setName(portName);
+            inPort.setType(portName);
+            getLibraryMasterPort().add(inPort);
+            UEMMulticastPort outPort = new UEMMulticastPort();
+            outPort.setName(portName);
+            outPort.setGroup(portName);
             outPort.setDirection(PortDirectionType.OUTPUT);
             getMulticastPort().add(outPort);
         }

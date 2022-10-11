@@ -1,11 +1,14 @@
-package com.metadata.generator.algorithm;
+package com.metadata.generator.algorithm.task;
 
+import com.metadata.generator.algorithm.UEMChannelPort;
+import com.metadata.generator.algorithm.UEMCommPort;
+import com.metadata.generator.algorithm.UEMLibraryPort;
+import com.metadata.generator.algorithm.UEMMulticastPort;
 import com.metadata.generator.constant.AlgorithmConstant;
 import com.scriptparser.parserdatastructure.entity.statement.CommunicationalStatement;
 import com.scriptparser.parserdatastructure.entity.statement.ThrowStatement;
 import com.scriptparser.parserdatastructure.wrapper.StatementWrapper;
 import com.strategy.strategydatastructure.wrapper.VariableTypeWrapper;
-import com.strategy.strategymaker.constant.StrategyConstant;
 import hopes.cic.xml.PortDirectionType;
 
 public class UEMListenTask extends UEMCommTask {
@@ -22,15 +25,19 @@ public class UEMListenTask extends UEMCommTask {
                     robot.getRobot().getVariableList().get(statement.getOutput().getId());
             int portSize =
                     variable.getVariableType().getSize() * variable.getVariableType().getCount();
-            UEMChannelPort inPort = new UEMChannelPort();
+            UEMCommPort inPort = new UEMCommPort();
             inPort.makePortInfo(portName, PortDirectionType.INPUT, portSize);
             inPort.setExport(true);
+            inPort.setCounterTeam(statement.getCounterTeam());
+            inPort.setVariableName(statement.getMessage().getId());
             getPort().add(inPort);
+            getExportPortList().add(inPort);
             UEMChannelPort outPort = new UEMChannelPort();
             outPort.makePortInfo(AlgorithmConstant.CONTROL_TASK + portName,
                     PortDirectionType.OUTPUT, portSize);
             outPort.setExport(false);
             getPort().add(outPort);
+            getControlPortList().add(outPort);
         }
     }
 
@@ -52,6 +59,7 @@ public class UEMListenTask extends UEMCommTask {
                     PortDirectionType.OUTPUT, portSize);
             outPort.setExport(false);
             getPort().add(outPort);
+            getControlPortList().add(outPort);
         }
     }
 
@@ -69,17 +77,18 @@ public class UEMListenTask extends UEMCommTask {
                     PortDirectionType.OUTPUT, 4);
             outPort.setExport(false);
             getPort().add(outPort);
+            getControlPortList().add(outPort);
         }
     }
 
     public void addSharedData(String dataId) {
         String portName = dataId;
         if (!existMulticastPort(portName)) {
-            UEMMulticastPort port = new UEMMulticastPort();
-            port.setName(portName);
-            port.setGroup(portName);
-            port.setDirection(PortDirectionType.INPUT);
-            getMulticastPort().add(port);
+            UEMMulticastPort inPort = new UEMMulticastPort();
+            inPort.setName(portName);
+            inPort.setGroup(portName);
+            inPort.setDirection(PortDirectionType.INPUT);
+            getMulticastPort().add(inPort);
             UEMLibraryPort outPort = new UEMLibraryPort();
             outPort.setName(portName);
             outPort.setType(portName);
