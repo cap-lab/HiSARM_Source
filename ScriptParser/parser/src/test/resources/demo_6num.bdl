@@ -50,7 +50,7 @@ Mode.MOVE_TO_MISSION_AREA(area) {
 
 Mode.SEARCH(target) {
     services:
-        search(target), timeout = 10 MIN
+        Search(target), timeout = 10 MINUTE
 }
 
 ModeTransition.SEARCH(area, target) {

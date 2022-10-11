@@ -68,7 +68,7 @@ Mode.MODE1 {
     ModeTransition.SUBMODE("1", "1000")
   services:
     ServiceTest1
-    TeamTestAndPublish("3", "3000", TestTeam2)
+    TeamTestAndPublish("3", "3000", "TestTeam2")
     #GroupTest("1", "500")
 }
 
@@ -94,7 +94,7 @@ Mode.CHANGED_MODE1 {
     ModeTransition.SUBMODE("7", "7000")
   services:
     ServiceTest1
-    TeamTestAndSubscribe(TestTeam1)
+    TeamTestAndSubscribe("TestTeam1")
 }
 
 ModeTransition.SUBMODE(arg1, arg2) {
