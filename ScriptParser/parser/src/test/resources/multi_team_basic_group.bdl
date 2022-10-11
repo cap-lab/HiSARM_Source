@@ -1,0 +1,107 @@
+{
+  TestTeam1: FakeBot bot[3]
+  TestTeam2: FakeBot bot[3]
+}
+
+# action_simplest: 액션 자신의 이름을 출력하는 액션
+# action_argument[숫자]: [숫자]만큼의 정수 인자를 받은 후, 각 인자들을 자신의 이름과 함께 출력하는 액션
+# action_argument[숫자]WithReturn: [숫자]만큼의 인자를 받은 후, 각 인자들을 자신의 이름과 함께 출력한 후, 인자의 전체 합을 반환하는 액션
+# action_argumentEnum[숫자]: [숫자]만큼의 ENUM_TEST Enum 인자를 받은 후, 각 인자들을 자신의 이름과 함께 출력하는 액션
+# action_argumentIntEnum[숫자]: [숫자]만큼의 정수와 ENUM_TEST Enum 인자를 받은 후, 각 인자들을 자신의 이름과 함께 출력하는 액션
+# action_argumentEnum[숫자]WithReturn[숫자2]: [숫자]만큼의 ENUM_TEST Enum 인자를 받은 후, 각 인자들을 자신의 이름과 함께 출력한 후, ENUM_TEST[숫자2]를 반환하는 액션
+# action_argumentText[숫자]Array[숫자2]: 크기가 [숫자2]인 [숫자]만큼의 바이트 어레이를 받은 후, 각 인자의 바이트 어레이를 출력하는 액션
+# action_argumentText[숫자]Array[숫자2]WithReturn: 크기가 [숫자2]인 [숫자]만큼의 바이트 어레이를 받은 후, 각 바이트 어레이의 합을 정수형으로 출력하는 액션
+# group_action_sharedWithReturn: Shared data인 ENUM_GROUP_TEST의 모든 어레이 값이 TRUE가 될 때까지 액션들이 랜덤한 위치의 값을 TRUE로 설정하고, TRUE의 개수를 반환하는 액션
+# group_action_argument2WithSharedSumWithReturn: 정수 인자와 최대 달성 값을 받은 후, shared data인 GROUP_SUM의 값이 최대 값을 넘을 때까지 정수 인자만큼의 값을 매번 더하고, 최종 값을 반환하는 액션
+
+ServiceTest1 {
+  action_simplest()
+  #action_argument1("12345")
+  #action_argument2("67","89")
+}
+
+GroupTest(arg1, arg2) {
+  ret_val = group_action_argument2WithSharedSumWithReturn(arg1, arg2)
+  throw EVENT1 broadcast # this event must be ignored if this service is called inside the group
+}
+
+TeamTestAndPublish(arg1, arg2, arg3) {
+  ret_val = group_action_argument2WithSharedSumWithReturn(arg1, arg2)
+  action_argument1(ret_val)
+  publish(arg3, ret_val)
+  throw EVENT2 broadcast
+}
+
+TeamTestAndSubscribe(arg1) {
+  receivedVal = subscribe(arg1, ret_val)
+  action_argument1(receivedVal)
+  throw EVENT2 broadcast
+}
+
+Mode.SUBMODE(arg1, arg2) {
+  services:
+    GroupTest(arg1, arg2)
+}
+
+Mode.MODE1 {
+  group(group1, min = 1):
+    ModeTransition.SUBMODE("1", "1000")
+  group(group2, min = 1, proper = 2):
+    ModeTransition.SUBMODE("1", "1000")
+  services:
+    ServiceTest1
+    TeamTestAndPublish("3", "3000", TestTeam2)
+    #GroupTest("1", "500")
+}
+
+Mode.MODE3 {
+  group(group1, min = 1):
+    ModeTransition.SUBMODE("4", "4000")
+  group(group2, min = 1):
+    ModeTransition.SUBMODE("5", "5000")
+  services:
+    ServiceTest1
+    GroupTest("1", "500")
+}
+
+Mode.MODE2 {
+  services:
+    GroupTest("1", "700")
+    ServiceTest1
+}
+
+Mode.CHANGED_MODE1 {
+  group(group1, min = 1, proper = 2):
+    ModeTransition.SUBMODE("7", "7000")
+  group(group2, min = 1):
+    ModeTransition.SUBMODE("7", "7000")
+  services:
+    ServiceTest1
+    TeamTestAndSubscribe(TestTeam1)
+}
+
+ModeTransition.SUBMODE(arg1, arg2) {
+  default: mode = SUBMODE(arg1, arg2)
+}
+
+Main.TestTeam1 {
+  case(MODE1):
+    catch(EVENT1): mode = MODE3
+    catch(EVENT2): mode = MODE2
+  case(MODE2):
+    catch(EVENT1): mode = MODE1
+  case(MODE3):
+    catch(EVENT1): mode = MODE1
+  default: mode = MODE1
+}
+
+Main.TestTeam2 {
+  case(CHANGED_MODE1):
+    catch(EVENT1): mode = MODE3
+    catch(EVENT2): mode = MODE2
+  case(MODE2):
+    catch(EVENT1): mode = PREVIOUS_MODE
+  case(MODE3): # unreachable mode
+    catch(EVENT1): mode = PREVIOUS_MODE
+  default: mode = CHANGED_MODE1
+}

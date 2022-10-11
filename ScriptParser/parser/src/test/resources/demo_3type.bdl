@@ -1,7 +1,91 @@
 {
     Searcher: Burger burger
-    Cover: Tank tank
+    Assistant: Tank tank
     Guard: Waffle waffle
+}
+
+Main.Searcher {
+    case(REMOTE_CONTROL):
+        catch(START): mode = SEARCH("RED", "Guard")
+    case(SEARCH):
+        catch(FINISH): mode = FINISH
+        catch(HIDE): mode = HIDE("Guard")
+        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
+    case(HIDE):
+        catch(RESTART): mode = PREVIOUS_MODE
+        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
+    default: mode = REMOTE_CONTROL
+}
+
+Main.Assistant {
+    case(REMOTE_CONTROL):
+        catch(START): mode = FOLLOW
+    case(FOLLOW):
+        catch(FINISH): mode = FINISH
+        catch(HIDE): mode = COVER("Guard")
+        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
+    case(COVER):
+        catch(RESTART): mode = PREVIOUS_MODE
+        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
+    default: mode = REMOTE_CONTROL
+}
+
+Main.Guard {
+    case(REMOTE_CONTROL):
+        catch(START): mode = WATCH("Searcher", "Assistant")
+    case(WATCH):
+        catch(FINISH): mode = FINISH
+        catch(HIDE): mode = GUARD("Searcher", "Assistant")
+    case(GUARD):
+        catch(RESTART): mode = PREVIOUS_MODE
+    default: mode = REMOTE_CONTROL
+}
+
+Mode.REMOTE_CONTROL {
+    services:
+        RemoteControlGroup
+        ReceiveCommand
+        SendImage
+}
+
+Mode.SEARCH(target, sender) {
+    services:
+        Search(target)
+        ListenAlarm(sender)
+        ReceiveCommand
+}
+
+Mode.HIDE(sender) {
+    services:
+        Hide
+        ListenAlarm(sender)
+        ReceiveCommand
+}
+
+Mode.FOLLOW {
+    services:
+        Follow
+        ReceiveCommand
+}
+
+Mode.COVER(team_name) {
+    services:
+        Attack
+        ListenAlarm(team_name)
+        ReceiveCommand
+}
+
+Mode.WATCH(receiver1, receiver2) {
+    services:
+        Watch(receiver1, receiver2)
+        ReceiveCommand
+}
+
+Mode.GUARD(receiver1, receiver2) {
+    services:
+        ReleaseAlarm(receiver1, receiver2)
+        Attack
+        ReceiveCommand
 }
 
 RemoteControlGroup {
@@ -20,6 +104,10 @@ ReceiveCommand {
     }
 } repeat(500 MSEC)
 
+SendImage {
+    sendImage()
+} repeat(100 MSEC)
+
 Search(target) {
     search(target)
 }
@@ -36,102 +124,30 @@ Attack {
     attack()
 }
 
-GetAlarm(team_name) {
-    ALARM = receive(team_name, ALERT)
-    if (ALARM == "TRUE") {
+ListenAlarm(sender) {
+    ISENEMY = receive(sender, ISENEMY)
+    if (ISENEMY == "TRUE") {
         throw HIDE broadcast
     }
-    if (ALARM == "FALSE") {
+    if (ISENEMY == "FALSE") {
         throw RESTART broadcast
     }
 }
 
-Watch(team_name, signal) {
-    ALERT = monitor(signal)
-    if (ALERT != signal) {
-        send(team_name, ALERT)
+Watch(receiver1, receiver2) {
+    ISENEMY = checkEnemy()
+    if (ISENEMY == "TRUE") {
+        send(receiver1, ISENEMY)
+        send(receiver2, ISENEMY)
+        throw HIDE broadcast
     }
 }
 
-Mode.REMOTE_CONTROL {
-    services:
-        RemoteControlGroup
-        ReceiveCommand
-}
-
-Mode.SEARCH(target, team_name) {
-    services:
-        Search(tareget)
-        GetAlarm(team_name)
-        ReceiveCommand
-}
-
-Mode.HIDE(team_name) {
-    services:
-        Hide
-        GetAlarm(team_name)
-        ReceiveCommand
-}
-
-
-Mode.FOLLOW {
-    services:
-        Follow
-        ReceiveCommand
-}
-
-Mode.COVER {
-    services:
-        Attack
-        ReceiveCommand
-}
-
-Mode.WATCH(team_name) {
-    services:
-        Watch(team_name, "FALSE")
-        ReceiveCommand
-}
-
-Mode.GUARD(team_name) {
-    services:
-        Watch(team_name, "TRUE")
-        Attack
-        ReceiveCommand
-}
-
-Main.Searcher {
-    case(REMOTE_CONTROL):
-        catch(START): mode = SEARCH(target, "Guard")
-    case(SEARCH):
-        catch(FINISH): mode = FINISH
-        catch(HIDE): mode = HIDE("Guard")
-        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
-    case(HIDE):
-        catch(RESTART): mode = PREVIOUS_MODE
-        catch(START): mode = SEARCH(target, "Guard")
-        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
-    default: mode = REMOTE_CONTROL
-}
-
-Main.Cover {
-    case(REMOTE_CONTROL):
-        catch(START): mode = FOLLOW
-    case(FOLLOW):
-        catch(FINISH): mode = FINISH
-        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
-        catch(HIDE): mode = COVER
-    case(COVER):
-        catch(RESTART): mode = PREVIOUS_MODE
-    default: mode = REMOTE_CONTROL
-}
-
-Main.Guard {
-    case(REMOTE_CONTROL):
-        catch(START): mode = WATCH("Searcher")
-    case(WATCH):
-        catch(FINISH): mode = FINISH
-        catch(HIDE): mode = GUARD("Searcher")
-    case(GUARD):
-        catch(RESTART): mode = PREVIOUS_MODE
-    default: mode = REMOTE_CONTROL
+ReleaseAlarm(receiver1, receiver2) {
+    ISENEMY = checkEnemy()
+    if (ISENEMY == "FALSE") {
+        send(receiver1, ISENEMY)
+        send(receiver2, ISENEMY)
+        throw RESTART broadcast
+    }
 }

@@ -20,7 +20,7 @@ ReceiveCommand {
 
 
 Search(target) {
-    search(target)
+    group_search(target)
 }
 
 MoveTo(area) {
@@ -34,11 +34,11 @@ Mode.REMOTE_CONTROL {
         RemoteControlGroup
 }
 
-Mode.SEARCH_GROUPING {
+Mode.SEARCH_GROUPING(target) {
     group(groupA, min=2):
-        ModeTransition.SEARCH("room1","RED")
+        ModeTransition.SEARCH("room1",target)
     group(groupB, min=2, proper=4):
-        ModeTransition.SEARCH("room2","BLUE")
+        ModeTransition.SEARCH("room2",target)
     services:
         ReceiveCommand
 }
@@ -50,7 +50,7 @@ Mode.MOVE_TO_MISSION_AREA(area) {
 
 Mode.SEARCH(target) {
     services:
-        Search(target)
+        search(target), timeout = 10 MIN
 }
 
 ModeTransition.SEARCH(area, target) {
@@ -61,7 +61,7 @@ ModeTransition.SEARCH(area, target) {
 
 Main.Robot {
     case(REMOTE_CONTROL):
-        catch(START): mode = SEARCH_GROUPING
+        catch(START): mode = SEARCH_GROUPING(target)
     case(SEARCH_GROUPING):
         catch(FINISH): mode = FINISH
     default: mode = REMOTE_CONTROL

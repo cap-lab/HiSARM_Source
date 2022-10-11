@@ -141,35 +141,35 @@ Mode.STAND_BY(quality) {
 
 Mode.COMMUNICATION_RELAY {
     services:
-        FrameRelay(GroundWatcher)
-        FrameRelay(Scouter)
-        RelayStandByCommandForSingleRobot(GroundWatcher)
-        RelayStandByCommandForSingleRobot(Scouter)
-        RelayReceiveCommandForSingleRobot(GroundWatcher)
-        RelayReceiveCommandForSingleRobot(Scouter)
-        RelayRemoteControlForSingleRobot(GroundWatcher)
-        RelayRemoteControlForSingleRobot(Scouter)
+        FrameRelay("GroundWatcher")
+        FrameRelay("Scouter")
+        RelayStandByCommandForSingleRobot("GroundWatcher")
+        RelayStandByCommandForSingleRobot("Scouter")
+        RelayReceiveCommandForSingleRobot("GroundWatcher")
+        RelayReceiveCommandForSingleRobot("Scouter")
+        RelayRemoteControlForSingleRobot("GroundWatcher")
+        RelayRemoteControlForSingleRobot("Scouter")
         ReceiveCommand
 }
 
 Mode.SEARCH(radius, method) {
     services:
         Search(radius, method)
-        SendFrameToOtherTeam(RelayMesh, "middle")
-        ReceiveCommandFromOtherTeam(RelayMesh)
+        SendFrameToOtherTeam("RelayMesh", "middle")
+        ReceiveCommandFromOtherTeam("RelayMesh")
 }
 
 Mode.REMOTE_CONTROL_BY_RELAY(quality) {
     services:
-        RemoteControlFromOtherTeam(RelayMesh)
-        ReceiveCommandFromOtherTeam(RelayMesh)
-        SendFrameToOtherTeam(RelayMesh, "middle")
+        RemoteControlFromOtherTeam("RelayMesh")
+        ReceiveCommandFromOtherTeam("RelayMesh")
+        SendFrameToOtherTeam("RelayMesh", "middle")
 }
 
 Mode.STAND_BY_RELAY(quality) {
     services:
-        ReceiveStandByCommandForSingleRobotFromOtherTeam(RelayMesh)
-        SendFrameToOtherTeam(RelayMesh, "middle")
+        ReceiveStandByCommandForSingleRobotFromOtherTeam("RelayMesh")
+        SendFrameToOtherTeam("RelayMesh", "middle")
 }
 
 # 그림 상으로는 통신 중개할 때에는 아예 이동이 안 되는 것처럼 보여서 스크립트에서도 통신 중개는 종료 외에 다른 transition이 발생하지 않음
