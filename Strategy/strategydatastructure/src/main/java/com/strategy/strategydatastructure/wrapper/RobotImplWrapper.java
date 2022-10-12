@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import com.dbmanager.datastructure.robot.RobotImpl;
-import com.dbmanager.datastructure.task.Task;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,8 +18,8 @@ public class RobotImplWrapper {
     private List<String> groupList = new ArrayList<>();
     private List<ControlStrategyWrapper> controlStrategyList = new ArrayList<>();
     private List<ActionTypeWrapper> actionTypeList = new ArrayList<>();
-    private List<Task> additionalTaskList = new ArrayList<>();
     private Map<String, VariableTypeWrapper> variableMap = new HashMap<>();
+    private List<AdditionalTaskWrapper> additionalTaskList = new ArrayList<>();
 
     public ActionTypeWrapper getActionType(String actionType) throws Exception {
         Optional<ActionTypeWrapper> action = getActionTypeList().stream()
