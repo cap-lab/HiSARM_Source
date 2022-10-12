@@ -2,13 +2,9 @@ package com.dbmanager.commonlibraries;
 
 import static com.mongodb.client.model.Filters.eq;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
@@ -20,8 +16,6 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Projections;
 
 public class DAO {
-	private final Path dbConfigFile = Paths.get("configuration", "database.conf");
-
 	private MongoDatabase mDB;
 	private MongoClient mongoClient;
 
@@ -36,10 +30,12 @@ public class DAO {
 	private MongoCollection<Document> variableCollection;
 	private MongoCollection<Document> variableImplCollection;
 
-	private DAO() {
-		connectDB();
+	private DAO() {}
 
-		strategyCollection = mDB.getCollection(DBCollections.Collection_Strategy);
+	public void initializeDB(String ip, int port, String user, String pwd, String dbName) {
+		connectDB(ip, port, user, pwd, dbName);
+
+		strategyCollection = mDB.getCollection(DBCollections.Collection_Control_Strategy);
 		groupActionCollection = mDB.getCollection(DBCollections.Collection_GroupAction);
 		actionCollection = mDB.getCollection(DBCollections.Collection_Action);
 		actionImplCollection = mDB.getCollection(DBCollections.Collection_ActionImpl);
@@ -59,30 +55,19 @@ public class DAO {
 		return DBHolder.instance;
 	}
 
-	private void connectDB() {
+	private void connectDB(String ip, int port, String user, String pwd, String dbName) {
 		try {
-			DBConf dbConf = getDatabaseConfiguration();
-			MongoCredential credential = MongoCredential.createCredential(dbConf.getUserName(),
-					dbConf.getDbName(), dbConf.getPassword().toCharArray());
+			MongoCredential credential =
+					MongoCredential.createCredential(user, dbName, pwd.toCharArray());
 			mongoClient = (MongoClient) MongoClients.create(MongoClientSettings.builder()
-					.applyToClusterSettings(builder -> builder.hosts(
-							Arrays.asList(new ServerAddress(dbConf.getIp(), dbConf.getPort()))))
+					.applyToClusterSettings(
+							builder -> builder.hosts(Arrays.asList(new ServerAddress(ip, port))))
 					.credential(credential).build());
-			mDB = mongoClient.getDatabase(dbConf.getDbName());
+			mDB = mongoClient.getDatabase(dbName);
 			System.out.println("DB Connection OK!");
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("DB Connetion Error!");
-		}
-	}
-
-	private DBConf getDatabaseConfiguration() {
-		try {
-			ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-			return mapper.readValue(dbConfigFile.toFile(), DBConf.class);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
 		}
 	}
 

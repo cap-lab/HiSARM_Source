@@ -32,6 +32,10 @@ public class DBService {
         dbDao = DAO.getInstance();
     }
 
+    public static void initializeDB(String ip, int port, String user, String pwd, String dbName) {
+        dbDao.initializeDB(ip, port, user, pwd, dbName);
+    }
+
     public static boolean isExistentRobot(String robotClass) {
         return dbDao.getRobot(robotClass) != null;
     }
@@ -57,7 +61,7 @@ public class DBService {
     }
 
     public static GroupAction getGroupAction(String actionName) {
-        return GroupActionMapper.mapToGroupAction(dbDao.getAction(actionName));
+        return GroupActionMapper.mapToGroupAction(dbDao.getGroupAction(actionName));
     }
 
     public static ActionImpl getActionImpl(String actionImplId) {

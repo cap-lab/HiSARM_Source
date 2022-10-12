@@ -10,5 +10,5 @@ public class DBCollections {
     public static final String Collection_RobotImpl = "RobotImpl";
     public static final String Collection_Architecture = "Architecture";
     public static final String Collection_Task = "Task";
-    public static final String Collection_Strategy = "Strategy";
+    public static final String Collection_Control_Strategy = "ControlStrategy";
 }
