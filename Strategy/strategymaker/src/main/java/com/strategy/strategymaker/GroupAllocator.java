@@ -14,36 +14,25 @@ import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 
 public class GroupAllocator {
     private static List<String> exploredList = new ArrayList<>();
+    private static Map<String, List<RobotImplWrapper>> allocationMap = new HashMap<>();
 
     private static boolean robotMatchWithGroupConstraint(RobotImplWrapper robot,
             GroupWrapper group) {
         return true;
     }
 
-    private static boolean robotAlreadyAllocated(Map<String, List<RobotImplWrapper>> allocationMap,
-            RobotImplWrapper robot) {
-        for (List<RobotImplWrapper> robotList : allocationMap.values()) {
-            if (robotList.contains(robot)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static int allocate(Map<String, List<RobotImplWrapper>> allocationMap,
-            List<RobotImplWrapper> candidateRobotList, List<RobotImplWrapper> allocatedList,
-            GroupWrapper group, String groupId, int count) {
-        for (RobotImplWrapper robot : candidateRobotList) {
-            if (robotAlreadyAllocated(allocationMap, robot)) {
-                continue;
-            }
+    private static int allocate(List<RobotImplWrapper> candidateRobotList,
+            List<RobotImplWrapper> allocatedList, GroupWrapper group, String groupId, int count) {
+        int candidateNum = candidateRobotList.size();
+        for (int i = 0; i < candidateNum && count > 0; i++) {
+            RobotImplWrapper robot = candidateRobotList.get(i);
             if (robotMatchWithGroupConstraint(robot, group)) {
                 robot.getGroupList().add(groupId);
                 allocatedList.add(robot);
+                candidateRobotList.remove(i);
+                candidateNum = candidateNum - 1;
+                i = i - 1;
                 count = count - 1;
-                if (count == 0) {
-                    break;
-                }
             }
         }
         return count;
@@ -62,29 +51,27 @@ public class GroupAllocator {
     }
 
 
-    private static void allocateRequired(Map<String, List<RobotImplWrapper>> allocationMap,
-            List<RobotImplWrapper> candidateRobotList, ModeWrapper mode, String previousGroupId)
-            throws Exception {
+    private static void allocateRequired(List<RobotImplWrapper> candidateRobotList,
+            ModeWrapper mode, String previousGroupId) throws Exception {
         for (GroupWrapper group : mode.getGroupList()) {
             String newGroupId = makeGroupKey(previousGroupId, group.getGroup().getName());
             int count = group.getGroup().getMin();
             List<RobotImplWrapper> allocatedList = new ArrayList<>();
             allocationMap.put(newGroupId, allocatedList);
-            count = allocate(allocationMap, candidateRobotList, allocatedList, group, newGroupId,
-                    count);
+            count = allocate(candidateRobotList, allocatedList, group, newGroupId, count);
             if (count != 0) {
                 throw new Exception("not enough robot for group");
             }
         }
     }
 
-    private static void allocateAdditional(Map<String, List<RobotImplWrapper>> allocationMap,
-            List<RobotImplWrapper> candidateRobotList, ModeWrapper mode, String previousGroupId) {
+    private static void allocateAdditional(List<RobotImplWrapper> candidateRobotList,
+            ModeWrapper mode, String previousGroupId) {
         for (GroupWrapper group : mode.getGroupList()) {
             String newGroupId = makeGroupKey(previousGroupId, group.getGroup().getName());
             int count = group.getGroup().getProper() - group.getGroup().getMin();
             List<RobotImplWrapper> allocatedList = allocationMap.get(newGroupId);
-            allocate(allocationMap, candidateRobotList, allocatedList, group, newGroupId, count);
+            allocate(candidateRobotList, allocatedList, group, newGroupId, count);
         }
     }
 
@@ -96,9 +83,8 @@ public class GroupAllocator {
         }
         exploredList.add(modeId);
 
-        Map<String, List<RobotImplWrapper>> allocationMap = new HashMap<>();
-        allocateRequired(allocationMap, candidateRobotList, mode, currentGroup);
-        allocateAdditional(allocationMap, candidateRobotList, mode, currentGroup);
+        allocateRequired(candidateRobotList, mode, currentGroup);
+        allocateAdditional(candidateRobotList, mode, currentGroup);
 
         for (GroupWrapper group : mode.getGroupList()) {
             String newGroupId = makeGroupKey(currentGroup, group.getGroup().getName());
@@ -124,9 +110,15 @@ public class GroupAllocator {
     public static void allocateGroup(MissionWrapper mission, List<RobotImplWrapper> robotList) {
         try {
             for (TeamWrapper team : mission.getTeamList()) {
+                List<RobotImplWrapper> candidateRobotList = new ArrayList<>();
+                for (RobotImplWrapper robot : robotList) {
+                    if (robot.getTeam().equals(team.getTeam().getName())) {
+                        candidateRobotList.add(robot);
+                    }
+                }
                 TransitionWrapper mainTransition = mission.getTransition(team.getTeam().getName());
                 traverseTransition(team.getTeam().getName(), team.getTeam().getName(),
-                        mainTransition, robotList);
+                        mainTransition, candidateRobotList);
             }
         } catch (Exception e) {
             e.printStackTrace();

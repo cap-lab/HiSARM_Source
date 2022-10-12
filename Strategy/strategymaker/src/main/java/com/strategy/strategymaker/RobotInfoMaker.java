@@ -2,6 +2,7 @@ package com.strategy.strategymaker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,11 +15,10 @@ import com.scriptparser.parserdatastructure.wrapper.TeamWrapper;
 import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 import com.strategy.strategydatastructure.wrapper.RobotTypeWrapper;
 import com.strategy.strategymaker.additionalinfo.AdditionalInfo;
-import com.strategy.strategymaker.constant.StrategyConstant;
 
 public class RobotInfoMaker {
-    private static List<RobotTypeWrapper> robotTypeList;
-    private static Set<Architecture> architectureStore;
+    private static List<RobotTypeWrapper> robotTypeList = new ArrayList<>();
+    private static Set<Architecture> architectureStore = new HashSet<>();
 
     public static List<RobotImplWrapper> makeRobotImplList(MissionWrapper mission,
             AdditionalInfo additionalInfo) {
@@ -70,20 +70,22 @@ public class RobotInfoMaker {
         int robotIndex = 0;
         for (String teamName : robotList.keySet()) {
             for (RobotWrapper robot : robotList.get(teamName)) {
-                RobotImplWrapper robotImpl = new RobotImplWrapper();
-                robotImpl.setRobotIndex(robotIndex);
-                robotImpl.getGroupList().add(teamName);
-                robotImpl.setRobotType(getRobotType(robot.getRobot().getType()));
-                for (int index = 0; index < robotCandidateList.size(); index++) {
-                    if (robotCandidateList.get(index).getRobotClass()
-                            .equals(robot.getRobot().getType())) {
-                        robotImpl.setRobot(robotCandidateList.get(index));
-                        robotCandidateList.remove(index);
-                        break;
+                for (int i = 0; i < robot.getRobot().getCount(); i++) {
+                    RobotImplWrapper robotImpl = new RobotImplWrapper();
+                    robotImpl.setRobotIndex(robotIndex);
+                    robotImpl.addTeam(teamName);
+                    robotImpl.setRobotType(getRobotType(robot.getRobot().getType()));
+                    for (int index = 0; index < robotCandidateList.size(); index++) {
+                        if (robotCandidateList.get(index).getRobotClass()
+                                .equals(robot.getRobot().getType())) {
+                            robotImpl.setRobot(robotCandidateList.get(index));
+                            robotCandidateList.remove(index);
+                            break;
+                        }
                     }
+                    robotImplList.add(robotImpl);
+                    robotIndex = robotIndex + 1;
                 }
-                robotImplList.add(robotImpl);
-                robotIndex = robotIndex + 1;
             }
         }
         return robotImplList;

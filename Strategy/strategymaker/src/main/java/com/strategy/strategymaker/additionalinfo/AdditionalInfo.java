@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 public class AdditionalInfo {
     private String projectName;
     private String taskServerPrefix;
+    private List<DatabaseInfo> dbInfo;
     private List<String> robotList;
     private List<ControlStrategyInfo> strategyList;
     private List<ConnectionInfo> connectionList;
@@ -97,4 +98,13 @@ public class AdditionalInfo {
     public void setVariableList(List<CustomVariableInfo> variableList) {
         this.variableList = variableList;
     }
+
+    public List<DatabaseInfo> getDbInfo() {
+        return dbInfo;
+    }
+
+    public void setDbInfo(List<DatabaseInfo> dbInfo) {
+        this.dbInfo = dbInfo;
+    }
+
 }

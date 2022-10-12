@@ -27,12 +27,14 @@ public class ControlStrategyInfoMaker {
                 String team = robot.getGroupList().get(0);
                 Set<ControlStrategyWrapper> controlStrategySet = new HashSet<>();
                 for (ActionTypeWrapper action : robot.getActionTypeList()) {
-                    String controlStrategyId = StrategyConstant.CONTROL_STRATEGY_DEFAULT;
                     ControlStrategyWrapper controlStrategy = new ControlStrategyWrapper();
+                    String controlStrategyId;
                     if (containControlStrategyInfo(additionalInfo, team, robot, action)) {
                         controlStrategyId =
                                 getControlStrategyInfo(additionalInfo, team, robot, action)
                                         .getStrategyId();
+                    } else {
+                        controlStrategyId = makeDefaultControlStrategyId(robot, action);
                     }
                     if (controlStrategyStore.keySet().contains(controlStrategyId)) {
                         controlStrategy = controlStrategyStore.get(controlStrategyId);
@@ -62,6 +64,12 @@ public class ControlStrategyInfoMaker {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static String makeDefaultControlStrategyId(RobotImplWrapper robot,
+            ActionTypeWrapper action) {
+        return robot.getRobotType().getRobotType().getRobotClass() + "_"
+                + action.getAction().getName() + "_0";
     }
 
     private static ControlStrategyInfo getControlStrategyInfo(AdditionalInfo additionalInfo,

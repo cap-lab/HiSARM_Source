@@ -20,15 +20,27 @@ public class RobotImplWrapper {
     private List<ControlStrategyWrapper> controlStrategyList = new ArrayList<>();
     private List<ActionTypeWrapper> actionTypeList = new ArrayList<>();
     private List<Task> additionalTaskList = new ArrayList<>();
-    private Map<String, VariableTypeWrapper> variableList = new HashMap<>();
+    private Map<String, VariableTypeWrapper> variableMap = new HashMap<>();
 
     public ActionTypeWrapper getActionType(String actionType) throws Exception {
-        Optional<ActionTypeWrapper> team = getActionTypeList().stream()
+        Optional<ActionTypeWrapper> action = getActionTypeList().stream()
                 .filter(t -> t.getAction().getName().equals(actionType)).findAny();
-        if (team.isPresent()) {
-            return team.get();
+        if (action.isPresent()) {
+            return action.get();
         } else {
             throw new Exception("No action whose name is " + actionType);
+        }
+    }
+
+    public void addTeam(String team) {
+        groupList.add(0, team);
+    }
+
+    public String getTeam() throws Exception {
+        if (groupList.size() > 0) {
+            return groupList.get(0);
+        } else {
+            throw new Exception("A team is not yet allocated");
         }
     }
 }

@@ -1,11 +1,13 @@
 package com.strategy.strategymaker;
 
 import java.nio.file.Paths;
+import com.dbmanager.commonlibraries.DBService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
 import com.strategy.strategydatastructure.wrapper.StrategyWrapper;
 import com.strategy.strategymaker.additionalinfo.AdditionalInfo;
+import com.strategy.strategymaker.additionalinfo.DatabaseInfo;
 
 public class StrategyMaker {
 
@@ -23,8 +25,11 @@ public class StrategyMaker {
     public StrategyWrapper strategyMake(MissionWrapper mission, String additionalInfoFile) {
         StrategyWrapper strategy = new StrategyWrapper();
         AdditionalInfo additionalInfo = parsingAdditionalInfo(additionalInfoFile);
-
+        DatabaseInfo dbInfo = additionalInfo.getDbInfo().get(0);
+        DBService.initializeDB(dbInfo.getIp(), dbInfo.getPort(), dbInfo.getUserName(),
+                dbInfo.getPassword(), dbInfo.getDbName());
         strategy.setRobotList(RobotInfoMaker.makeRobotImplList(mission, additionalInfo));
+        GroupAllocator.allocateGroup(mission, strategy.getRobotList());
         ActionTypeInfoMaker.makeActionTypeList(mission, strategy.getRobotList());
         ControlStrategyInfoMaker.makeControlStrategyList(additionalInfo, strategy.getRobotList());
         VariableInfoMaker.makeVariableInfoList(mission, additionalInfo, strategy.getRobotList());

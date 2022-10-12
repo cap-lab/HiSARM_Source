@@ -43,12 +43,14 @@ public class VariableInfoMaker {
             for (RobotImplWrapper robot : robotList) {
                 String team = robot.getGroupList().get(0);
                 TransitionWrapper mainTransition = mission.getTransition(team);
-                traverseTransition(mainTransition, robot, additionalInfo, mission);
+                robot.setVariableMap(
+                        traverseTransition(mainTransition, robot, additionalInfo, mission));
             }
             for (RobotImplWrapper robot : robotList) {
                 String team = robot.getGroupList().get(0);
                 TransitionWrapper mainTransition = mission.getTransition(team);
-                traverseTransition(mainTransition, robot, additionalInfo, mission);
+                robot.setVariableMap(
+                        traverseTransition(mainTransition, robot, additionalInfo, mission));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -63,9 +65,8 @@ public class VariableInfoMaker {
         variableMap.putAll(visitMode(defaultMode, robot, additionalInfo, mission));
         for (List<CatchEventWrapper> ceList : transition.getTransitionMap().values()) {
             for (CatchEventWrapper ce : ceList) {
-                variableMap.putAll(visitMode(
-
-                        ce.getMode().getMode(), robot, additionalInfo, mission));
+                variableMap
+                        .putAll(visitMode(ce.getMode().getMode(), robot, additionalInfo, mission));
             }
         }
         return variableMap;
