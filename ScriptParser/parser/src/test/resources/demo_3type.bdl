@@ -32,8 +32,8 @@ Main.Assistant {
 
 Main.Guard {
     case(REMOTE_CONTROL):
-        catch(START): mode = WATCH("Searcher", "Assistant")
-    case(WATCH):
+        catch(START): mode = OBSERVE("Searcher", "Assistant")
+    case(OBSERVE):
         catch(FINISH): mode = FINISH
         catch(HIDE): mode = GUARD("Searcher", "Assistant")
     case(GUARD):
@@ -44,57 +44,57 @@ Main.Guard {
 Mode.REMOTE_CONTROL {
     services:
         RemoteControlGroup
-        ReceiveCommand
-        SendImage
+        ReceiveCommandFromOperator
+        SendImageToOperator
 }
 
 Mode.SEARCH(target, sender) {
     services:
         Search(target)
         ListenAlarm(sender)
-        ReceiveCommand
+        ReceiveCommandFromOperator
 }
 
 Mode.HIDE(sender) {
     services:
         Hide
         ListenAlarm(sender)
-        ReceiveCommand
+        ReceiveCommandFromOperator
 }
 
 Mode.FOLLOW {
     services:
         Follow
-        ReceiveCommand
+        ReceiveCommandFromOperator
 }
 
-Mode.COVER(team_name) {
+Mode.COVER(sender) {
     services:
         Attack
-        ListenAlarm(team_name)
-        ReceiveCommand
+        ListenAlarm(sender)
+        ReceiveCommandFromOperator
 }
 
-Mode.WATCH(receiver1, receiver2) {
+Mode.OBSERVE(receiver1, receiver2) {
     services:
-        Watch(receiver1, receiver2)
-        ReceiveCommand
+        ObserveAndShare(receiver1, receiver2)
+        ReceiveCommandFromOperator
 }
 
 Mode.GUARD(receiver1, receiver2) {
     services:
         ReleaseAlarm(receiver1, receiver2)
         Attack
-        ReceiveCommand
+        ReceiveCommandFromOperator
 }
 
 RemoteControlGroup {
-    direction = group_remote_control()
-    group_move(direction)
+    direction = getDirection()
+    moveByRemoteControl(direction)
 } repeat(100 MSEC)
 
-ReceiveCommand {
-    cmd = group_get_cmd()
+ReceiveCommandFromOperator {
+    cmd = getModeTrasferCommand()
     if (cmd == "REMOTE_CONTROL"){
         throw REMOTE_CONTROL broadcast
     } else if (cmd == "START") {
@@ -104,12 +104,15 @@ ReceiveCommand {
     }
 } repeat(500 MSEC)
 
-SendImage {
-    sendImage()
+SendImageToOperator {
+    sendImageToOperator()
 } repeat(100 MSEC)
 
 Search(target) {
-    search(target)
+    isFound = search(target)
+    if (isFound == "TRUE") {
+        throw FINISH broadcast
+    }
 }
 
 Hide {
@@ -124,30 +127,30 @@ Attack {
     attack()
 }
 
-ListenAlarm(sender) {
-    ISENEMY = receive(sender, ISENEMY)
-    if (ISENEMY == "TRUE") {
-        throw HIDE broadcast
-    }
-    if (ISENEMY == "FALSE") {
-        throw RESTART broadcast
-    }
-}
-
-Watch(receiver1, receiver2) {
-    ISENEMY = checkEnemy()
-    if (ISENEMY == "TRUE") {
-        send(receiver1, ISENEMY)
-        send(receiver2, ISENEMY)
+ObserveAndShare(receiver1, receiver2) {
+    isEnemy = checkEnemy()
+    if (isEnemy == "TRUE") {
+        send(receiver1, isEnemy)
+        send(receiver2, isEnemy)
         throw HIDE broadcast
     }
 }
 
 ReleaseAlarm(receiver1, receiver2) {
-    ISENEMY = checkEnemy()
-    if (ISENEMY == "FALSE") {
-        send(receiver1, ISENEMY)
-        send(receiver2, ISENEMY)
+    isEnemy = checkEnemy()
+    if (isEnemy == "FALSE") {
+        send(receiver1, isEnemy)
+        send(receiver2, isEnemy)
+        throw RESTART broadcast
+    }
+}
+
+ListenAlarm(sender) {
+    isEnemy = receive(sender, isEnemy)
+    if (isEnemy == "TRUE") {
+        throw HIDE broadcast
+    }
+    if (isEnemy == "FALSE") {
         throw RESTART broadcast
     }
 }
