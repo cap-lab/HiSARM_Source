@@ -1,12 +1,12 @@
 package com.dbmanager.datastructure.robot;
 
 import java.util.List;
+import java.util.Map;
 
 public class RobotImpl {
     private String robotId;
-    private int robotIndex;
     private String robotClass;
-    private List<DeviceInfo> deviceList;
+    private Map<ConnectionType, CommunicationAddress> communicationInfoMap;
 
     public String getRobotId() {
         return robotId;
@@ -14,14 +14,6 @@ public class RobotImpl {
 
     public void setRobotId(String robotId) {
         this.robotId = robotId;
-    }
-
-    public int getRobotIndex() {
-        return robotIndex;
-    }
-
-    public void setRobotIndex(int robotIndex) {
-        this.robotIndex = robotIndex;
     }
 
     public String getRobotClass() {
@@ -32,11 +24,13 @@ public class RobotImpl {
         this.robotClass = robotClass;
     }
 
-    public List<DeviceInfo> getDeviceList() {
-        return deviceList;
+    public Map<ConnectionType, CommunicationAddress> getCommunicationInfoMap() {
+        return communicationInfoMap;
     }
 
-    public void setDeviceList(List<DeviceInfo> deviceList) {
-        this.deviceList = deviceList;
+    public void setCommunicationInfoMap(
+            Map<ConnectionType, CommunicationAddress> communicationInfoMap) {
+        this.communicationInfoMap = communicationInfoMap;
     }
+
 }

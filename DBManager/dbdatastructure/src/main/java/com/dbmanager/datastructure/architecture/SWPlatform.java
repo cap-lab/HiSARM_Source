@@ -1,7 +1,7 @@
 package com.dbmanager.datastructure.architecture;
 
 public enum SWPlatform {
-    ARDUINO("Arduino"), LINUX("Linux"), WINDOWS("Windows");
+    ARDUINO("Arduino"), LINUX("Linux");
 
     private final String value;
 

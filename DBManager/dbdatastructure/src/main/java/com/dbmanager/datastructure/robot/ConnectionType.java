@@ -1,10 +1,7 @@
 package com.dbmanager.datastructure.robot;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public enum ConnectionType {
-    ETHERNET_WIFI("Ethernet/Wi-Fi"), BLUETOOTH("Bluetooth"), WIRE("Wire"), USB("USB");
+    ETHERNET_WIFI("Ethernet/Wi-Fi"), USB("USB");
 
     private final String value;
 
@@ -22,14 +19,5 @@ public enum ConnectionType {
         } else {
             return ConnectionType.valueOf(value);
         }
-    }
-
-    public static List<ConnectionType> getConnectionPriority() {
-        List<ConnectionType> connectionList = new ArrayList<ConnectionType>();
-        connectionList.add(BLUETOOTH);
-        connectionList.add(ETHERNET_WIFI);
-        connectionList.add(WIRE);
-        connectionList.add(USB);
-        return connectionList;
     }
 }
