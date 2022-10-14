@@ -2,7 +2,6 @@ package com.strategy.strategymaker.additionalinfo;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.dbmanager.datastructure.robot.ConnectionType;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
@@ -12,13 +11,11 @@ public class AdditionalInfo {
     private List<DatabaseInfo> dbInfo;
     private List<String> robotList;
     private List<ControlStrategyInfo> strategyList;
-    private List<ConnectionInfo> connectionList;
     private List<CustomVariableInfo> variableList;
 
     public AdditionalInfo() {
         robotList = new ArrayList<String>();
         strategyList = new ArrayList<ControlStrategyInfo>();
-        connectionList = new ArrayList<ConnectionInfo>();
         variableList = new ArrayList<CustomVariableInfo>();
     }
 
@@ -68,26 +65,6 @@ public class AdditionalInfo {
             }
         }
         return null;
-    }
-
-    public List<ConnectionInfo> getConnectionList() {
-        return connectionList;
-    }
-
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
-    public void setConnectionList(List<ConnectionInfo> connectionList) {
-        this.connectionList = connectionList;
-    }
-
-    public List<ConnectionType> getConnectionCandidates(String robot1, String robot2) {
-        List<ConnectionType> connectionCandidateList = new ArrayList<ConnectionType>();
-        for (ConnectionInfo connection : connectionList) {
-            if (connection.getRobotList().contains(robot1)
-                    && connection.getRobotList().contains(robot2)) {
-                connectionCandidateList.add(connection.getConnection());
-            }
-        }
-        return connectionCandidateList;
     }
 
     public List<CustomVariableInfo> getVariableList() {
