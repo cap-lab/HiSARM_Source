@@ -2,7 +2,6 @@ package com.metadata.generator.algorithm.task;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.metadata.generator.algorithm.UEMChannelPort;
 import com.metadata.generator.algorithm.UEMCommPort;
 import com.metadata.generator.algorithm.UEMLibrary;
 import com.metadata.generator.algorithm.UEMPortMap;
@@ -10,7 +9,6 @@ import com.metadata.generator.constant.AlgorithmConstant;
 import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 import hopes.cic.xml.PortDirectionType;
 import hopes.cic.xml.RunConditionType;
-import hopes.cic.xml.TaskPortType;
 import hopes.cic.xml.YesNoType;
 
 public class UEMRobotTask extends UEMTask {

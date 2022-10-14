@@ -39,7 +39,7 @@ public class UEMChannelPort extends TaskPortType {
     }
 
     private PortDirectionType convertPortDirection(PortDirection direcrtion) {
-        return direction.equals(PortDirection.INPUT) ? PortDirectionType.INPUT
+        return direction.equals(PortDirection.IN) ? PortDirectionType.INPUT
                 : PortDirectionType.OUTPUT;
     }
 

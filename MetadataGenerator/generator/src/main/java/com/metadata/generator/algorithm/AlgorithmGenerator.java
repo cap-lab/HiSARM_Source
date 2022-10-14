@@ -70,6 +70,7 @@ public class AlgorithmGenerator {
                                     UEMChannel channel = UEMChannel.makeChannel(robotTask, port,
                                             counterRobotTask, counterPort);
                                     algorithm.getChannels().getChannel().add(channel);
+                                    algorithm.putRobotConnection(robotTask, counterRobotTask);
                                 }
                             }
                         }
