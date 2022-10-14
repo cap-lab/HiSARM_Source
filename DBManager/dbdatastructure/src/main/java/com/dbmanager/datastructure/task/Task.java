@@ -14,11 +14,11 @@ public class Task {
     private String linkFlags;
     private boolean hasSubGraph;
     private String RunCondition;
+    private ChannelPort groupPort;
+    private LibraryPort leaderPort;
     private List<ExtraSetting> extraSettings;
     private Set<ChannelPort> channelPortSet;
-    private Set<MulticastPort> multicastPortSet;
     private Set<LibraryPort> libraryPortSet;
-    private Set<SysRequest> sysRequestSet;
     private Set<PortMap> portMapSet;
     private Set<TaskFile> taskFiles;
 
@@ -118,28 +118,12 @@ public class Task {
         this.channelPortSet = channelPortSet;
     }
 
-    public Set<MulticastPort> getMulticastPortSet() {
-        return multicastPortSet;
-    }
-
-    public void setMulticastPortSet(Set<MulticastPort> multicastPortSet) {
-        this.multicastPortSet = multicastPortSet;
-    }
-
     public Set<LibraryPort> getLibraryPortSet() {
         return libraryPortSet;
     }
 
     public void setLibraryPortSet(Set<LibraryPort> libraryPortSet) {
         this.libraryPortSet = libraryPortSet;
-    }
-
-    public Set<SysRequest> getSysRequestSet() {
-        return sysRequestSet;
-    }
-
-    public void setSysRequestSet(Set<SysRequest> sysRequestSet) {
-        this.sysRequestSet = sysRequestSet;
     }
 
     public Set<PortMap> getPortMapSet() {
@@ -156,5 +140,21 @@ public class Task {
 
     public void setTaskFiles(Set<TaskFile> taskFiles) {
         this.taskFiles = taskFiles;
+    }
+
+    public ChannelPort getGroupPort() {
+        return groupPort;
+    }
+
+    public void setGroupPort(ChannelPort groupPort) {
+        this.groupPort = groupPort;
+    }
+
+    public LibraryPort getLeaderPort() {
+        return leaderPort;
+    }
+
+    public void setLeaderPort(LibraryPort leaderPort) {
+        this.leaderPort = leaderPort;
     }
 }

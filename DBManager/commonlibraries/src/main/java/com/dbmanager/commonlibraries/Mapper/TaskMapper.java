@@ -10,10 +10,8 @@ import com.dbmanager.datastructure.task.ChannelPort;
 import com.dbmanager.datastructure.task.CommunicationType;
 import com.dbmanager.datastructure.task.ExtraSetting;
 import com.dbmanager.datastructure.task.LibraryPort;
-import com.dbmanager.datastructure.task.MulticastPort;
 import com.dbmanager.datastructure.task.PortDirection;
 import com.dbmanager.datastructure.task.PortMap;
-import com.dbmanager.datastructure.task.SysRequest;
 import com.dbmanager.datastructure.task.Task;
 import com.dbmanager.datastructure.task.TaskFile;
 import com.dbmanager.datastructure.task.Time;
@@ -31,12 +29,6 @@ public class TaskMapper {
         return channelPort;
     }
 
-    private static MulticastPort mapToMulticastPort(Document document) {
-        MulticastPort multicastPort = new MulticastPort();
-
-        return multicastPort;
-    }
-
     private static LibraryPort mapToLibraryPort(Document document) {
         LibraryPort libraryPort = new LibraryPort();
 
@@ -44,16 +36,6 @@ public class TaskMapper {
         libraryPort.setIndex(document.getInteger("index"));
 
         return libraryPort;
-    }
-
-    private static SysRequest mapToSysRequest(Document document) {
-        SysRequest sysRequest = new SysRequest();
-
-        sysRequest.setName(document.getString("name"));
-        sysRequest.setType(document.getString("type"));
-        sysRequest.setValue(document.getDouble("value"));
-
-        return sysRequest;
     }
 
     private static Set<ChannelPort> makeChannelPortSet(List<Document> documentList) {
@@ -64,14 +46,6 @@ public class TaskMapper {
         return channelPortSet;
     }
 
-    private static Set<MulticastPort> makeMulticastPortSet(List<Document> documentList) {
-        Set<MulticastPort> multicastPortSet = new HashSet<MulticastPort>();
-        documentList.stream()
-                .filter(doc -> doc.getString("type").equals(CommunicationType.MULTICAST.getValue()))
-                .forEach(doc -> multicastPortSet.add(mapToMulticastPort(doc)));
-        return multicastPortSet;
-    }
-
     private static Set<LibraryPort> makeLibraryPortSet(List<Document> documentList) {
         Set<LibraryPort> libraryPortSet = new HashSet<LibraryPort>();
         documentList.stream()
@@ -80,12 +54,28 @@ public class TaskMapper {
         return libraryPortSet;
     }
 
-    private static Set<SysRequest> makeSysRequestSet(List<Document> documentList) {
-        Set<SysRequest> sysRequestSet = new HashSet<SysRequest>();
-        documentList.stream().filter(
-                doc -> doc.getString("type").equals(CommunicationType.SYSREQUEST.getValue()))
-                .forEach(doc -> sysRequestSet.add(mapToSysRequest(doc)));
-        return sysRequestSet;
+    private static ChannelPort makeGroupPort(List<Document> documentList) {
+        ChannelPort groupPort = null;
+        if (documentList.stream()
+                .filter(doc -> doc.getString("type").equals(CommunicationType.GROUP.getValue()))
+                .findFirst().isPresent()) {
+            groupPort = new ChannelPort();
+            groupPort.setDirection(PortDirection.IN);
+            groupPort.setName(CommunicationType.GROUP.getValue());
+            groupPort.setSampleSize(4);
+        }
+        return groupPort;
+    }
+
+    private static LibraryPort makeLeaderPort(List<Document> documentList) {
+        LibraryPort leaderPort = null;
+        if (documentList.stream()
+                .filter(doc -> doc.getString("type").equals(CommunicationType.LEADER.getValue()))
+                .findFirst().isPresent()) {
+            leaderPort = new LibraryPort();
+            leaderPort.setName(CommunicationType.LEADER.getValue());
+        }
+        return leaderPort;
     }
 
     private static Set<TaskFile> makeTaskFileSet(List<Document> documentList) {
@@ -150,12 +140,10 @@ public class TaskMapper {
             task.setExtraSettings(makeExtraSetting((List<Document>) document.get("ExtraSetting")));
             task.setChannelPortSet(
                     makeChannelPortSet((List<Document>) document.get("Communication")));
-            task.setMulticastPortSet(
-                    makeMulticastPortSet((List<Document>) document.get("Communication")));
             task.setLibraryPortSet(
                     makeLibraryPortSet((List<Document>) document.get("Communication")));
-            task.setSysRequestSet(
-                    makeSysRequestSet((List<Document>) document.get("Communication")));
+            task.setGroupPort(makeGroupPort((List<Document>) document.get("Communication")));
+            task.setLeaderPort(makeLeaderPort((List<Document>) document.get("Communication")));
             task.setPortMapSet(makePortMapSet((List<Document>) document.get("PortMap")));
             task.setTaskFiles(makeTaskFileSet((List<Document>) document.get("File")));
         } catch (Exception e) {
