@@ -29,6 +29,7 @@ import com.strategy.strategydatastructure.wrapper.StrategyWrapper;
 import com.strategy.strategydatastructure.wrapper.VariableTypeWrapper;
 import com.strategy.strategymaker.GroupAllocator;
 import com.strategy.strategymaker.additionalinfo.AdditionalInfo;
+import hopes.cic.exception.CICXMLException;
 import hopes.cic.xml.ChannelPortType;
 import hopes.cic.xml.PortDirectionType;
 import hopes.cic.xml.TaskPortType;
@@ -38,7 +39,7 @@ public class AlgorithmGenerator {
     private static CICAlgorithmXMLHandler handler = new CICAlgorithmXMLHandler();
     private static UEMAlgorithm algorithm = new UEMAlgorithm();
 
-    public static void generateAlgorithmXML(MissionWrapper mission, StrategyWrapper strategy,
+    public static void generate(MissionWrapper mission, StrategyWrapper strategy,
             AdditionalInfo additionalInfo, Path targetDir) {
         try {
             for (RobotImplWrapper robot : strategy.getRobotList()) {
@@ -385,5 +386,14 @@ public class AlgorithmGenerator {
                     .map(pm -> (UEMPortMap) pm).toList(), channelList);
         }
         algorithm.getChannels().getChannel().addAll(channelList);
+    }
+
+    public String getXMLString() {
+        try {
+            return handler.getXMLString();
+        } catch (CICXMLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

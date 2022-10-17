@@ -2,17 +2,12 @@ package com.metadata.generator.architecture;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.sound.sampled.Port;
 import com.dbmanager.datastructure.architecture.Architecture;
 import com.dbmanager.datastructure.architecture.Processor;
 import com.dbmanager.datastructure.robot.CommunicationAddress;
-import com.dbmanager.datastructure.robot.Connection;
 import com.dbmanager.datastructure.robot.ConnectionType;
 import com.dbmanager.datastructure.robot.IPBasedAddress;
 import com.dbmanager.datastructure.robot.PortBasedAddress;
-import com.dbmanager.datastructure.robot.RobotImpl;
 import com.metadata.generator.UEMRobot;
 import com.metadata.generator.algorithm.UEMAlgorithm;
 import com.metadata.generator.algorithm.task.UEMRobotTask;
@@ -29,7 +24,7 @@ public class ArchitectureGenerator {
     private static CICArchitectureXMLHandler handler = new CICArchitectureXMLHandler();
     private static UEMArchitecture architecture = new UEMArchitecture();
 
-    public static void generate(MissionWrapper mission, AdditionalInfo additionalInfo,
+    public static List<UEMRobot> generate(MissionWrapper mission, AdditionalInfo additionalInfo,
             UEMAlgorithm algorithm) {
         try {
             List<UEMRobot> robotList = new ArrayList<>();
@@ -42,8 +37,10 @@ public class ArchitectureGenerator {
                 makeIntraRobotConnection(robot);
             }
             makeInterRobotConnection(algorithm, robotList);
+            return robotList;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
     }
 
