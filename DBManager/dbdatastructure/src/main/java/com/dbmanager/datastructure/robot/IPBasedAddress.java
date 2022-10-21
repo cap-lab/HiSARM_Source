@@ -10,7 +10,7 @@ public class IPBasedAddress implements CommunicationAddress {
     public static final String IP = "ip";
     public static final String PORT = "port";
 
-    public void setIP(String ip) {
+    public void setIp(String ip) {
         this.ip = ip;
     }
 

@@ -6,7 +6,6 @@ public class Robot {
     private String robotClass;
     private String primaryArchitecture;
     private List<String> architectureList;
-    private List<Connection> connectionList;
     private List<String> resourceList;
 
     public String getRobotClass() {
@@ -31,14 +30,6 @@ public class Robot {
 
     public void setArchitectureList(List<String> architectureList) {
         this.architectureList = architectureList;
-    }
-
-    public List<Connection> getConnectionList() {
-        return connectionList;
-    }
-
-    public void setConnectionList(List<Connection> connectionList) {
-        this.connectionList = connectionList;
     }
 
     public List<String> getResourceList() {

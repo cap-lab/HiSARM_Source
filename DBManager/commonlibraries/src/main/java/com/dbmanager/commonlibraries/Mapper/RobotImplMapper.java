@@ -15,20 +15,24 @@ public class RobotImplMapper {
     private static Map<ConnectionType, CommunicationAddress> makeCommunicationMap(
             List<Document> documentList) {
         Map<ConnectionType, CommunicationAddress> communicationMap = new HashMap<>();
-
         documentList.forEach(d -> {
             ConnectionType type =
                     ConnectionType.getEnumFromString(d.getString("type").toUpperCase());
-            CommunicationAddress address = null;
+            Document addressDoc = d.get("address", Document.class);
             switch (type) {
                 case ETHERNET_WIFI:
-                    address = d.get("address", IPBasedAddress.class);
+                    IPBasedAddress ipAddress = new IPBasedAddress();
+                    ipAddress.setIp(addressDoc.getString("ip"));
+                    ipAddress.setPort(addressDoc.getInteger("port"));
+                    ipAddress = addressDoc.get("address", IPBasedAddress.class);
+                    communicationMap.put(type, ipAddress);
                     break;
                 case USB:
-                    address = d.get("address", PortBasedAddress.class);
+                    PortBasedAddress portAddress = new PortBasedAddress();
+                    portAddress.setPort(addressDoc.getString("port"));
+                    communicationMap.put(type, portAddress);
                     break;
             }
-            communicationMap.put(type, address);
         });
 
         return communicationMap;
