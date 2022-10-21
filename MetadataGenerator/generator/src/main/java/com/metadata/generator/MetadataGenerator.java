@@ -5,10 +5,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+
+import com.metadata.generator.algorithm.AlgorithmGenerator;
+import com.metadata.generator.architecture.ArchitectureGenerator;
 import com.metadata.generator.constant.MetadataConstant;
+import com.metadata.generator.mapping.MappingGenerator;
 import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
 import com.strategy.strategydatastructure.wrapper.StrategyWrapper;
-import com.strategy.strategymaker.additionalinfo.AdditionalInfo;
+import com.strategy.strategydatastructure.additionalinfo.AdditionalInfo;
 
 public class MetadataGenerator {
     private String makeProjectDirName(String projectName) {
@@ -33,5 +38,17 @@ public class MetadataGenerator {
         }
         makeProjectDirectory(projectDir);
         ConfigurationGenerator.generateConfiguration(projectDir, projectName);
+
+        AlgorithmGenerator algorithm = new AlgorithmGenerator();
+        algorithm.generate(mission, strategy, additionalInfo, projectDir);
+        algorithm.generateAlgorithmXML(projectDir, projectName);
+
+        ArchitectureGenerator architecture = new ArchitectureGenerator();
+        List<UEMRobot> robotList = architecture.generate(mission, additionalInfo, algorithm.getAlgorithm());
+        architecture.generateArchitectureXML(projectDir, projectName);
+
+        MappingGenerator mapping = new MappingGenerator();
+        mapping.generate(robotList, algorithm.getAlgorithm());
+        mapping.generateMappingXML(projectDir, projectName);
     }
 }

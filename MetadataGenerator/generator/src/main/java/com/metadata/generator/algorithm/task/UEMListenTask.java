@@ -22,7 +22,7 @@ public class UEMListenTask extends UEMCommTask {
         String portName = makePortName(statement.getCounterTeam(), statement.getMessage().getId());
         if (!existChannelPort(portName)) {
             VariableTypeWrapper variable =
-                    robot.getRobot().getVariableList().get(statement.getOutput().getId());
+                    robot.getRobot().getVariableMap().get(statement.getOutput().getId());
             int portSize =
                     variable.getVariableType().getSize() * variable.getVariableType().getCount();
             UEMCommPort inPort = new UEMCommPort();
@@ -46,12 +46,12 @@ public class UEMListenTask extends UEMCommTask {
         String portName = makePortName(statement.getCounterTeam(), statement.getMessage().getId());
         if (!existMulticastPort(portName)) {
             VariableTypeWrapper variable =
-                    robot.getRobot().getVariableList().get(statement.getOutput().getId());
+                    robot.getRobot().getVariableMap().get(statement.getOutput().getId());
             int portSize =
                     variable.getVariableType().getSize() * variable.getVariableType().getCount();
             UEMMulticastPort inPort = new UEMMulticastPort();
             inPort.setName(portName);
-            inPort.setGroup(robot.getRobot().getGroupList().get(0));
+            inPort.setGroup(robot.getRobot().getTeam());
             inPort.setDirection(PortDirectionType.INPUT);
             getMulticastPort().add(inPort);
             UEMChannelPort outPort = new UEMChannelPort();

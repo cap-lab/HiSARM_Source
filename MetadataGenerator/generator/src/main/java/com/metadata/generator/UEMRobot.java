@@ -1,5 +1,6 @@
 package com.metadata.generator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import com.metadata.generator.algorithm.task.UEMRobotTask;
@@ -7,7 +8,7 @@ import com.metadata.generator.architecture.UEMArchitectureDevice;
 
 public class UEMRobot {
     UEMRobotTask robotTask;
-    List<UEMArchitectureDevice> deviceList;
+    List<UEMArchitectureDevice> deviceList = new ArrayList<>();
 
     public UEMRobotTask getRobotTask() {
         return robotTask;

@@ -1,5 +1,6 @@
 package com.metadata.generator.algorithm.task;
 
+import java.util.ArrayList;
 import java.util.List;
 import com.dbmanager.datastructure.task.ChannelPort;
 import com.dbmanager.datastructure.task.LibraryPort;
@@ -10,11 +11,12 @@ import com.metadata.generator.algorithm.UEMTaskGraph;
 import com.metadata.generator.constant.AlgorithmConstant;
 import com.strategy.strategydatastructure.wrapper.ActionImplWrapper;
 import hopes.cic.xml.LibraryMasterPortType;
+import hopes.cic.xml.YesNoType;
 
 public class UEMActionTask extends UEMTask {
     private ActionImplWrapper action;
     private String scope;
-    private List<UEMTaskGraph> subTaskGraphs;
+    private List<UEMTaskGraph> subTaskGraphs = new ArrayList<>();
 
     public UEMActionTask(String robotTask, String groupId, String serviceId,
             ActionImplWrapper action) {
@@ -33,6 +35,7 @@ public class UEMActionTask extends UEMTask {
             setCflags(task.getCompileFlags());
             setLdflags(task.getLinkFlags());
             setHasSubGraph(convertYesNoString(task.isHasSubGraph()));
+            setIsHardwareDependent(YesNoType.NO);
             setTaskType(AlgorithmConstant.COMPUTATION_TASK);
             setLanguage(task.getLanguage());
             setChannelPorts(task);

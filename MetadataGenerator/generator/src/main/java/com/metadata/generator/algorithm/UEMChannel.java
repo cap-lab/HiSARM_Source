@@ -27,7 +27,7 @@ public class UEMChannel extends ChannelType {
     }
 
     public void setType(String type) {
-        setType(ChannelTypeType.valueOf(type));
+        setType(ChannelTypeType.fromValue(type));
     }
 
     public static UEMChannel makeChannel(UEMTask task, UEMChannelPort port, UEMTask counterTask,

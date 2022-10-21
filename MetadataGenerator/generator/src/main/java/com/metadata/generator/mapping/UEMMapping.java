@@ -12,4 +12,12 @@ public class UEMMapping extends CICMappingType {
         }
         return null;
     }
+
+    public void addMulticast(String groupName){
+        if (getMulticast(groupName) == null){
+            UEMMappingMulticast multicast = new UEMMappingMulticast();
+            multicast.setGroupName(groupName);
+            getMulticast().add(multicast);
+        }
+    }
 }

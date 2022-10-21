@@ -22,7 +22,7 @@ public class UEMReportTask extends UEMCommTask {
         String portName = makePortName(statement.getCounterTeam(), statement.getMessage().getId());
         if (!existChannelPort(portName)) {
             VariableTypeWrapper variable =
-                    robot.getRobot().getVariableList().get(statement.getOutput().getId());
+                    robot.getRobot().getVariableMap().get(statement.getOutput().getId());
             int portSize =
                     variable.getVariableType().getSize() * variable.getVariableType().getCount();
             UEMChannelPort inPort = new UEMChannelPort();
@@ -46,7 +46,7 @@ public class UEMReportTask extends UEMCommTask {
         String portName = makePortName(statement.getCounterTeam(), statement.getMessage().getId());
         if (!existMulticastPort(portName)) {
             VariableTypeWrapper variable =
-                    robot.getRobot().getVariableList().get(statement.getOutput().getId());
+                    robot.getRobot().getVariableMap().get(statement.getOutput().getId());
             int portSize =
                     variable.getVariableType().getSize() * variable.getVariableType().getCount();
             UEMChannelPort inPort = new UEMChannelPort();

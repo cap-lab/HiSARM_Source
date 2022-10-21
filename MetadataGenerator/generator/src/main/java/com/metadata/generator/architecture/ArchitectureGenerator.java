@@ -1,5 +1,7 @@
 package com.metadata.generator.architecture;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import com.dbmanager.datastructure.architecture.Architecture;
@@ -11,9 +13,10 @@ import com.dbmanager.datastructure.robot.PortBasedAddress;
 import com.metadata.generator.UEMRobot;
 import com.metadata.generator.algorithm.UEMAlgorithm;
 import com.metadata.generator.algorithm.task.UEMRobotTask;
+import com.metadata.generator.constant.MetadataConstant;
 import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
 import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
-import com.strategy.strategymaker.additionalinfo.AdditionalInfo;
+import com.strategy.strategydatastructure.additionalinfo.AdditionalInfo;
 import hopes.cic.exception.CICXMLException;
 import hopes.cic.xml.ArchitectureElementCategoryType;
 import hopes.cic.xml.ModuleListType;
@@ -21,15 +24,15 @@ import hopes.cic.xml.ModuleType;
 import hopes.cic.xml.handler.CICArchitectureXMLHandler;
 
 public class ArchitectureGenerator {
-    private static CICArchitectureXMLHandler handler = new CICArchitectureXMLHandler();
-    private static UEMArchitecture architecture = new UEMArchitecture();
+    private UEMArchitecture architecture = new UEMArchitecture();
 
-    public static List<UEMRobot> generate(MissionWrapper mission, AdditionalInfo additionalInfo,
+    public List<UEMRobot> generate(MissionWrapper mission, AdditionalInfo additionalInfo,
             UEMAlgorithm algorithm) {
         try {
             List<UEMRobot> robotList = new ArrayList<>();
             for (UEMRobotTask robotTask : algorithm.getRobotTaskList()) {
                 UEMRobot robot = new UEMRobot();
+                robotList.add(robot);
                 robot.setRobotTask(robotTask);
                 makeTarget(robot);
                 makeElementType(robot);
@@ -44,21 +47,21 @@ public class ArchitectureGenerator {
         }
     }
 
-    private static void makeTarget(UEMRobot robot) {
+    private void makeTarget(UEMRobot robot) {
         for (Architecture device : robot.getRobotTask().getRobot().getRobotType().getDeviceList()) {
             architecture.setTarget(device.getDeviceName());
             break;
         }
     }
 
-    private static void makeElementType(UEMRobot robot) {
+    private void makeElementType(UEMRobot robot) {
         for (Architecture device : robot.getRobotTask().getRobot().getRobotType().getDeviceList()) {
             makeProcessorElement(device);
             makeMemoryElement(device);
         }
     }
 
-    private static void makeProcessorElement(Architecture device) {
+    private void makeProcessorElement(Architecture device) {
         for (Processor processor : device.getProcessors()) {
             if (!architecture.getElementTypes().getElementType().stream()
                     .filter(e -> e.getCategory().equals(ArchitectureElementCategoryType.PROCESSOR))
@@ -73,7 +76,7 @@ public class ArchitectureGenerator {
         }
     }
 
-    private static void makeMemoryElement(Architecture device) {
+    private void makeMemoryElement(Architecture device) {
         if (!architecture.getElementTypes().getElementType().stream()
                 .filter(e -> e.getCategory().equals(ArchitectureElementCategoryType.MEMORY))
                 .anyMatch(e -> e.getSlavePort().get(0).getSize().intValue() == device.getMemory()
@@ -87,14 +90,14 @@ public class ArchitectureGenerator {
         }
     }
 
-    private static void setDeviceAttribute(UEMArchitectureDevice device, String namePrefix,
+    private void setDeviceAttribute(UEMArchitectureDevice device, String namePrefix,
             Architecture deviceInfo) {
         device.setPlatform(deviceInfo.getSWPlatform().getValue());
         device.setArchitecture(deviceInfo.getCPU().getValue());
-        device.setName(namePrefix + "_" + deviceInfo.getDeviceName());
+        device.setName(namePrefix, deviceInfo.getDeviceName());
     }
 
-    private static void setDeviceProcessor(UEMArchitectureDevice device, Architecture deviceInfo) {
+    private void setDeviceProcessor(UEMArchitectureDevice device, Architecture deviceInfo) {
         for (Processor processor : deviceInfo.getProcessors()) {
             device.getElements().getElement()
                     .add(new UEMArchitectureElementType(processor.getNumberOfCores(),
@@ -103,17 +106,17 @@ public class ArchitectureGenerator {
         }
     }
 
-    private static void setDeviceMemory(UEMArchitectureDevice device, Architecture deviceInfo) {
+    private void setDeviceMemory(UEMArchitectureDevice device, Architecture deviceInfo) {
         device.getElements().getElement().add(new UEMArchitectureElementType(
                 deviceInfo.getMemory().getValue(), device.getName() + "_" + "SHARED_MEMORY"));
     }
 
-    private static void setDeviceElement(UEMArchitectureDevice device, Architecture deviceInfo) {
+    private void setDeviceElement(UEMArchitectureDevice device, Architecture deviceInfo) {
         setDeviceProcessor(device, deviceInfo);
         setDeviceMemory(device, deviceInfo);
     }
 
-    private static void setModuleList(UEMArchitectureDevice device, Architecture deviceInfo) {
+    private void setModuleList(UEMArchitectureDevice device, Architecture deviceInfo) {
         if (device.getModules() == null) {
             device.setModules(new ModuleListType());
         }
@@ -125,7 +128,7 @@ public class ArchitectureGenerator {
     }
 
 
-    private static void setDeviceEnvironmentVariable(UEMArchitectureDevice device,
+    private void setDeviceEnvironmentVariable(UEMArchitectureDevice device,
             Architecture deviceInfo) {
         deviceInfo.getEnvironmentVariableList().forEach(e -> {
             device.getEnvironmentVariables().getVariable()
@@ -133,7 +136,7 @@ public class ArchitectureGenerator {
         });
     }
 
-    public static void makeEachRobotArchitecture(UEMRobot robot) {
+    public void makeEachRobotArchitecture(UEMRobot robot) {
         RobotImplWrapper robotImpl = robot.getRobotTask().getRobot();
         for (Architecture robotArchitecture : robotImpl.getRobotType().getDeviceList()) {
             UEMArchitectureDevice architectureDevice = new UEMArchitectureDevice();
@@ -147,7 +150,7 @@ public class ArchitectureGenerator {
         }
     }
 
-    private static UEMTCPConnection makeTCPConnection(IPBasedAddress address, boolean isServer) {
+    private UEMTCPConnection makeTCPConnection(IPBasedAddress address, boolean isServer) {
         UEMTCPConnection connection = new UEMTCPConnection();
 
         connection.setIp((String) address.getAddress().get(IPBasedAddress.IP));
@@ -158,7 +161,7 @@ public class ArchitectureGenerator {
         return connection;
     }
 
-    private static UEMSerialConnection makePortConnection(PortBasedAddress address,
+    private UEMSerialConnection makePortConnection(PortBasedAddress address,
             boolean isMaster) {
         UEMSerialConnection connection = new UEMSerialConnection();
 
@@ -171,7 +174,7 @@ public class ArchitectureGenerator {
         return connection;
     }
 
-    private static void setDeviceConnection(ConnectionType type, UEMArchitectureDevice targetDevice,
+    private void setDeviceConnection(ConnectionType type, UEMArchitectureDevice targetDevice,
             CommunicationAddress address, boolean isServer_Master) {
         if (targetDevice.hasConnection(type, isServer_Master)) {
             return;
@@ -186,7 +189,7 @@ public class ArchitectureGenerator {
         }
     }
 
-    private static void setConnection(String masterDevice, String masterConnection,
+    private void setConnection(String masterDevice, String masterConnection,
             String slaveDevice, String slaveConnection) {
         UEMArchitectureConnection connection =
                 architecture.getConnection(masterDevice, masterConnection);
@@ -200,7 +203,7 @@ public class ArchitectureGenerator {
         }
     }
 
-    private static void makeIntraRobotConnection(UEMRobot robot) throws Exception {
+    private void makeIntraRobotConnection(UEMRobot robot) throws Exception {
         RobotImplWrapper robotImpl = robot.getRobotTask().getRobot();
         if (robotImpl.getRobotType().getRobotType().getArchitectureList().size() > 1) {
             String primaryDevice = robotImpl.getRobotType().getRobotType().getPrimaryArchitecture();
@@ -219,7 +222,7 @@ public class ArchitectureGenerator {
         }
     }
 
-    private static UEMArchitectureDevice findRobotPrimaryArchitecture(List<UEMRobot> robotList,
+    private UEMArchitectureDevice findRobotPrimaryArchitecture(List<UEMRobot> robotList,
             String robotId) throws Exception {
         for (UEMRobot robot : robotList) {
             if (robot.getRobotTask().getName().equals(robotId)) {
@@ -230,7 +233,7 @@ public class ArchitectureGenerator {
         return null;
     }
 
-    private static void makeChannelConnection(UEMAlgorithm algorithm, List<UEMRobot> robotList)
+    private void makeChannelConnection(UEMAlgorithm algorithm, List<UEMRobot> robotList)
             throws Exception {
         for (UEMRobotTask src : algorithm.getRobotConnectionMap().keySet()) {
             UEMArchitectureDevice srcDevice =
@@ -248,7 +251,7 @@ public class ArchitectureGenerator {
         }
     }
 
-    private static void makeInterRobotConnection(UEMAlgorithm algorithm, List<UEMRobot> robotList)
+    private void makeInterRobotConnection(UEMAlgorithm algorithm, List<UEMRobot> robotList)
             throws Exception {
         makeChannelConnection(algorithm, robotList);
         for (UEMRobot robot : robotList) {
@@ -257,12 +260,17 @@ public class ArchitectureGenerator {
         }
     }
 
-    public String getXMLString() {
+    public boolean generateArchitectureXML(Path rootDirectory, String projectName) {
         try {
-            return handler.getXMLString();
+            Path filePath = Paths.get(rootDirectory.toString(),
+                    projectName + MetadataConstant.ARCHITECTURE_SUFFIX);
+            CICArchitectureXMLHandler handler = new CICArchitectureXMLHandler();
+            handler.setArchitecture(architecture);
+            handler.storeXMLString(filePath.toString());
+            return true;
         } catch (CICXMLException e) {
             e.printStackTrace();
-            return null;
+            return false;
         }
     }
 }

@@ -14,7 +14,7 @@ public class ConfigurationGenerator {
             Path filePath = Paths.get(rootDirectory.toString(),
                     projectName + MetadataConstant.CONFIGURATION_SUFFIX);
             CICConfigurationXMLHandler handler = new CICConfigurationXMLHandler();
-            handler.loadXMLfileToHandler(templatePath.toString());
+            handler.loadXMLfileToHandler(templatePath.toAbsolutePath().toString());
             handler.storeXMLString(filePath.toString());
             return true;
         } catch (CICXMLException e) {

@@ -13,6 +13,10 @@ public class UEMLibrary extends LibraryType {
         setHasInternalStates(YesNoType.YES);
     }
 
+    public static String makeGroup(String groupScope, String actionName, int argIndex){
+        return groupScope + "_" + actionName + "_" + String.valueOf(argIndex);
+    }
+
     public static String makeName(String parentName, String scope, String libraryName) {
         if (scope == null) {
             return parentName + libraryName;

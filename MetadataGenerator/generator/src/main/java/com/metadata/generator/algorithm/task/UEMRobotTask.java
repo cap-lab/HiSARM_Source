@@ -28,6 +28,8 @@ public class UEMRobotTask extends UEMTask {
         setIsHardwareDependent(YesNoType.NO);
         setSubGraphProperty(AlgorithmConstant.PROCESS_NETWORK);
         this.robot = robot;
+        listenTask = new UEMListenTask(getName(), AlgorithmConstant.LISTEN);
+        reportTask = new UEMReportTask(getName(), AlgorithmConstant.REPORT);
     }
 
     public RobotImplWrapper getRobot() {
