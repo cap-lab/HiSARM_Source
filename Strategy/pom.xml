@@ -6,8 +6,8 @@
     <project.dbmanager.version>0.1-SNAPSHOT</project.dbmanager.version>
     <project.strategy.version>0.1-SNAPSHOT</project.strategy.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>13</maven.compiler.source>
-    <maven.compiler.target>13</maven.compiler.target>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
   </properties>
 
   <groupId>com.strategy</groupId>
