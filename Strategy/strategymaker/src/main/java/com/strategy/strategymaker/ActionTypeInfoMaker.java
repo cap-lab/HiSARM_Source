@@ -18,7 +18,6 @@ import com.scriptparser.parserdatastructure.wrapper.TransitionWrapper;
 import com.strategy.strategydatastructure.wrapper.ActionTypeWrapper;
 import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 import com.strategy.strategydatastructure.wrapper.VariableTypeWrapper;
-import com.strategy.strategymaker.constant.StrategyConstant;
 
 public class ActionTypeInfoMaker {
     private static Set<ActionTypeWrapper> actionTypeStore = new HashSet<>();

@@ -23,8 +23,8 @@ import com.scriptparser.parserdatastructure.wrapper.VariableWrapper;
 import com.strategy.strategydatastructure.wrapper.ActionTypeWrapper;
 import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 import com.strategy.strategydatastructure.wrapper.VariableTypeWrapper;
-import com.strategy.strategymaker.additionalinfo.AdditionalInfo;
-import com.strategy.strategymaker.additionalinfo.CustomVariableInfo;
+import com.strategy.strategydatastructure.additionalinfo.AdditionalInfo;
+import com.strategy.strategydatastructure.additionalinfo.CustomVariableInfo;
 
 public class VariableInfoMaker {
     private static Map<String, VariableTypeWrapper> variableStore = new HashMap<>();

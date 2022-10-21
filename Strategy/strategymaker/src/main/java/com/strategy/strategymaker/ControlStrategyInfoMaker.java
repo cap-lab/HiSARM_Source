@@ -8,13 +8,12 @@ import java.util.Map;
 import java.util.Set;
 import com.dbmanager.commonlibraries.DBService;
 import com.dbmanager.datastructure.controlstrategy.ControlStrategyElement;
+import com.strategy.strategydatastructure.additionalinfo.AdditionalInfo;
+import com.strategy.strategydatastructure.additionalinfo.ControlStrategyInfo;
 import com.strategy.strategydatastructure.wrapper.ActionImplWrapper;
 import com.strategy.strategydatastructure.wrapper.ActionTypeWrapper;
 import com.strategy.strategydatastructure.wrapper.ControlStrategyWrapper;
 import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
-import com.strategy.strategymaker.additionalinfo.AdditionalInfo;
-import com.strategy.strategymaker.additionalinfo.ControlStrategyInfo;
-import com.strategy.strategymaker.constant.StrategyConstant;
 
 public class ControlStrategyInfoMaker {
     private static Map<String, ControlStrategyWrapper> controlStrategyStore = new HashMap<>();
@@ -51,6 +50,7 @@ public class ControlStrategyInfoMaker {
                                 actionImpl.setActionImpl(
                                         DBService.getActionImpl(csElement.getActionImplId()));
                                 actionImpl.setAction(action);
+                                actionImpl.setTask(DBService.getTask(actionImpl.getActionImpl().getTaskId()));
                                 actionImplStore.put(csElement.getActionImplId(), actionImpl);
                             }
                             actionImplSet.add(actionImpl);

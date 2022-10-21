@@ -1,4 +1,4 @@
-package com.strategy.strategymaker.additionalinfo;
+package com.strategy.strategydatastructure.additionalinfo;
 
 public class CustomVariableInfo {
     private String name;

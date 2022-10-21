@@ -12,9 +12,9 @@ import com.dbmanager.datastructure.robot.RobotImpl;
 import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
 import com.scriptparser.parserdatastructure.wrapper.RobotWrapper;
 import com.scriptparser.parserdatastructure.wrapper.TeamWrapper;
+import com.strategy.strategydatastructure.additionalinfo.AdditionalInfo;
 import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 import com.strategy.strategydatastructure.wrapper.RobotTypeWrapper;
-import com.strategy.strategymaker.additionalinfo.AdditionalInfo;
 
 public class RobotInfoMaker {
     private static List<RobotTypeWrapper> robotTypeList = new ArrayList<>();

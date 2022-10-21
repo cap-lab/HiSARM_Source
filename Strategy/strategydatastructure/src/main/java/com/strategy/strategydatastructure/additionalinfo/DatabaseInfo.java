@@ -1,4 +1,4 @@
-package com.strategy.strategymaker.additionalinfo;
+package com.strategy.strategydatastructure.additionalinfo;
 
 public class DatabaseInfo {
     private String ip;

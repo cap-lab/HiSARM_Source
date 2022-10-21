@@ -1,4 +1,4 @@
-package com.strategy.strategymaker.additionalinfo;
+package com.strategy.strategydatastructure.additionalinfo;
 
 import java.util.ArrayList;
 import java.util.List;
