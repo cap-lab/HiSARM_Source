@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<xs:schema id="UEMCommon"
-        targetNamespace="http://iris.snu.ac.kr/UEM_Schema"
-        elementFormDefault="qualified"
-        xmlns="http://iris.snu.ac.kr/UEM_Schema"
-        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema id="UEMCommon" targetNamespace="http://iris.snu.ac.kr/UEM_Schema" elementFormDefault="qualified" xmlns="http://iris.snu.ac.kr/UEM_Schema" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <!-- Definitions for the common types -->
   <xs:simpleType name="NameType">
@@ -13,24 +9,31 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:complexType name="VectorType">
+  <xs:complexType name="UEMVectorType">
     <xs:sequence>
       <xs:element name="value" type="xs:integer" minOccurs="1" maxOccurs="unbounded" />
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="VectorListType">
+  <xs:complexType name="UEMVectorListType">
     <xs:sequence>
-      <xs:element name="vector" type="VectorType" minOccurs="1" maxOccurs="unbounded" />
+      <xs:element name="vector" type="UEMVectorType" minOccurs="1" maxOccurs="unbounded" />
     </xs:sequence>
   </xs:complexType>
-  
-  <xs:complexType name="TimeType">
-    <xs:attribute name="metric" type="TimeMetricType" use="required" />
+
+  <xs:complexType name="UEMTimeType">
+    <xs:attribute name="metric" type="UEMTimeMetricType" use="required" />
     <xs:attribute name="value" type="xs:nonNegativeInteger" use="required" />
   </xs:complexType>
 
-  <xs:simpleType name="TimeMetricType">
+  <xs:complexType name="UEMLocationType">
+    <xs:attribute name="x" type="xs:integer" use="required" />
+    <xs:attribute name="y" type="xs:integer" use="required" />
+    <xs:attribute name="width" type="xs:integer" use="required" />
+    <xs:attribute name="height" type="xs:integer" use="required" />
+  </xs:complexType>
+
+  <xs:simpleType name="UEMTimeMetricType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="h" />
       <xs:enumeration value="m" />
@@ -43,93 +46,40 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="YesNoType">
+  <xs:simpleType name="UEMYesNoType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="Yes" />
       <xs:enumeration value="No" />
     </xs:restriction>
   </xs:simpleType>
-  
-  <xs:simpleType name="Direction">
+
+  <xs:simpleType name="UEMDirection">
     <xs:restriction base="xs:string">
       <xs:enumeration value="IN" />
       <xs:enumeration value="OUT" />
     </xs:restriction>
   </xs:simpleType>
-  
-  <xs:simpleType name="TrueFalseType">
+
+  <xs:simpleType name="UEMTrueFalseType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="true" />
       <xs:enumeration value="false" />
     </xs:restriction>
   </xs:simpleType>
-  
-    <xs:simpleType name="SizeMetricType">
+
+  <xs:simpleType name="UEMSizeMetricType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="YiB" />  <!-- yotta-binary(yobi) byte -->
-      <xs:enumeration value="ZiB" />  <!-- zetta-binary(zebi) byte -->
-      <xs:enumeration value="EiB" />  <!-- exa-binary  (exbi) byte -->
-      <xs:enumeration value="PiB" />  <!-- peta-binary (pebi) byte -->
-      <xs:enumeration value="TiB" />  <!-- tera-binary (tebi) byte -->
-      <xs:enumeration value="GiB" />  <!-- giga-binary (gibi) byte -->
-      <xs:enumeration value="MiB" />  <!-- mega-binary (mebi) byte -->
-      <xs:enumeration value="KiB" />  <!-- kilo-binary (kibi) byte -->
+      <xs:enumeration value="YiB" /> <!-- yotta-binary(yobi) byte -->
+      <xs:enumeration value="ZiB" /> <!-- zetta-binary(zebi) byte -->
+      <xs:enumeration value="EiB" /> <!-- exa-binary  (exbi) byte -->
+      <xs:enumeration value="PiB" /> <!-- peta-binary (pebi) byte -->
+      <xs:enumeration value="TiB" /> <!-- tera-binary (tebi) byte -->
+      <xs:enumeration value="GiB" /> <!-- giga-binary (gibi) byte -->
+      <xs:enumeration value="MiB" /> <!-- mega-binary (mebi) byte -->
+      <xs:enumeration value="KiB" /> <!-- kilo-binary (kibi) byte -->
       <xs:enumeration value="B" />
     </xs:restriction>
   </xs:simpleType>
-  
-    	
-  	<xs:complexType name="ConfigType">	
-		<xs:sequence>
-			<xs:element name="location" type="LocationType" minOccurs="1" maxOccurs="1" />
-			<xs:element name="parameter" type="ParameterType" minOccurs="0" maxOccurs="unbounded" />
-		</xs:sequence>
-	</xs:complexType>
-	
-	<xs:complexType name="LocationType">	
-		<xs:attribute name="x" type="xs:integer" use="required" />	
-		<xs:attribute name="y" type="xs:integer" use="required" />	
-		<xs:attribute name="width" type="xs:integer" use="required" />	
-		<xs:attribute name="height" type="xs:integer" use="required" />	
-	</xs:complexType>
-	
-	<xs:complexType name="ParameterType">	
-		<xs:attribute name="name" type="ParameterCandidate" use="required" />	
-		<xs:attribute name="value" type="xs:string" use="required" />	
-	</xs:complexType>
-	
-	<xs:simpleType name="ParameterCandidate">
-    	<xs:restriction base="xs:string">
-    		<xs:enumeration value="CICFile" /> <!-- computation / control -->
-    		<xs:enumeration value="RunCondition" /> <!-- computation / control -->
-    		<xs:enumeration value="HasInternalStates" /> <!-- computation / control / library -->
-    		<xs:enumeration value="Deadline" /> <!-- computation / control -->
-    		<xs:enumeration value="DeadlineUnit" /> <!-- computation / control -->
-    		<xs:enumeration value="Period" /> <!-- computation / control -->
-    		<xs:enumeration value="PeriodUnit" /> <!-- computation / control -->
-    		<xs:enumeration value="Priority" /> <!-- computation / control -->
-    		<xs:enumeration value="Language" /> <!-- computation / control -->
-    		<xs:enumeration value="CompileFlags" /> <!-- computation / control / library -->
-    		<xs:enumeration value="LinkFlags" /> <!-- computation / control / library -->
-    		<xs:enumeration value="HasMTM" /> <!-- computation / control -->
-    		<xs:enumeration value="HasSubGraph" /> <!-- computation / control -->
-    		<xs:enumeration value="IsDependency" /> <!-- computation / control / library -->
-    		<xs:enumeration value="LoopType" /> <!-- computation / control -->
-    		<xs:enumeration value="LoopCount" /> <!-- computation / control -->
-    		<xs:enumeration value="IsLoopSubTask" /> <!-- computation / control -->
-    		<xs:enumeration value="IsDesignatedTask" /> <!-- computation / control -->
-    		<xs:enumeration value="SubgraphProperty" /> <!-- computation / control -->
-    		<xs:enumeration value="Description" /> <!-- computation / control / library -->
-    		<xs:enumeration value="LibraryType" /> <!-- library -->
-    		<xs:enumeration value="LibraryFile" /> <!-- library -->
-    		<xs:enumeration value="LibraryHeader" /> <!-- library -->
-    	</xs:restriction>
-  	</xs:simpleType>
-  	
-	<xs:simpleType name="PortCategoryType">
-    	<xs:restriction base="xs:string">
-    		<xs:enumeration value="fifo" />
-    		<xs:enumeration value="overwritable" />
-    	</xs:restriction>
-  	</xs:simpleType>
+
+
 </xs:schema>

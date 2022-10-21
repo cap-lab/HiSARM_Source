@@ -1,0 +1,32 @@
+package java.com.xmlparser.xml.handler;
+
+import java.com.xmlparser.xml.TaskXMLTaskTypeLoader;
+import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
+import com.xmlparser.TaskXMLTaskType;
+
+public class TaskXMLTaskHandler extends XMLHandler {
+    private TaskXMLTaskTypeLoader loader;
+    private TaskXMLTaskType task;
+
+    public TaskXMLTaskHandler() {
+        loader = new TaskXMLTaskTypeLoader();
+        task = new TaskXMLTaskType();
+    }
+
+    @Override
+    protected void storeResource(StringWriter writer) throws Exception {
+        loader.storeResource(task, writer);
+    }
+
+    @Override
+    protected void loadResource(ByteArrayInputStream is) throws Exception {
+        task = loader.loadResource(is);
+    }
+
+    @Override
+    public void init() {
+
+    }
+
+}

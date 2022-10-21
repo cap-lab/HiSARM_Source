@@ -10,23 +10,23 @@
 	<!-- Type definitions for strategy specification -->
 	<xs:complexType name="TaskXMLTaskGraphType">
 		<xs:sequence>
-			<xs:element name="setting_list" type="SettingListType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="setting_list" type="TaskXMLSettingListType" minOccurs="1" maxOccurs="1" />
 			<xs:element name="task_list" type="TaskXMLListType" minOccurs="1" maxOccurs="1" />
-			<xs:element name="library_list" type="LibraryListType" minOccurs="1" maxOccurs="1" />
-			<xs:element name="channel_list" type="ChannelListType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="library_list" type="TaskXMLLibraryListType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="channel_list" type="TaskXMLChannelListType" minOccurs="1" maxOccurs="1" />
 			<xs:element name="taskLibraryConnection_list" type="TaskXMLLibraryConnectionListType" minOccurs="1" maxOccurs="1" />
-			<xs:element name="libraryLibraryConnection_list" type="LibraryLibraryConnectionListType" minOccurs="1" maxOccurs="1" />
-			<xs:element name="exclusive_set_list" type="ExclusiveSetListType" minOccurs="1" maxOccurs="1" />
-			<xs:element name="supertaskChannel_list" type="SuperTaskChannelListType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="libraryLibraryConnection_list" type="TaskXMLLibraryLibraryConnectionListType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="exclusive_set_list" type="TaskXMLExclusiveSetListType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="supertaskChannel_list" type="TaskXMLSuperTaskChannelListType" minOccurs="1" maxOccurs="1" />
 			<xs:element name="taskGroupList" type="TaskXMLGroupListType" minOccurs="1" maxOccurs="1" />
-			<xs:element name="multicast_group_list" type="MulticastGroupListType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="multicast_group_list" type="TaskXMLMulticastGroupListType" minOccurs="1" maxOccurs="1" />
 		</xs:sequence>
 		<xs:attribute name="name" type="NameType" use="required" />
 	</xs:complexType>
 
-	<xs:complexType name="SettingListType">
+	<xs:complexType name="TaskXMLSettingListType">
 		<xs:sequence>
-			<xs:element name="setting" type="SettingType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="setting" type="TaskXMLSettingType" minOccurs="1" maxOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
 
@@ -36,15 +36,15 @@
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:complexType name="LibraryListType">
+	<xs:complexType name="TaskXMLLibraryListType">
 		<xs:sequence>
-			<xs:element name="library" type="LibraryType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="library" type="TaskXMLLibraryType" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:complexType name="ChannelListType">
+	<xs:complexType name="TaskXMLChannelListType">
 		<xs:sequence>
-			<xs:element name="channel" type="ChannelType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="channel" type="TaskXMLChannelType" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
 	</xs:complexType>
 
@@ -54,22 +54,22 @@
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:complexType name="LibraryLibraryConnectionListType">
+	<xs:complexType name="TaskXMLLibraryLibraryConnectionListType">
 		<xs:sequence>
-			<xs:element name="libraryLibraryConnection" type="LibraryLibraryConnectionType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="libraryLibraryConnection" type="TaskXMLLibraryLibraryConnectionType" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:complexType name="ExclusiveSetListType">
+	<xs:complexType name="TaskXMLExclusiveSetListType">
 		<xs:sequence>
-			<xs:element name="exclusive_set" type="ExclusiveSetType" minOccurs="0" maxOccurs="1" />
+			<xs:element name="exclusive_set" type="TaskXMLExclusiveSetType" minOccurs="0" maxOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:complexType name="SuperTaskChannelListType">
+	<xs:complexType name="TaskXMLSuperTaskChannelListType">
 		<!-- FIX ME -->
 		<xs:sequence>
-			<xs:element name="supertask" type="SuperTaskType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="supertask" type="TaskXMLSuperTaskType" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
 	</xs:complexType>
 
@@ -77,21 +77,133 @@
 		<xs:attribute name="name" type="NameType" use="required" />
 	</xs:complexType>
 
-	<xs:complexType name="MulticastGroupListType">
+	<xs:complexType name="TaskXMLMulticastGroupListType">
 		<xs:sequence>
-			<xs:element name="multicast_group" type="MulticastGroupType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="multicast_group" type="TaskXMLMulticastGroupType" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:complexType name="SettingType">
+	<xs:complexType name="TaskXMLSettingType">
 		<xs:attribute name="cycle" type="xs:nonNegativeInteger" default="0" />
-		<xs:attribute name="unit" type="TimeMetricType" default="us" />
-		<xs:attribute name="FuncTarget" type="FuncTargetType" default="PTHREAD" />
-		<xs:attribute name="ThreadSetting" type="ThreadSettingType" default="MULTI_THREAD" />
+		<xs:attribute name="unit" type="UEMTimeMetricType" default="us" />
+		<xs:attribute name="FuncTarget" type="TaskXMLFuncTargetType" default="PTHREAD" />
+		<xs:attribute name="ThreadSetting" type="TaskXMLThreadSettingType" default="MULTI_THREAD" />
 		<xs:attribute name="TaskGraphProperty" type="TaskXMLGraphPropertyType" default="ProcessNetwork" />
 	</xs:complexType>
 
-	<xs:simpleType name="ThreadSettingType">
+	<xs:complexType name="TaskXMLLibraryType">
+		<xs:sequence>
+			<xs:element name="config" type="TaskXMLConfigType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="inPort_list" type="TaskXMLLibInPortListType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="outPort_list" type="TaskXMLLibOutPortListType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="function_list" type="TaskXMLLibFunctionListType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="extraSetting_list" type="TaskXMLextraSettingListType" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="name" type="NameType" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLLibInPortListType">
+		<xs:sequence>
+			<xs:element name="inPort" type="TaskXMLLibPortType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLLibOutPortListType">
+		<xs:sequence>
+			<xs:element name="outPort" type="TaskXMLLibPortType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLLibPortType">
+		<xs:attribute name="id" type="xs:integer" use="required" />
+		<xs:attribute name="name" type="NameType" use="required" />
+		<xs:attribute name="type" type="TaskXMLPortCategoryType" use="required" />
+		<xs:attribute name="description" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLLibFunctionListType">
+		<xs:sequence>
+			<xs:element name="function" type="TaskXMLLibFunctionType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLLibFunctionType">
+		<xs:sequence>
+			<xs:element name="argument" type="TaskXMLFuncArgumentType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="name" type="NameType" use="required" />
+		<xs:attribute name="type" type="xs:string" use="required" />
+		<xs:attribute name="description" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLFuncArgumentType">
+		<xs:attribute name="name" type="NameType" use="required" />
+		<xs:attribute name="type" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLChannelType">
+		<xs:sequence>
+			<xs:element name="edge_list" type="TaskXMLChannelEdgeListType" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="src_task" type="NameType" use="required" />
+		<xs:attribute name="src_port" type="NameType" use="required" />
+		<xs:attribute name="dst_task" type="NameType" use="required" />
+		<xs:attribute name="dst_port" type="NameType" use="required" />
+		<xs:attribute name="size" type="xs:integer" use="required" />
+		<xs:attribute name="init_size" type="xs:integer" use="required" />
+		<xs:attribute name="sampleType" type="xs:string" use="required" />
+		<xs:attribute name="sampleSize" type="xs:integer" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLChannelEdgeListType">
+		<xs:sequence>
+			<xs:element name="edge" type="TaskXMLChannelEdgeType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLChannelEdgeType">
+		<xs:attribute name="id" type="xs:integer" use="required" />
+		<xs:attribute name="x" type="xs:integer" use="required" />
+		<xs:attribute name="y" type="xs:integer" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLLibraryConnectionType">
+		<xs:sequence>
+			<xs:element name="edge_list" type="TaskXMLChannelEdgeListType" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="src_task" type="NameType" use="required" />
+		<xs:attribute name="src_port" type="NameType" use="required" />
+		<xs:attribute name="dst_library" type="NameType" use="required" />
+		<xs:attribute name="dst_port" type="NameType" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLLibraryLibraryConnectionType">
+		<xs:sequence>
+			<xs:element name="edge_list" type="TaskXMLChannelEdgeListType" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="src_library" type="NameType" use="required" />
+		<xs:attribute name="src_port" type="NameType" use="required" />
+		<xs:attribute name="dst_library" type="NameType" use="required" />
+		<xs:attribute name="dst_port" type="NameType" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLExclusiveSetType">
+		<!-- FIX ME -->
+		<xs:attribute name="name" type="NameType" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLSuperTaskType">
+		<!-- FIX ME -->
+		<xs:attribute name="name" type="NameType" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="TaskXMLMulticastGroupType">
+		<xs:attribute name="id" type="xs:integer" use="required" />
+		<xs:attribute name="name" type="NameType" use="required" />
+		<xs:attribute name="size" type="xs:integer" use="required" />
+		<xs:attribute name="description" type="xs:string" use="required" />
+	</xs:complexType>
+	<xs:simpleType name="TaskXMLThreadSettingType">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="MULTI_THREAD" />
 		</xs:restriction>
@@ -104,122 +216,10 @@
 		</xs:restriction>
 	</xs:simpleType>
 
-	<xs:simpleType name="FuncTargetType">
+	<xs:simpleType name="TaskXMLFuncTargetType">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="PTHREAD" />
 		</xs:restriction>
 	</xs:simpleType>
 
-	<xs:complexType name="LibraryType">
-		<xs:sequence>
-			<xs:element name="config" type="ConfigType" minOccurs="1" maxOccurs="1" />
-			<xs:element name="inPort_list" type="LibInPortListType" minOccurs="1" maxOccurs="1" />
-			<xs:element name="outPort_list" type="LibOutPortListType" minOccurs="1" maxOccurs="1" />
-			<xs:element name="function_list" type="LibFunctionListType" minOccurs="1" maxOccurs="1" />
-			<xs:element name="extraSetting_list" type="extraSettingListType" minOccurs="1" maxOccurs="1" />
-		</xs:sequence>
-		<xs:attribute name="name" type="NameType" use="required" />
-	</xs:complexType>
-
-	<xs:complexType name="LibInPortListType">
-		<xs:sequence>
-			<xs:element name="inPort" type="LibPortType" minOccurs="0" maxOccurs="unbounded" />
-		</xs:sequence>
-	</xs:complexType>
-
-	<xs:complexType name="LibOutPortListType">
-		<xs:sequence>
-			<xs:element name="outPort" type="LibPortType" minOccurs="0" maxOccurs="unbounded" />
-		</xs:sequence>
-	</xs:complexType>
-
-	<xs:complexType name="LibPortType">
-		<xs:attribute name="id" type="xs:integer" use="required" />
-		<xs:attribute name="name" type="NameType" use="required" />
-		<xs:attribute name="type" type="PortCategoryType" use="required" />
-		<xs:attribute name="description" type="xs:string" use="required" />
-	</xs:complexType>
-
-	<xs:complexType name="LibFunctionListType">
-		<xs:sequence>
-			<xs:element name="function" type="LibFunctionType" minOccurs="0" maxOccurs="unbounded" />
-		</xs:sequence>
-	</xs:complexType>
-
-	<xs:complexType name="LibFunctionType">
-		<xs:sequence>
-			<xs:element name="argument" type="FuncArgumentType" minOccurs="0" maxOccurs="unbounded" />
-		</xs:sequence>
-		<xs:attribute name="name" type="NameType" use="required" />
-		<xs:attribute name="type" type="xs:string" use="required" />
-		<xs:attribute name="description" type="xs:string" use="required" />
-	</xs:complexType>
-
-	<xs:complexType name="FuncArgumentType">
-		<xs:attribute name="name" type="NameType" use="required" />
-		<xs:attribute name="type" type="xs:string" use="required" />
-	</xs:complexType>
-
-	<xs:complexType name="ChannelType">
-		<xs:sequence>
-			<xs:element name="edge_list" type="ChannelEdgeListType" minOccurs="1" maxOccurs="1" />
-		</xs:sequence>
-		<xs:attribute name="src_task" type="NameType" use="required" />
-		<xs:attribute name="src_port" type="NameType" use="required" />
-		<xs:attribute name="dst_task" type="NameType" use="required" />
-		<xs:attribute name="dst_port" type="NameType" use="required" />
-		<xs:attribute name="size" type="xs:integer" use="required" />
-		<xs:attribute name="init_size" type="xs:integer" use="required" />
-		<xs:attribute name="sampleType" type="xs:string" use="required" />
-		<xs:attribute name="sampleSize" type="xs:integer" use="required" />
-	</xs:complexType>
-
-	<xs:complexType name="ChannelEdgeListType">
-		<xs:sequence>
-			<xs:element name="edge" type="ChannelEdgeType" minOccurs="0" maxOccurs="unbounded" />
-		</xs:sequence>
-	</xs:complexType>
-
-	<xs:complexType name="ChannelEdgeType">
-		<xs:attribute name="id" type="xs:integer" use="required" />
-		<xs:attribute name="x" type="xs:integer" use="required" />
-		<xs:attribute name="y" type="xs:integer" use="required" />
-	</xs:complexType>
-
-	<xs:complexType name="TaskXMLLibraryConnectionType">
-		<xs:sequence>
-			<xs:element name="edge_list" type="ChannelEdgeListType" minOccurs="1" maxOccurs="1" />
-		</xs:sequence>
-		<xs:attribute name="src_task" type="NameType" use="required" />
-		<xs:attribute name="src_port" type="NameType" use="required" />
-		<xs:attribute name="dst_library" type="NameType" use="required" />
-		<xs:attribute name="dst_port" type="NameType" use="required" />
-	</xs:complexType>
-
-	<xs:complexType name="LibraryLibraryConnectionType">
-		<xs:sequence>
-			<xs:element name="edge_list" type="ChannelEdgeListType" minOccurs="1" maxOccurs="1" />
-		</xs:sequence>
-		<xs:attribute name="src_library" type="NameType" use="required" />
-		<xs:attribute name="src_port" type="NameType" use="required" />
-		<xs:attribute name="dst_library" type="NameType" use="required" />
-		<xs:attribute name="dst_port" type="NameType" use="required" />
-	</xs:complexType>
-
-	<xs:complexType name="ExclusiveSetType">
-		<!-- FIX ME -->
-		<xs:attribute name="name" type="NameType" use="required" />
-	</xs:complexType>
-
-	<xs:complexType name="SuperTaskType">
-		<!-- FIX ME -->
-		<xs:attribute name="name" type="NameType" use="required" />
-	</xs:complexType>
-
-	<xs:complexType name="MulticastGroupType">
-		<xs:attribute name="id" type="xs:integer" use="required" />
-		<xs:attribute name="name" type="NameType" use="required" />
-		<xs:attribute name="size" type="xs:integer" use="required" />
-		<xs:attribute name="description" type="xs:string" use="required" />
-	</xs:complexType>
 </xs:schema>

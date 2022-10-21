@@ -1,82 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<xs:schema id="UEM_ControlFSM" 
-        targetNamespace="http://iris.snu.ac.kr/UEM_Schema"
-        elementFormDefault="qualified"
-        xmlns="http://iris.snu.ac.kr/UEM_Schema"
-        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema id="UEM_ControlFSM" targetNamespace="http://iris.snu.ac.kr/UEM_Schema" elementFormDefault="qualified" xmlns="http://iris.snu.ac.kr/UEM_Schema" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-    <xs:include schemaLocation="./UEMCommon.xsd" />
-    
-    <xs:element name="fsms" type="UEMControlFSMType" />
-    
-  <xs:complexType name="UEMControlFSMType">
-  	<xs:sequence>
-    	<xs:element name="fsm" type="FSMType" minOccurs="1" maxOccurs="unbounded" />
-    </xs:sequence>
-  </xs:complexType>
-  
-  <xs:complexType name="FSMType">
-  	<xs:sequence>
-  		<xs:element name="state_list" type="StateListType" minOccurs="1" maxOccurs="1" />
-  		<xs:element name="transition_list" type="TransitionListType" minOccurs="1" maxOccurs="1" />
-  	</xs:sequence>
-  	<xs:attribute name="name" type="NameType" use="required" />
-  </xs:complexType>
-  
-  <xs:complexType name="StateListType">
-  	<xs:sequence>
-  		<xs:element name="state" type="StateType" minOccurs="0" maxOccurs="unbounded" />
-  	</xs:sequence>
-  </xs:complexType>
-  
-  <xs:complexType name="StateType">
-  	<xs:attribute name="name" type="NameType" use="required" />
-  	<xs:attribute name="x" type="xs:int" use="required" />
-  	<xs:attribute name="y" type="xs:int" use="required" />
-  	<xs:attribute name="initial_state" type="xs:boolean" use="required" />
-  	<xs:attribute name="hierarchical" type="xs:boolean" use="required" />
-  </xs:complexType>
-  
-  <xs:complexType name="TransitionListType">
-  	<xs:sequence>
-  		<xs:element name="transition" type="TransitionType" minOccurs="0" maxOccurs="unbounded"/>
-  	</xs:sequence>
-  </xs:complexType>
-  
-  <xs:complexType name="TransitionType">
-  	<xs:sequence>
-  		<xs:element name="condition_list" type="ConditionListType" minOccurs="1" maxOccurs="1" />
-  	</xs:sequence>
-  	<xs:attribute name="name" type="NameType" use="required" />
-  	<xs:attribute name="src_state" type="NameType" use="required" />
-  	<xs:attribute name="dst_state" type="NameType" use="required" />
-  	<xs:attribute name="curve0_x" type="xs:int" use="required" />
-  	<xs:attribute name="curve0_y" type="xs:int" use="required" />
-  	<xs:attribute name="curve1_x" type="xs:int" use="required" />
-  	<xs:attribute name="curve1_y" type="xs:int" use="required" />
-  </xs:complexType>
-  
-  <xs:complexType name="ConditionListType">
-  	<xs:sequence>
-  		<xs:element name="condition" type="ConditionType" minOccurs="0" maxOccurs="unbounded" />
-  	</xs:sequence>
-  </xs:complexType>
-  
-  <xs:complexType name="ConditionType">
-  	<xs:attribute name="type" type="FSMConditionType" use="required" />
-  	<xs:attribute name="inport_name" type="NameType" use="optional" />
-  	<xs:attribute name="value" type="NameType" use="optional" />
-  	<xs:attribute name="comparator" type="NameType" use="optional" />
-  	<xs:attribute name="timeVal" type="xs:int" use="optional" />
-  	<xs:attribute name="timeUnit" type="NameType" use="optional" />
-  </xs:complexType>
-  
-  <xs:simpleType name="FSMConditionType">
-  	<xs:restriction base="xs:string">
-		<xs:enumeration value="TimeOut" />
-		<xs:enumeration value="Input" />
-	</xs:restriction>
-  </xs:simpleType>
-  
+	<xs:include schemaLocation="./UEMCommon.xsd" />
+
+	<xs:element name="fsms" type="UEMControlFSMType" />
+
+	<xs:complexType name="UEMControlFSMType">
+		<xs:sequence>
+			<xs:element name="fsm" type="UEMFSMType" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="UEMFSMType">
+		<xs:sequence>
+			<xs:element name="state_list" type="UEMStateListType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="transition_list" type="UEMTransitionListType" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="name" type="NameType" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="UEMStateListType">
+		<xs:sequence>
+			<xs:element name="state" type="UEMStateType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="UEMStateType">
+		<xs:attribute name="name" type="NameType" use="required" />
+		<xs:attribute name="x" type="xs:int" use="required" />
+		<xs:attribute name="y" type="xs:int" use="required" />
+		<xs:attribute name="initial_state" type="xs:boolean" use="required" />
+		<xs:attribute name="hierarchical" type="xs:boolean" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="UEMTransitionListType">
+		<xs:sequence>
+			<xs:element name="transition" type="UEMTransitionType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="UEMTransitionType">
+		<xs:sequence>
+			<xs:element name="condition_list" type="UEMConditionListType" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="name" type="NameType" use="required" />
+		<xs:attribute name="src_state" type="NameType" use="required" />
+		<xs:attribute name="dst_state" type="NameType" use="required" />
+		<xs:attribute name="curve0_x" type="xs:int" use="required" />
+		<xs:attribute name="curve0_y" type="xs:int" use="required" />
+		<xs:attribute name="curve1_x" type="xs:int" use="required" />
+		<xs:attribute name="curve1_y" type="xs:int" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="UEMConditionListType">
+		<xs:sequence>
+			<xs:element name="condition" type="UEMConditionType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="UEMConditionType">
+		<xs:attribute name="type" type="UEMFSMConditionType" use="required" />
+		<xs:attribute name="inport_name" type="NameType" use="optional" />
+		<xs:attribute name="value" type="NameType" use="optional" />
+		<xs:attribute name="comparator" type="NameType" use="optional" />
+		<xs:attribute name="timeVal" type="xs:int" use="optional" />
+		<xs:attribute name="timeUnit" type="NameType" use="optional" />
+	</xs:complexType>
+
+	<xs:simpleType name="UEMFSMConditionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="TimeOut" />
+			<xs:enumeration value="Input" />
+		</xs:restriction>
+	</xs:simpleType>
+
 </xs:schema>
