@@ -49,8 +49,7 @@ public class UEMControlTask extends UEMTask {
         List<UEMChannel> channelList = new ArrayList<>();
         for (TaskPortType counterPort : actionTask.getPort()) {
             UEMChannelPort port = new UEMChannelPort();
-            port.setPortInfo(actionTask.getAction().getActionImpl().getActionImplId(),
-                    (UEMChannelPort) counterPort);
+            port.setPortInfo(actionTask.getName(), (UEMChannelPort) counterPort);
             getPort().add(port);
             channelList.add(
                     UEMChannel.makeChannel(this, port, actionTask, (UEMChannelPort) counterPort));
