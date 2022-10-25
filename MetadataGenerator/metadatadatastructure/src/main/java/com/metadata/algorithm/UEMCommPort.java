@@ -1,8 +1,11 @@
 package com.metadata.algorithm;
 
+import com.strategy.strategydatastructure.wrapper.VariableTypeWrapper;
+
 public class UEMCommPort extends UEMChannelPort {
     private String counterTeam;
-    private String variableName;
+    private String message;
+    private VariableTypeWrapper variable;
 
     public UEMCommPort() {
         super();
@@ -17,11 +20,23 @@ public class UEMCommPort extends UEMChannelPort {
     }
 
     public String getVariableName() {
-        return variableName;
+        return counterTeam + "_" + message;
     }
 
-    public void setVariableName(String variableName) {
-        this.variableName = variableName;
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public VariableTypeWrapper getVariable() {
+        return variable;
+    }
+
+    public void setVariable(VariableTypeWrapper variable) {
+        this.variable = variable;
     }
 
     public void setPortInfo(UEMCommPort port) {
@@ -32,4 +47,5 @@ public class UEMCommPort extends UEMChannelPort {
         setType(port.getType());
         getRate().add(port.getRate().get(0));
     }
+
 }

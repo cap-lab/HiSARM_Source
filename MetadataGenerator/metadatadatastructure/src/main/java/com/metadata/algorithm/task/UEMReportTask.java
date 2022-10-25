@@ -2,6 +2,7 @@ package com.metadata.algorithm.task;
 
 import com.metadata.algorithm.UEMChannelPort;
 import com.metadata.algorithm.UEMCommPort;
+import com.metadata.algorithm.UEMLibrary;
 import com.metadata.algorithm.UEMLibraryPort;
 import com.metadata.algorithm.UEMMulticastPort;
 import com.metadata.constant.AlgorithmConstant;
@@ -35,9 +36,11 @@ public class UEMReportTask extends UEMCommTask {
             outPort.makePortInfo(portName, PortDirectionType.OUTPUT, portSize);
             outPort.setExport(true);
             outPort.setCounterTeam(statement.getCounterTeam());
-            outPort.setVariableName(statement.getMessage().getId());
+            outPort.setMessage(statement.getMessage().getId());
+            outPort.setVariable(variable);
             getPort().add(outPort);
             getExportPortList().add(outPort);
+            getChannelPortMap().put(outPort, inPort);
         }
     }
 
@@ -59,11 +62,14 @@ public class UEMReportTask extends UEMCommTask {
             outPort.setName(portName);
             outPort.setGroup(robot.getRobot().getGroupList().get(0));
             outPort.setDirection(PortDirectionType.OUTPUT);
+            outPort.setMessage(statement.getMessage().getId());
+            outPort.setVariable(variable);
             getMulticastPort().add(outPort);
+            getMulticastPortMap().put(outPort, inPort);
         }
     }
 
-    public void addThrow(StatementWrapper throwEvent, String group) {
+    public void addThrow(StatementWrapper throwEvent, String group, UEMRobotTask robot) {
         ThrowStatement statement = (ThrowStatement) throwEvent.getStatement();
         String portName = makePortName(group, statement.getEvent().getName());
         if (statement.broadcast) {
@@ -77,22 +83,27 @@ public class UEMReportTask extends UEMCommTask {
             outPort.setName(portName);
             outPort.setGroup(group);
             outPort.setDirection(PortDirectionType.OUTPUT);
+            outPort.setMessage(statement.getEvent().getName());
+            outPort.setVariable(robot.getRobot().getVariableMap().get("EVENT"));
             getMulticastPort().add(outPort);
+            getMulticastPortMap().put(outPort, inPort);
         }
     }
 
-    public void addSharedData(String dataId) {
-        String portName = dataId;
+    public void addSharedData(UEMLibrary library) {
+        String portName = library.getName();
         if (!existMulticastPort(portName)) {
             UEMLibraryPort inPort = new UEMLibraryPort();
             inPort.setName(portName);
             inPort.setType(portName);
+            inPort.setLibrary(library);
             getLibraryMasterPort().add(inPort);
             UEMMulticastPort outPort = new UEMMulticastPort();
             outPort.setName(portName);
             outPort.setGroup(portName);
             outPort.setDirection(PortDirectionType.OUTPUT);
             getMulticastPort().add(outPort);
+            getSharedDataPortMap().put(inPort, outPort);
         }
     }
 }

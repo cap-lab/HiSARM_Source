@@ -80,8 +80,8 @@ public class AlgorithmGenerator {
                                 .equals(port.getCounterTeam())) {
                             for (TaskPortType cp : counterRobotTask.getPort()) {
                                 UEMCommPort counterPort = (UEMCommPort) cp;
-                                if (counterPort.getCounterTeam().equals(senderTeam) && counterPort
-                                        .getVariableName().equals(port.getVariableName())) {
+                                if (counterPort.getCounterTeam().equals(senderTeam)
+                                        && counterPort.getMessage().equals(port.getMessage())) {
                                     UEMChannel channel = UEMChannel.makeChannel(robotTask, port,
                                             counterRobotTask, counterPort);
                                     algorithm.getChannels().getChannel().add(channel);
@@ -339,8 +339,8 @@ public class AlgorithmGenerator {
                     robot.getReportTask().addPublish(statement, robot);
                 } else if (statement.getStatement().getStatementType()
                         .equals(StatementType.THROW)) {
-                    robot.getListenTask().addThrow(statement, currentGroup);
-                    robot.getReportTask().addThrow(statement, currentGroup);
+                    robot.getListenTask().addThrow(statement, currentGroup, robot);
+                    robot.getReportTask().addThrow(statement, currentGroup, robot);
                     algorithm.addMulticastGroup(currentGroup, 4);
                 }
             } catch (Exception e) {
@@ -375,13 +375,13 @@ public class AlgorithmGenerator {
         TransitionWrapper transition = mission.getTransition(team);
         traverseTransitionForCommunication(transition, robot, team);
         for (UEMLibrary library : robot.getLibraryTaskList()) {
-            robot.getListenTask().addSharedData(library.getName());
+            robot.getListenTask().addSharedData(library);
             UEMLibraryConnection listenConnection = new UEMLibraryConnection();
             listenConnection.setSlaveLibrary(library.getName());
             listenConnection.setMasterPort(library.getName());
             listenConnection.setMasterTask(robot.getListenTask().getName());
             algorithm.getLibraryConnections().getTaskLibraryConnection().add(listenConnection);
-            robot.getReportTask().addSharedData(library.getName());
+            robot.getReportTask().addSharedData(library);
             UEMLibraryConnection reportConnection = new UEMLibraryConnection();
             reportConnection.setSlaveLibrary(library.getName());
             reportConnection.setMasterPort(library.getName());
