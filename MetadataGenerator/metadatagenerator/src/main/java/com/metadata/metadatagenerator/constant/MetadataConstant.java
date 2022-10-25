@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 public class MetadataConstant {
         public static final Path PROJECT_DIRECTORY = Paths.get("");
         public static final Path RESOURCE_DIRECTORY =
-                        Paths.get(PROJECT_DIRECTORY.toString(), "resources");
+                        Paths.get(PROJECT_DIRECTORY.toString(), "src", "resources");
         public static final Path GENERATE_DIRECTORY =
                         Paths.get(PROJECT_DIRECTORY.toString(), "generated");
 

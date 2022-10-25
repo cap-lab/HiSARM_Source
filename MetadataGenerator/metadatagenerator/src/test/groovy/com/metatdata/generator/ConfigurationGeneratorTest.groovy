@@ -1,9 +1,9 @@
 import spock.lang.*
 import java.nio.file.Path
 import java.nio.file.Paths
-import com.metadata.generator.MetadataGenerator
-import com.metadata.generator.ConfigurationGenerator
-import com.metadata.generator.constant.MetadataConstant
+import com.metadata.metadatagenerator.MetadataGenerator
+import com.metadata.metadatagenerator.ConfigurationGenerator
+import com.metadata.metadatagenerator.constant.MetadataConstant
 
 class ConfigurationGeneratorTest extends spock.lang.Specification {
 
