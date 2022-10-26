@@ -1,4 +1,4 @@
-package com.metadata.algorithm;
+package com.metadata.algorithm.library;
 
 import hopes.cic.xml.TaskLibraryConnectionType;
 

@@ -6,26 +6,29 @@ import com.dbmanager.datastructure.task.ChannelPort;
 import com.dbmanager.datastructure.task.LibraryPort;
 import com.dbmanager.datastructure.task.Task;
 import com.metadata.algorithm.UEMChannelPort;
-import com.metadata.algorithm.UEMLibraryPort;
 import com.metadata.algorithm.UEMTaskGraph;
+import com.metadata.algorithm.library.UEMLibraryPort;
 import com.metadata.constant.AlgorithmConstant;
+import com.scriptparser.parserdatastructure.entity.statement.ActionStatement;
 import com.strategy.strategydatastructure.wrapper.ActionImplWrapper;
 import hopes.cic.xml.LibraryMasterPortType;
 import hopes.cic.xml.YesNoType;
 
 public class UEMActionTask extends UEMTask {
-    private ActionImplWrapper action;
+    private ActionImplWrapper actionImpl;
+    private ActionStatement actionStatement;
     private String scope;
     private List<UEMTaskGraph> subTaskGraphs = new ArrayList<>();
 
     public UEMActionTask(String robotTask, String groupId, String serviceId,
-            ActionImplWrapper action) {
+            ActionImplWrapper actionImpl, ActionStatement actionStatement) {
         super();
         this.scope = groupId + "_" + serviceId;
-        setName(robotTask, scope + "_" + action.getActionImpl().getActionImplId());
-        this.action = action;
+        setName(robotTask, scope + "_" + actionImpl.getActionImpl().getActionImplId());
+        this.actionImpl = actionImpl;
+        this.actionStatement = actionStatement;
         setParentTask(robotTask);
-        setTaskInfo(action.getTask());
+        setTaskInfo(actionImpl.getTask());
     }
 
     private void setTaskInfo(Task task) {
@@ -63,12 +66,12 @@ public class UEMActionTask extends UEMTask {
         }
     }
 
-    public ActionImplWrapper getAction() {
-        return action;
+    public ActionImplWrapper getActionImpl() {
+        return actionImpl;
     }
 
-    public void setAction(ActionImplWrapper action) {
-        this.action = action;
+    public void setActionImpl(ActionImplWrapper actionImpl) {
+        this.actionImpl = actionImpl;
     }
 
     public UEMLibraryPort getLibraryPort(int index) {
@@ -90,6 +93,14 @@ public class UEMActionTask extends UEMTask {
 
     public String getScope() {
         return scope;
+    }
+
+    public ActionStatement getActionStatement() {
+        return actionStatement;
+    }
+
+    public void setActionStatement(ActionStatement actionStatement) {
+        this.actionStatement = actionStatement;
     }
 
 }

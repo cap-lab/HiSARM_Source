@@ -3,8 +3,8 @@ package com.metadata.algorithm.task;
 import java.util.ArrayList;
 import java.util.List;
 import com.metadata.algorithm.UEMCommPort;
-import com.metadata.algorithm.UEMLibrary;
 import com.metadata.algorithm.UEMPortMap;
+import com.metadata.algorithm.library.UEMSharedData;
 import com.metadata.constant.AlgorithmConstant;
 import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 import hopes.cic.xml.PortDirectionType;
@@ -12,9 +12,10 @@ import hopes.cic.xml.RunConditionType;
 import hopes.cic.xml.YesNoType;
 
 public class UEMRobotTask extends UEMTask {
+    private int robotIndex;
     private RobotImplWrapper robot;
     private List<UEMActionTask> actionTaskList = new ArrayList<>();
-    private List<UEMLibrary> libraryTaskList = new ArrayList<>();
+    private List<UEMSharedData> sharedDataTaskList = new ArrayList<>();
     private UEMListenTask listenTask;
     private UEMReportTask reportTask;
 
@@ -32,6 +33,15 @@ public class UEMRobotTask extends UEMTask {
         reportTask = new UEMReportTask(getName(), AlgorithmConstant.REPORT);
     }
 
+    public int getRobotIndex() {
+        return robotIndex;
+    }
+
+    public void setRobotIndex(int robotIndex) {
+        this.robotIndex = robotIndex;
+    }
+
+
     public RobotImplWrapper getRobot() {
         return robot;
     }
@@ -44,16 +54,12 @@ public class UEMRobotTask extends UEMTask {
         this.actionTaskList = actionTaskList;
     }
 
-    public List<UEMLibrary> getLibraryTaskList() {
-        return libraryTaskList;
+    public List<UEMSharedData> getSharedDataTaskList() {
+        return sharedDataTaskList;
     }
 
-    public void setLibraryTaskList(List<UEMLibrary> libraryTaskList) {
-        this.libraryTaskList = libraryTaskList;
-    }
-
-    public UEMLibrary getLibraryTask(String name) {
-        for (UEMLibrary library : libraryTaskList) {
+    public UEMSharedData getSharedDataTask(String name) {
+        for (UEMSharedData library : sharedDataTaskList) {
             if (library.getName().equals(name)) {
                 return library;
             }

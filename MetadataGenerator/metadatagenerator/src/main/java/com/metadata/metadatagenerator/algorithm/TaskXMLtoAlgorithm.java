@@ -7,11 +7,11 @@ import java.util.List;
 
 import com.metadata.algorithm.UEMChannel;
 import com.metadata.algorithm.UEMChannelPort;
-import com.metadata.algorithm.UEMLibrary;
-import com.metadata.algorithm.UEMLibraryConnection;
 import com.metadata.algorithm.UEMModeTask;
 import com.metadata.algorithm.UEMPortMap;
 import com.metadata.algorithm.UEMTaskGraph;
+import com.metadata.algorithm.library.UEMLibrary;
+import com.metadata.algorithm.library.UEMLibraryConnection;
 import com.metadata.algorithm.task.UEMTask;
 import com.metadata.constant.AlgorithmConstant;
 import com.xmlparser.TaskXMLChannelType;

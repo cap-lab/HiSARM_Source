@@ -2,7 +2,8 @@ package com.metadata.algorithm;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import com.metadata.algorithm.library.UEMLibrary;
+import com.metadata.algorithm.library.UEMLibraryConnection;
 import com.metadata.algorithm.task.UEMTask;
 
 public class UEMTaskGraph {

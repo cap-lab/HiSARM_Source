@@ -2,9 +2,9 @@ package com.metadata.algorithm.task;
 
 import com.metadata.algorithm.UEMChannelPort;
 import com.metadata.algorithm.UEMCommPort;
-import com.metadata.algorithm.UEMLibrary;
-import com.metadata.algorithm.UEMLibraryPort;
 import com.metadata.algorithm.UEMMulticastPort;
+import com.metadata.algorithm.library.UEMLibrary;
+import com.metadata.algorithm.library.UEMLibraryPort;
 import com.metadata.constant.AlgorithmConstant;
 import com.scriptparser.parserdatastructure.entity.statement.CommunicationalStatement;
 import com.scriptparser.parserdatastructure.entity.statement.ThrowStatement;
@@ -57,7 +57,7 @@ public class UEMListenTask extends UEMCommTask {
             inPort.setGroup(robot.getRobot().getTeam());
             inPort.setDirection(PortDirectionType.INPUT);
             inPort.setMessage(statement.getMessage().getId());
-            inPort.setVariable(variable);
+            inPort.setVariableType(variable);
             getMulticastPort().add(inPort);
             UEMChannelPort outPort = new UEMChannelPort();
             outPort.makePortInfo(AlgorithmConstant.CONTROL_TASK + portName,
@@ -78,7 +78,7 @@ public class UEMListenTask extends UEMCommTask {
             inPort.setGroup(group);
             inPort.setDirection(PortDirectionType.INPUT);
             inPort.setMessage(statement.getEvent().getName());
-            inPort.setVariable(robot.getRobot().getVariableMap().get("EVENT"));
+            inPort.setVariableType(robot.getRobot().getVariableMap().get("EVENT"));
             getMulticastPort().add(inPort);
             UEMChannelPort outPort = new UEMChannelPort();
             outPort.makePortInfo(AlgorithmConstant.CONTROL_TASK + portName,

@@ -1,32 +1,19 @@
-package com.metadata.algorithm;
+package com.metadata.algorithm.library;
 
 import com.metadata.constant.AlgorithmConstant;
 import com.strategy.strategydatastructure.wrapper.VariableTypeWrapper;
-import hopes.cic.xml.LibraryType;
 import hopes.cic.xml.YesNoType;
 
-public class UEMLibrary extends LibraryType {
+public class UEMSharedData extends UEMLibrary {
     private VariableTypeWrapper variableType;
     private String group;
 
-    public UEMLibrary() {
-        setHasInternalStates(YesNoType.YES);
+    public UEMSharedData() {
+        super();
     }
 
-    public static String makeGroup(String groupScope, String actionName, int argIndex){
+    public static String makeGroup(String groupScope, String actionName, int argIndex) {
         return groupScope + "_" + actionName + "_" + String.valueOf(argIndex);
-    }
-
-    public static String makeName(String parentName, String scope, String libraryName) {
-        if (scope == null) {
-            return parentName + libraryName;
-        } else {
-            return parentName + "_" + scope + "_" + libraryName;
-        }
-    }
-
-    public void setName(String parentName, String libraryName) {
-        setName(makeName(parentName, null, libraryName));
     }
 
     public void makeGeneratedLibrary(String name) {

@@ -2,9 +2,9 @@ package com.metadata.algorithm.task;
 
 import com.metadata.algorithm.UEMChannelPort;
 import com.metadata.algorithm.UEMCommPort;
-import com.metadata.algorithm.UEMLibrary;
-import com.metadata.algorithm.UEMLibraryPort;
 import com.metadata.algorithm.UEMMulticastPort;
+import com.metadata.algorithm.library.UEMLibrary;
+import com.metadata.algorithm.library.UEMLibraryPort;
 import com.metadata.constant.AlgorithmConstant;
 import com.scriptparser.parserdatastructure.entity.statement.CommunicationalStatement;
 import com.scriptparser.parserdatastructure.entity.statement.ThrowStatement;
@@ -63,7 +63,7 @@ public class UEMReportTask extends UEMCommTask {
             outPort.setGroup(robot.getRobot().getGroupList().get(0));
             outPort.setDirection(PortDirectionType.OUTPUT);
             outPort.setMessage(statement.getMessage().getId());
-            outPort.setVariable(variable);
+            outPort.setVariableType(variable);
             getMulticastPort().add(outPort);
             getMulticastPortMap().put(outPort, inPort);
         }
@@ -84,7 +84,7 @@ public class UEMReportTask extends UEMCommTask {
             outPort.setGroup(group);
             outPort.setDirection(PortDirectionType.OUTPUT);
             outPort.setMessage(statement.getEvent().getName());
-            outPort.setVariable(robot.getRobot().getVariableMap().get("EVENT"));
+            outPort.setVariableType(robot.getRobot().getVariableMap().get("EVENT"));
             getMulticastPort().add(outPort);
             getMulticastPortMap().put(outPort, inPort);
         }

@@ -13,11 +13,12 @@ import com.dbmanager.datastructure.task.TaskFile;
 import com.metadata.algorithm.UEMAlgorithm;
 import com.metadata.algorithm.UEMChannel;
 import com.metadata.algorithm.UEMCommPort;
-import com.metadata.algorithm.UEMLibrary;
-import com.metadata.algorithm.UEMLibraryConnection;
-import com.metadata.algorithm.UEMLibraryPort;
 import com.metadata.algorithm.UEMPortMap;
 import com.metadata.algorithm.UEMTaskGraph;
+import com.metadata.algorithm.library.UEMLibrary;
+import com.metadata.algorithm.library.UEMLibraryConnection;
+import com.metadata.algorithm.library.UEMLibraryPort;
+import com.metadata.algorithm.library.UEMSharedData;
 import com.metadata.algorithm.task.UEMActionTask;
 import com.metadata.algorithm.task.UEMControlTask;
 import com.metadata.algorithm.task.UEMListenTask;
@@ -56,12 +57,15 @@ public class AlgorithmGenerator {
     public void generate(MissionWrapper mission, StrategyWrapper strategy,
             AdditionalInfo additionalInfo, Path targetDir) {
         try {
+            int index = 0;
             for (RobotImplWrapper robot : strategy.getRobotList()) {
                 UEMRobotTask robotTask = new UEMRobotTask(robot.getRobot().getRobotId(), robot);
                 makeRobotInerGraph(mission, robotTask, additionalInfo, targetDir);
+                robotTask.setRobotIndex(index);
                 robotTask.setPort();
                 algorithm.addTask(robotTask);
                 algorithm.getRobotTaskList().add(robotTask);
+                index = index + 1;
             }
             makeRobotInterGraph();
         } catch (Exception e) {
@@ -226,11 +230,12 @@ public class AlgorithmGenerator {
                 for (ControlStrategyWrapper controlStrategy : controlStrategyList) {
                     if (controlStrategy.getControlStrategy().getActionName()
                             .equals(actionStatement.getActionName())) {
-                        for (ActionImplWrapper action : controlStrategy.getActionList()) {
-                            Task task = action.getTask();
+                        for (ActionImplWrapper actionImpl : controlStrategy.getActionList()) {
+                            Task task = actionImpl.getTask();
                             UEMActionTask actionTask = new UEMActionTask(robot.getName(),
                                     currentGroup + "_" + mode.getMode().getName(),
-                                    s.getService().getService().getName(), action);
+                                    s.getService().getService().getName(), actionImpl,
+                                    actionStatement);
                             try {
                                 copyFiles(task, taskServerPrefix, targetDir);
                             } catch (Exception e) {
@@ -291,21 +296,21 @@ public class AlgorithmGenerator {
 
     private void makeLibraryTask(UEMRobotTask robot) {
         for (UEMActionTask actionTask : robot.getActionTaskList()) {
-            if (actionTask.getAction().getAction().isGroupAction()) {
-                ActionTypeWrapper actionType = actionTask.getAction().getAction();
+            if (actionTask.getActionImpl().getActionType().isGroupAction()) {
+                ActionTypeWrapper actionType = actionTask.getActionImpl().getActionType();
                 for (int i = 0; i < actionType.getVariableSharedList().size(); i++) {
                     VariableTypeWrapper variable = actionType.getVariableSharedList().get(i);
                     UEMLibraryPort libPort = actionTask.getLibraryPort(i);
                     String libName = UEMLibrary.makeName(robot.getName(), actionTask.getScope(),
                             actionType.getAction().getName() + "_" + String.valueOf(i));
-                    UEMLibrary library = robot.getLibraryTask(libName);
+                    UEMSharedData library = robot.getSharedDataTask(libName);
                     if (library == null) {
-                        library = new UEMLibrary();
+                        library = new UEMSharedData();
                         library.makeGeneratedLibrary(libName);
-                        library.setGroup(UEMLibrary.makeGroup(actionTask.getScope(),
+                        library.setGroup(UEMSharedData.makeGroup(actionTask.getScope(),
                                 actionType.getAction().getName(), i));
                         algorithm.getLibraries().getLibrary().add(library);
-                        robot.getLibraryTaskList().add(library);
+                        robot.getSharedDataTaskList().add(library);
                         library.setVariableType(variable);
                     }
                     UEMLibraryConnection connection = new UEMLibraryConnection();
@@ -374,7 +379,7 @@ public class AlgorithmGenerator {
         String team = robot.getRobot().getGroupList().get(0);
         TransitionWrapper transition = mission.getTransition(team);
         traverseTransitionForCommunication(transition, robot, team);
-        for (UEMLibrary library : robot.getLibraryTaskList()) {
+        for (UEMSharedData library : robot.getSharedDataTaskList()) {
             robot.getListenTask().addSharedData(library);
             UEMLibraryConnection listenConnection = new UEMLibraryConnection();
             listenConnection.setSlaveLibrary(library.getName());

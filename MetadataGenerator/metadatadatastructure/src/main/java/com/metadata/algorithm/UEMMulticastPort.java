@@ -4,15 +4,15 @@ import com.strategy.strategydatastructure.wrapper.VariableTypeWrapper;
 import hopes.cic.xml.MulticastPortType;
 
 public class UEMMulticastPort extends MulticastPortType {
-    private VariableTypeWrapper variable;
+    private VariableTypeWrapper variableType;
     private String message;
 
-    public VariableTypeWrapper getVariable() {
-        return variable;
+    public VariableTypeWrapper getVariableType() {
+        return variableType;
     }
 
-    public void setVariable(VariableTypeWrapper variable) {
-        this.variable = variable;
+    public void setVariableType(VariableTypeWrapper variableType) {
+        this.variableType = variableType;
     }
 
     public String getMessage() {
@@ -28,6 +28,6 @@ public class UEMMulticastPort extends MulticastPortType {
     }
 
     public int getSize() {
-        return variable.getVariableType().getCount() * variable.getVariableType().getSize();
+        return variableType.getVariableType().getCount() * variableType.getVariableType().getSize();
     }
 }
