@@ -24,7 +24,7 @@ ${inPort.variable.variableType.type.getValue()} ${inPort.variableName}[${inPort.
 
 // MULTICAST VARIABLE DEFINE
 <#list multicastPortMap as multicastPort, channelPort>
-    <#if multicastPort.variable.variableBase.type.getValue() == "enum">
+    <#if multicastPort.variable.variableType.type.getValue() == "enum">
 VARIABLE_${multicastPort.variable.variableType.name} ${multicastPort.variableName}[${multicastPort.variable.variableType.count}];
     <#else>
 ${multicastPort.variable.variableType.type.getValue()} ${multicastPort.variableName}[${multicastPort.variable.variableType.count}];
@@ -33,10 +33,10 @@ ${multicastPort.variable.variableType.type.getValue()} ${multicastPort.variableN
 
 // SHARED DATA VARIABLE DEFINE
 <#list sharedDataPortMap as libPort, multicastPort>
-    <#if variable.variableBase.type.getValue() == "enum">
-VARIABLE_${variable.variableBase.name} ${libPort.variableName}[${variable.variableBase.count}];
+    <#if libPort.variable.variableType.type.getValue() == "enum">
+VARIABLE_${libPort.variable.variableType.name} ${libPort.library.name}[${libPort.variable.variableType.count}];
     <#else>
-${variable.variableBase.type.getValue()} ${libPort.variableName}[${variable.variableBase.count}];
+${libPort.variable.variableType.type.getValue()} ${libPort.library.name}[${libPort.variable.variableType.count}];
     </#if>
 </#list>
 
@@ -57,7 +57,7 @@ STATIC MULTICAST_PORT multicastPortList[${multicastPortMap?size}] = {
 // GROUP SERVICE PORT SECTION
 STATIC GROUP_SERVICE_PORT sharedDataPortList[${sharedDataPortMap?size}] = {
 <#list sharedDataPortMap as libPort, multicastPort>
-    {"${multicastPort.name}", -1, -1, NULL, NULL, l_${libPort.library.name}_set_${libPort.variable.name}_listen, {{-1, -1}, ${libPort.variableName}}, ${libPort.size}, -1},
+    {"${multicastPort.name}", -1, -1, NULL, NULL, l_${libPort.library.name}_set_${libPort.library.name}_listen, {{-1, -1}, ${libPort.library.name}}, ${libPort.size}, -1},
 </#list>
 };
     

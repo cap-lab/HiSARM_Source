@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.Writer;
+import java.nio.file.Path;
 import java.util.Map;
 import com.codegenerator.generator.constant.CodeGeneratorConstant;
 import freemarker.cache.FileTemplateLoader;
@@ -41,11 +42,10 @@ public class FTLHandler {
 		}
 	}
 
-	public void generateCode(String templatePath, String outputFilePath,
-			Map<String, Object> rootHash) {
+	public void generateCode(Path templatePath, Path outputFilePath, Map<String, Object> rootHash) {
 		try {
-			Template template = templateConfiguration.getTemplate(templatePath);
-			Writer out = new OutputStreamWriter(new PrintStream(new File(outputFilePath)));
+			Template template = templateConfiguration.getTemplate(templatePath.toString());
+			Writer out = new OutputStreamWriter(new PrintStream(outputFilePath.toFile()));
 			template.process(rootHash, out);
 		} catch (Exception e) {
 			e.printStackTrace();
