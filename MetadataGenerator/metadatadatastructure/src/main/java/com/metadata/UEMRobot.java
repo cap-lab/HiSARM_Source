@@ -19,6 +19,14 @@ public class UEMRobot {
         this.robotTask = robotTask;
     }
 
+    public int getRobotIndex() {
+        return getRobotTask().getRobotIndex();
+    }
+
+    public String getRobotName() {
+        return getRobotTask().getRobot().getRobot().getRobotId();
+    }
+
     public List<UEMArchitectureDevice> getDeviceList() {
         return deviceList;
     }

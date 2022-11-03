@@ -12,10 +12,10 @@ import hopes.cic.xml.RunConditionType;
 import hopes.cic.xml.YesNoType;
 
 public class UEMRobotTask extends UEMTask {
-    private int robotIndex;
     private RobotImplWrapper robot;
     private List<UEMActionTask> actionTaskList = new ArrayList<>();
     private List<UEMSharedData> sharedDataTaskList = new ArrayList<>();
+    private UEMControlTask controlTask;
     private UEMListenTask listenTask;
     private UEMReportTask reportTask;
 
@@ -34,13 +34,8 @@ public class UEMRobotTask extends UEMTask {
     }
 
     public int getRobotIndex() {
-        return robotIndex;
+        return getRobot().getRobotIndex();
     }
-
-    public void setRobotIndex(int robotIndex) {
-        this.robotIndex = robotIndex;
-    }
-
 
     public RobotImplWrapper getRobot() {
         return robot;
@@ -65,6 +60,14 @@ public class UEMRobotTask extends UEMTask {
             }
         }
         return null;
+    }
+
+    public UEMControlTask getControlTask() {
+        return controlTask;
+    }
+
+    public void setControlTask(UEMControlTask controlTask) {
+        this.controlTask = controlTask;
     }
 
     public UEMListenTask getListenTask() {

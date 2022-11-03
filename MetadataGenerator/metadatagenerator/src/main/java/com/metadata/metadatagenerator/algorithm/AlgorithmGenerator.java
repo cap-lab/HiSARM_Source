@@ -57,15 +57,12 @@ public class AlgorithmGenerator {
     public void generate(MissionWrapper mission, StrategyWrapper strategy,
             AdditionalInfo additionalInfo, Path targetDir) {
         try {
-            int index = 0;
             for (RobotImplWrapper robot : strategy.getRobotList()) {
                 UEMRobotTask robotTask = new UEMRobotTask(robot.getRobot().getRobotId(), robot);
                 makeRobotInerGraph(mission, robotTask, additionalInfo, targetDir);
-                robotTask.setRobotIndex(index);
                 robotTask.setPort();
                 algorithm.addTask(robotTask);
                 algorithm.getRobotTaskList().add(robotTask);
-                index = index + 1;
             }
             makeRobotInterGraph();
         } catch (Exception e) {
@@ -415,6 +412,8 @@ public class AlgorithmGenerator {
                     .map(pm -> (UEMPortMap) pm).collect(Collectors.toList()), channelList);
         }
         algorithm.getChannels().getChannel().addAll(channelList);
+        algorithm.getTasks().getTask().add(controlTask);
+        robot.setControlTask(controlTask);
     }
 
     public boolean generateAlgorithmXML(Path rootDirectory, String projectName) {
