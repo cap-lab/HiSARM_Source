@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.dbmanager.commonlibraries.DBService;
+import com.dbmanager.datastructure.variable.PrimitiveType;
+import com.dbmanager.datastructure.variable.Variable;
 import com.scriptparser.parserdatastructure.entity.common.Identifier;
 import com.scriptparser.parserdatastructure.entity.common.IdentifierSet;
 import com.scriptparser.parserdatastructure.entity.statement.ActionStatement;
@@ -184,6 +186,19 @@ public class VariableInfoMaker {
         return new KeyValue<ServiceWrapper, String>(service, variable);
     }
 
+    public static void makePrimitiveVariableTypeList(RobotImplWrapper robot) {
+        for (PrimitiveType ptype : PrimitiveType.values()) {
+            VariableTypeWrapper variableType = new VariableTypeWrapper();
+            Variable type = new Variable();
+            type.setCount(1);
+            type.setName(ptype.getValue());
+            type.setSize(ptype.getSize());
+            type.setType(ptype);
+            variableType.setVariableType(type);
+            robot.getPrimitiveVariableMap().put(ptype, variableType);
+        }
+    }
+
     public static void makeVariableInfoList(MissionWrapper mission, AdditionalInfo additionalInfo,
             List<RobotImplWrapper> robotList) {
         try {
@@ -202,6 +217,9 @@ public class VariableInfoMaker {
                 mainTransition.traverseTransition(new String(), robot.getTeam(), new ArrayList<>(),
                         null, maker);
                 robot.setVariableMap(maker.getFiguredVariables());
+            }
+            for (RobotImplWrapper robot : robotList) {
+                makePrimitiveVariableTypeList(robot);
             }
         } catch (Exception e) {
             e.printStackTrace();
