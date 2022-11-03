@@ -37,6 +37,11 @@
       <artifactId>dbdatastructure</artifactId>
       <version>${project.dbmanager.version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.scriptparser</groupId>
+      <artifactId>parserdatastructure</artifactId>
+      <version>${project.scriptparser.version}</version>
+    </dependency>
     <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>

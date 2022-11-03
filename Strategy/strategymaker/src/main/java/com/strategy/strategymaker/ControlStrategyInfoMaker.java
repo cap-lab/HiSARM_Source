@@ -25,15 +25,15 @@ public class ControlStrategyInfoMaker {
             for (RobotImplWrapper robot : robotList) {
                 String team = robot.getGroupList().get(0);
                 Set<ControlStrategyWrapper> controlStrategySet = new HashSet<>();
-                for (ActionTypeWrapper action : robot.getActionTypeList()) {
+                for (ActionTypeWrapper actionType : robot.getActionTypeList()) {
                     ControlStrategyWrapper controlStrategy = new ControlStrategyWrapper();
                     String controlStrategyId;
-                    if (containControlStrategyInfo(additionalInfo, team, robot, action)) {
+                    if (containControlStrategyInfo(additionalInfo, team, robot, actionType)) {
                         controlStrategyId =
-                                getControlStrategyInfo(additionalInfo, team, robot, action)
+                                getControlStrategyInfo(additionalInfo, team, robot, actionType)
                                         .getStrategyId();
                     } else {
-                        controlStrategyId = makeDefaultControlStrategyId(robot, action);
+                        controlStrategyId = makeDefaultControlStrategyId(robot, actionType);
                     }
                     if (controlStrategyStore.keySet().contains(controlStrategyId)) {
                         controlStrategy = controlStrategyStore.get(controlStrategyId);
@@ -49,8 +49,9 @@ public class ControlStrategyInfoMaker {
                             } else {
                                 actionImpl.setActionImpl(
                                         DBService.getActionImpl(csElement.getActionImplId()));
-                                actionImpl.setAction(action);
-                                actionImpl.setTask(DBService.getTask(actionImpl.getActionImpl().getTaskId()));
+                                actionImpl.setActionType(actionType);
+                                actionImpl.setTask(
+                                        DBService.getTask(actionImpl.getActionImpl().getTaskId()));
                                 actionImplStore.put(csElement.getActionImplId(), actionImpl);
                             }
                             actionImplSet.add(actionImpl);
