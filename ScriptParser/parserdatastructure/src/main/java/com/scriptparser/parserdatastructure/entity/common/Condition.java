@@ -2,6 +2,7 @@ package com.scriptparser.parserdatastructure.entity.common;
 
 import java.util.List;
 import com.scriptparser.parserdatastructure.enumeration.Operator;
+import com.scriptparser.parserdatastructure.util.ConditionVisitor;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,4 +16,15 @@ public class Condition {
     private List<Identifier> tagList;
     private Operator operator;
     private boolean isLeaf;
+
+    public int exploreCondition(ConditionVisitor visitor, int conditionId) {
+        int currentId = conditionId;
+        visitor.preConditionFunction(this, currentId);
+        if (isLeaf == false) {
+            conditionId = left.exploreCondition(visitor, conditionId + 1);
+            conditionId = right.exploreCondition(visitor, conditionId + 1);
+        }
+        visitor.postConditionFunction(this, currentId);
+        return conditionId;
+    }
 }
