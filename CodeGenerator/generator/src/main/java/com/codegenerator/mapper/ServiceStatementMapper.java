@@ -47,7 +47,8 @@ public class ServiceStatementMapper {
             for (int inputIndex = 0; inputIndex < inputList.size(); inputIndex++) {
                 IdentifierSet input = action.getInputList().get(inputIndex);
                 VariableTypeWrapper inputType = actionType.getVariableInputList().get(inputIndex);
-                VariableTypeWrapper elementType = null;
+                VariableTypeWrapper elementType = robot.getRobot().getRobotTask().getRobot()
+                        .getPrimitiveVariableMap().get(inputType.getVariableType().getType());
                 List<CodeVariableWrapper> childVariableList = new ArrayList<CodeVariableWrapper>();
                 for (int elementIndex = 0; elementIndex < input.getIdentifierSet()
                         .size(); elementIndex++) {

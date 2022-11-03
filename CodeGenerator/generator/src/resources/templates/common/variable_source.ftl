@@ -20,3 +20,10 @@ void variable_relation_of_${variable.id}[${variable.type.count}] = {
 };
     </#if>
 </#list>
+
+// VARIABLE DEFINE
+<#list variableList as variable>
+VARIABLE variable_${variable.id} = {
+    ${variable.type.size}, variable_buffer_of_${variable.id}, ${variable.childVariable.type.size}, ${variable.childVariable?size}, variable_relation_of_${variable.id}
+};
+</#list>
