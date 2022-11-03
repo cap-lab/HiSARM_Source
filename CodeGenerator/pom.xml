@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <properties>
-        <project.scriptparser.version>0.1-SNAPSHOT</project.scriptparser.version>
-        <project.strategy.version>0.1-SNAPSHOT</project.strategy.version>
-        <project.metadata.version>0.1-SNAPSHOT</project.metadata.version>
-        <project.CICXML4JAVA.version>1.3.0-SNAPSHOT</project.CICXML4JAVA.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-    </properties>
+  <properties>
+    <project.scriptparser.version>0.1-SNAPSHOT</project.scriptparser.version>
+    <project.strategy.version>0.1-SNAPSHOT</project.strategy.version>
+    <project.metadata.version>0.1-SNAPSHOT</project.metadata.version>
+    <project.codegenerator.version>0.1-SNAPSHOT</project.codegenerator.version>
+    <project.CICXML4JAVA.version>1.3.0-SNAPSHOT</project.CICXML4JAVA.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+  </properties>
 
-    <groupId>com.codegenerator</groupId>
-    <artifactId>codegenerator</artifactId>
-    <version>0.1-SNAPSHOT</version>
-    <packaging>pom</packaging>
+  <groupId>com.codegenerator</groupId>
+  <artifactId>codegenerator</artifactId>
+  <version>0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
-    <modules>
-        <module>generator</module>
-    </modules>
+  <modules>
+    <module>generator</module>
+    <module>datastructure</module>
+  </modules>
 
 </project>

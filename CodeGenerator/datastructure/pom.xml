@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
-    <groupId>com.codegenerator</groupId>
     <artifactId>codegenerator</artifactId>
+    <groupId>com.codegenerator</groupId>
     <version>0.1-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
   <groupId>com.codegenerator</groupId>
-  <artifactId>generator</artifactId>
+  <artifactId>datastructure</artifactId>
 
-  <name>generator</name>
+  <name>datastructure</name>
 
   <dependencies>
     <dependency>
@@ -28,11 +25,11 @@
       <artifactId>junit</artifactId>
       <version>4.13.2</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.freemarker/freemarker -->
     <dependency>
-      <groupId>org.freemarker</groupId>
-      <artifactId>freemarker</artifactId>
-      <version>2.3.30</version>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.22</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.scriptparser</groupId>
@@ -45,19 +42,9 @@
       <version>${project.strategy.version}</version>
     </dependency>
     <dependency>
-      <groupId>hopes.cic.xml</groupId>
-      <artifactId>CICXML4JAVA</artifactId>
-      <version>${project.CICXML4JAVA.version}</version>
-    </dependency>
-    <dependency>
       <groupId>com.metadata</groupId>
       <artifactId>metadatadatastructure</artifactId>
       <version>${project.metadata.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.codegenerator</groupId>
-      <artifactId>datastructure</artifactId>
-      <version>${project.codegenerator.version}</version>
     </dependency>
   </dependencies>
 
@@ -78,6 +65,15 @@
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.8.0</version>
+          <configuration>
+            <annotationProcessorPaths>
+              <path>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.18.22</version>
+              </path>
+            </annotationProcessorPaths>
+          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
