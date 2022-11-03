@@ -12,20 +12,35 @@ public class KeyValueList<K, V> {
         return list.size();
     }
 
+    public boolean containKeyValue(KeyValue<K, V> newkv) {
+        return list.stream()
+                .anyMatch(kv -> kv.key.equals(newkv.key) && kv.value.equals(newkv.value));
+    }
+
     public void add(int index, K key, V value) {
-        list.add(index, new KeyValue<K, V>(key, value));
+        KeyValue<K, V> kv = new KeyValue<>(key, value);
+        if (!containKeyValue(kv)) {
+            list.add(index, kv);
+        }
     }
 
     public void add(int index, KeyValue<K, V> kv) {
-        list.add(index, kv);
+        if (!containKeyValue(kv)) {
+            list.add(index, kv);
+        }
     }
 
     public void add(KeyValue<K, V> kv) {
-        list.add(kv);
+        if (!containKeyValue(kv)) {
+            list.add(kv);
+        }
     }
 
     public void add(K key, V value) {
-        list.add(new KeyValue<K, V>(key, value));
+        KeyValue<K, V> kv = new KeyValue<>(key, value);
+        if (!containKeyValue(kv)) {
+            list.add(kv);
+        }
     }
 
     public boolean containKey(K key) {
@@ -90,4 +105,12 @@ public class KeyValueList<K, V> {
         return value;
     }
 
+    public void remove(K key, V value) {
+        for (KeyValue<K, V> kv : list) {
+            if (kv.key.equals(key) && kv.value.equals(value)) {
+                list.remove(kv);
+                break;
+            }
+        }
+    }
 }
