@@ -13,8 +13,8 @@ typedef enum _VARIABLE_${variableType.name} {
     </#if>
 </#list>
 
-<#list variableMap as key, variableType>
-extern VARIABLE variable_${key};
+<#list variableList as variable>
+extern VARIABLE variable_${variable.id};
 </#list>
 
 #endif
