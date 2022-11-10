@@ -35,6 +35,8 @@ public class CommonCodeGenerator {
         rootHash.put(RobotSpecificCommonConstant.ROBOT_ID, robot.getRobotIndex());
         rootHash.put(RobotSpecificCommonConstant.CONTROL_TASK_ID,
                 robot.getRobotTask().getControlTask().getId().intValue());
+        rootHash.put(RobotSpecificCommonConstant.GROUP_LIST,
+                robot.getRobotTask().getRobot().getGroupList());
 
         FTLHandler.getInstance().generateCode(CodeGeneratorConstant.ROBOT_SPECIFIC_COMMON_TEMPLATE,
                 Paths.get(targetDir.toString(),

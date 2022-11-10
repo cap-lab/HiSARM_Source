@@ -1,0 +1,25 @@
+#include "semo_common.h"
+#include "semo_leader.h"
+#include "${robotId}_group.h"
+
+extern LIBFUNC(void, set_robot_id_listen, GROUP group_id, int32 robot_id);
+extern LIBFUNC(int8, avail_robot_id_leader, GROUP group_id);
+extern LIBFUNC(int32, get_robot_id_leader, GROUP group_id);
+extern LIBFUNC(void, set_robot_id_leader, GROUP group_id, int32 robot_id);
+extern LIBFUNC(int8, avail_robot_id_report, GROUP group_id);
+extern LIBFUNC(int32, get_robot_id_report, GROUP group_id);
+
+extern LIBFUNC(void, set_heartbeat_listen, GROUP group_id, int32 robot_id);
+extern LIBFUNC(int8, avail_heartbeat_leader, GROUP group_id);
+extern LIBFUNC(int32, get_heartbeat_leader, GROUP group_id);
+extern LIBFUNC(void, set_heartbeat_leader, GROUP group_id, int32 robot_id);
+extern LIBFUNC(int8, avail_heartbeat_report, GROUP group_id);
+extern LIBFUNC(int32, get_heartbeat_report, GROUP group_id);
+
+extern LIBFUNC(void, set_leader_selection_state, GROUP group_id, LEADER_SELECTION_STATE state);
+extern LIBFUNC(LEADER_SELECTION_STATE, get_leader_selection_state, GROUP group_id);
+extern LIBFUNC(int64, get_last_time, GROUP group_id);
+extern LIBFUNC(void, set_last_time, GROUP group_id, int64 time);
+extern LIBFUNC(int32, get_leader, GROUP group_id);
+extern LIBFUNC(void, set_leader, GROUP group_id, int32 robot_id);
+

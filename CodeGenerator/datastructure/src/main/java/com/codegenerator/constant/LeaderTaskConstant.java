@@ -1,7 +1,7 @@
 package com.codegenerator.constant;
 
-public class RobotSpecificCommonConstant {
+public class LeaderTaskConstant {
     public static final String ROBOT_ID = "robotId";
-    public static final String CONTROL_TASK_ID = "controlTaskId";
     public static final String GROUP_LIST = "groupList";
+
 }

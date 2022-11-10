@@ -12,8 +12,8 @@ public class CodeGeneratorConstant {
 
         public static final Path COMMON_TEMPLATE_DIRECTORY =
                         Paths.get(TEMPLATE_DIRECTORY.toString(), "common");
-        public static final Path ROBOT_SPECIFIC_COMMON_TEMPLATE =
-                        Paths.get(COMMON_TEMPLATE_DIRECTORY.toString(), "robotSpecificCommon.ftl");
+        public static final Path ROBOT_SPECIFIC_COMMON_TEMPLATE = Paths
+                        .get(COMMON_TEMPLATE_DIRECTORY.toString(), "robot_specific_common.ftl");
         public static final Path VARIABLE_HEADER_TEMPLATE =
                         Paths.get(COMMON_TEMPLATE_DIRECTORY.toString(), "variable_header.ftl");
         public static final Path VARIABLE_SOURCE_TEMPLATE =
@@ -33,6 +33,13 @@ public class CodeGeneratorConstant {
                         Paths.get(TEMPLATE_DIRECTORY.toString(), "shared_data_header.ftl");
         public static final Path SHARED_DATA_SOURCE_TEMPLATE =
                         Paths.get(TEMPLATE_DIRECTORY.toString(), "shared_data_source.ftl");
+
+        public static final Path LEADER_TEMPLATE_DIRECTORY =
+                        Paths.get(TEMPLATE_DIRECTORY.toString(), "leader");
+        public static final Path LEADER_HEADER_TEMPLATE =
+                        Paths.get(TEMPLATE_DIRECTORY.toString(), "leader_header.ftl");
+        public static final Path LEADER_SOURCE_TEMPLATE =
+                        Paths.get(TEMPLATE_DIRECTORY.toString(), "leader_source.ftl");
 
         public static final Path CONTROL_TEMPLATE_DIRECTORY =
                         Paths.get(TEMPLATE_DIRECTORY.toString(), "control");

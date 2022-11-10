@@ -5,21 +5,22 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.codegenerator.constant.SharedDataTaskConstant;
 import com.codegenerator.generator.constant.CodeGeneratorConstant;
-import com.codegenerator.generator.constant.SharedDataTaskConstant;
-import com.metadata.UEMRobot;
-import com.metadata.algorithm.UEMLibrary;
+import com.codegenerator.wrapper.CodeRobotWrapper;
+import com.metadata.algorithm.library.UEMLibrary;
+import com.metadata.algorithm.library.UEMSharedData;
 
 public class SharedDataCodeGenerator {
-    public void generate(Path targetDir, List<UEMRobot> robotList) {
-        for (UEMRobot robot : robotList) {
-            for (UEMLibrary library : robot.getRobotTask().getLibraryTaskList()) {
-                makeSharedDataTaskCode(targetDir, library);
+    public void generate(Path targetDir, List<CodeRobotWrapper> robotList) {
+        for (CodeRobotWrapper robot : robotList) {
+            for (UEMLibrary library : robot.getRobot().getRobotTask().getSharedDataTaskList()) {
+                makeSharedDataTaskCode(targetDir, (UEMSharedData) library);
             }
         }
     }
 
-    private void makeSharedDataTaskCode(Path targetDir, UEMLibrary library) {
+    private void makeSharedDataTaskCode(Path targetDir, UEMSharedData library) {
         Map<String, Object> rootHash = new HashMap<>();
 
         rootHash.put(SharedDataTaskConstant.LIB_NAME, library.getName());
