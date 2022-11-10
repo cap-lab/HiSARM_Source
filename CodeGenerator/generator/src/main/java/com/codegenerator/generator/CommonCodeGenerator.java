@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.codegenerator.constant.GroupCodeConstant;
 import com.codegenerator.constant.RobotSpecificCommonConstant;
 import com.codegenerator.constant.VariableConstant;
 import com.codegenerator.generator.constant.CodeGeneratorConstant;
@@ -23,6 +24,7 @@ public class CommonCodeGenerator {
             for (CodeRobotWrapper robot : robotList) {
                 generateRobotSpecificCommon(targetDir, robot.getRobot());
                 generateVariableCode(targetDir, mission, robot);
+                generateGroupCode(targetDir, robot);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -85,6 +87,23 @@ public class CommonCodeGenerator {
         FTLHandler.getInstance().generateCode(CodeGeneratorConstant.VARIABLE_SOURCE_TEMPLATE,
                 Paths.get(targetDir.toString(),
                         robot.getRobotName() + CodeGeneratorConstant.VARIABLE_SOURCE_SUFFIX),
+                rootHash);
+    }
+
+    private void generateGroupCode(Path targetDir, CodeRobotWrapper robot) {
+        Map<String, Object> rootHash = new HashMap<>();
+
+        rootHash.put(GroupCodeConstant.ROBOT_ID, robot.getRobotName());
+        rootHash.put(GroupCodeConstant.GROUP_LIST,
+                robot.getRobot().getRobotTask().getRobot().getGroupList());
+
+        FTLHandler.getInstance().generateCode(CodeGeneratorConstant.GROUP_HEADER_TEMPLATE,
+                Paths.get(targetDir.toString(),
+                        robot.getRobotName() + CodeGeneratorConstant.GROUP_HEADER_SUFFIX),
+                rootHash);
+        FTLHandler.getInstance().generateCode(CodeGeneratorConstant.GROUP_SOURCE_TEMPLATE,
+                Paths.get(targetDir.toString(),
+                        robot.getRobotName() + CodeGeneratorConstant.GROUP_SOURCE_SUFFIX),
                 rootHash);
     }
 }

@@ -1,4 +1,4 @@
-
+#include "${robotId}_group.h"
 GROUP group_list[${groupList?size}] = {
     <#list groupList as group>
     ID_GROUP_${group.name},

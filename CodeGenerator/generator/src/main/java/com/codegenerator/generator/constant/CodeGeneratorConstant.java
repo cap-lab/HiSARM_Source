@@ -41,6 +41,13 @@ public class CodeGeneratorConstant {
         public static final Path LEADER_SOURCE_TEMPLATE =
                         Paths.get(TEMPLATE_DIRECTORY.toString(), "leader_source.ftl");
 
+        public static final Path GROUP_TEMPLATE_DIRECTORY =
+                        Paths.get(TEMPLATE_DIRECTORY.toString(), "group");
+        public static final Path GROUP_HEADER_TEMPLATE =
+                        Paths.get(TEMPLATE_DIRECTORY.toString(), "group_header.ftl");
+        public static final Path GROUP_SOURCE_TEMPLATE =
+                        Paths.get(TEMPLATE_DIRECTORY.toString(), "group_source.ftl");
+
         public static final Path CONTROL_TEMPLATE_DIRECTORY =
                         Paths.get(TEMPLATE_DIRECTORY.toString(), "control");
         public static final Path CONTROL_TASK_TEMPLATE =
@@ -52,4 +59,6 @@ public class CodeGeneratorConstant {
         public static final String COMMON_HEADER_SUFFIX = "_common.h";
         public static final String VARIABLE_HEADER_SUFFIX = "_variable.h";
         public static final String VARIABLE_SOURCE_SUFFIX = "_variable.c";
+        public static final String GROUP_HEADER_SUFFIX = "_group.h";
+        public static final String GROUP_SOURCE_SUFFIX = "_group.c";
 }
