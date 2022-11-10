@@ -18,6 +18,8 @@ public class UEMCommTask extends UEMTask {
     private Map<UEMCommPort, UEMChannelPort> channelPortMap = new HashMap<>();
     private Map<UEMMulticastPort, UEMChannelPort> multicastPortMap = new HashMap<>();
     private Map<UEMLibraryPort, UEMMulticastPort> sharedDataPortMap = new HashMap<>();
+    protected UEMLibraryPort leaderPort;
+    private Map<UEMMulticastPort, UEMMulticastPort> leaderPortMap = new HashMap<>();
 
     public UEMCommTask(String robotId, String name) {
         super();
@@ -40,13 +42,12 @@ public class UEMCommTask extends UEMTask {
     }
 
     private void setCommRelatedFile(String robotId) {
+        getExtraHeader().add(AlgorithmConstant.COMMON_HEADER);
+        getExtraHeader().add(AlgorithmConstant.COMMON_HEADER);
         getExtraSource().add(AlgorithmConstant.COMMUNICATION_SOURCE);
-        getExtraSource().add(AlgorithmConstant.COMMON_PORT_SOURCE);
-        getExtraSource().add(robotId + AlgorithmConstant.ROBOT_PORT_SOURCE_SUFFIX);
         getExtraSource().add(robotId + AlgorithmConstant.ROBOT_VARIABLE_SOURCE_SUFFIX);
         getExtraHeader().add(AlgorithmConstant.COMMUNICATION_HEADER);
         getExtraHeader().add(AlgorithmConstant.COMMON_PORT_HEADER);
-        getExtraHeader().add(robotId + AlgorithmConstant.ROBOT_PORT_HEADER_SUFFIX);
         getExtraHeader().add(robotId + AlgorithmConstant.ROBOT_VARIABLE_HEADER_SUFFIX);
         setExtraCommonCode(robotId);
     }
@@ -69,6 +70,14 @@ public class UEMCommTask extends UEMTask {
 
     public Map<UEMLibraryPort, UEMMulticastPort> getSharedDataPortMap() {
         return sharedDataPortMap;
+    }
+
+    public Map<UEMMulticastPort, UEMMulticastPort> getLeaderPortMap() {
+        return leaderPortMap;
+    }
+
+    public UEMLibraryPort getLeaderPort() {
+        return leaderPort;
     }
 
 }

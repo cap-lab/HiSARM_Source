@@ -27,7 +27,4 @@ public class UEMMulticastPort extends MulticastPortType {
         return getGroup() + "_" + message;
     }
 
-    public int getSize() {
-        return variableType.getVariableType().getCount() * variableType.getVariableType().getSize();
-    }
 }

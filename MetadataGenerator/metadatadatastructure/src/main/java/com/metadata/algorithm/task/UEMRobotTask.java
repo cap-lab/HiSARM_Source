@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.metadata.algorithm.UEMCommPort;
 import com.metadata.algorithm.UEMPortMap;
+import com.metadata.algorithm.library.UEMLeaderLibrary;
 import com.metadata.algorithm.library.UEMSharedData;
 import com.metadata.constant.AlgorithmConstant;
 import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
@@ -18,6 +19,8 @@ public class UEMRobotTask extends UEMTask {
     private UEMControlTask controlTask;
     private UEMListenTask listenTask;
     private UEMReportTask reportTask;
+    private UEMLeaderLibrary leaderLibraryTask;
+    private UEMLeaderTask leaderTask;
 
     public UEMRobotTask(String name, RobotImplWrapper robot) {
         super();
@@ -110,5 +113,21 @@ public class UEMRobotTask extends UEMTask {
         portMap.setDirection(PortDirectionType.INPUT);
         portMap.setPort(cflags);
         getPortMapList().add(portMap);
+    }
+
+    public UEMLeaderLibrary getLeaderLibraryTask() {
+        return leaderLibraryTask;
+    }
+
+    public void setLeaderLibraryTask(UEMLeaderLibrary leaderLibraryTask) {
+        this.leaderLibraryTask = leaderLibraryTask;
+    }
+
+    public UEMLeaderTask getLeaderTask() {
+        return leaderTask;
+    }
+
+    public void setLeaderTask(UEMLeaderTask leaderTask) {
+        this.leaderTask = leaderTask;
     }
 }

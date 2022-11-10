@@ -27,7 +27,6 @@ public class UEMControlTask extends UEMTask {
 
     private void setExtraFile(String robotId) {
         getExtraSource().add(AlgorithmConstant.COMMON_TIMER_SOURCE);
-        getExtraSource().add(AlgorithmConstant.COMMON_PORT_SOURCE);
         getExtraSource().add(AlgorithmConstant.COMMON_SERVICE_SOURCE);
         getExtraHeader().add(AlgorithmConstant.COMMON_HEADER);
         getExtraSource().add(robotId + AlgorithmConstant.ROBOT_PORT_SOURCE_SUFFIX);

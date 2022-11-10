@@ -14,6 +14,9 @@ public class AlgorithmConstant {
     public static final String LISTEN = "listen";
     public static final String REPORT = "report";
     public static final String CONTROL = "control";
+    public static final String LEADER = "leader";
+    public static final String ROBOT_ID = "robotId";
+    public static final String HEARTBEAT = "heartbeat";
 
     public static final String LIBRARY_FILE_EXTENSION = ".cicl";
     public static final String LIBRARY_HEADER_EXTENSION = ".cicl.h";
@@ -31,12 +34,15 @@ public class AlgorithmConstant {
     public static final String ROBOT_TIMER_HEADER_SUFFIX = "_timer.h";
     public static final String ROBOT_TIMER_SOURCE_SUFFIX = "_timer.c";
     public static final String ROBOT_MODE_SOURCE_SUFFIX = "_mode.c";
-    public static final String COMMON_HEADER = "common.h";
-    public static final String COMMON_PORT_HEADER = "port.h";
-    public static final String COMMON_PORT_SOURCE = "port.c";
+    public static final String ROBOT_LEADER_LIBRARY_SOURCE_SUFFIX = "_leader_lib.cicl";
+    public static final String ROBOT_LEADER_LIBRARY_HEADER_SUFFIX = "_leader_lib.cicl.h";
+    public static final String COMMON_HEADER = "semo_common.h";
+    public static final String COMMON_PORT_HEADER = "semo_port.h";
     public static final String COMMON_TIMER_SOURCE = "timer.c";
     public static final String COMMON_SERVICE_SOURCE = "service.c";
-    public static final String COMMUNICATION_HEADER = "communication.h";
-    public static final String COMMUNICATION_SOURCE = "communication.c";
+    public static final String COMMUNICATION_HEADER = "semo_communication.h";
+    public static final String COMMUNICATION_SOURCE = "semo_communication.c";
+    public static final String COMMON_LEADER_SELECTION_SOURCE = "leader_selection.cic";
+    public static final String COMMON_LEADER_SELECTION_HEADER = "semo_leader_selection.h";
 
 }

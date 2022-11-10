@@ -3,8 +3,9 @@ package com.metadata.algorithm.task;
 import com.metadata.algorithm.UEMChannelPort;
 import com.metadata.algorithm.UEMCommPort;
 import com.metadata.algorithm.UEMMulticastPort;
-import com.metadata.algorithm.library.UEMLibrary;
+import com.metadata.algorithm.library.UEMLeaderLibrary;
 import com.metadata.algorithm.library.UEMLibraryPort;
+import com.metadata.algorithm.library.UEMSharedData;
 import com.metadata.constant.AlgorithmConstant;
 import com.scriptparser.parserdatastructure.entity.statement.CommunicationalStatement;
 import com.scriptparser.parserdatastructure.entity.statement.ThrowStatement;
@@ -31,7 +32,7 @@ public class UEMListenTask extends UEMCommTask {
             inPort.setExport(true);
             inPort.setCounterTeam(statement.getCounterTeam());
             inPort.setMessage(statement.getMessage().getId());
-            inPort.setVariable(variable);
+            inPort.setVariableType(variable);
             getPort().add(inPort);
             getExportPortList().add(inPort);
             UEMChannelPort outPort = new UEMChannelPort();
@@ -90,7 +91,7 @@ public class UEMListenTask extends UEMCommTask {
         }
     }
 
-    public void addSharedData(UEMLibrary library) {
+    public void addSharedData(UEMSharedData library) {
         String portName = library.getName();
         if (!existMulticastPort(portName)) {
             UEMMulticastPort inPort = new UEMMulticastPort();
@@ -102,8 +103,38 @@ public class UEMListenTask extends UEMCommTask {
             outPort.setName(portName);
             outPort.setType(portName);
             outPort.setLibrary(library);
+            outPort.setVariableType(library.getVariableType());
             getLibraryMasterPort().add(outPort);
             getSharedDataPortMap().put(outPort, inPort);
         }
+    }
+
+    public void addLeaderPort(UEMLeaderLibrary leaderLib) {
+        this.leaderPort = new UEMLibraryPort();
+        this.leaderPort.setName(AlgorithmConstant.LEADER);
+        this.leaderPort.setType(AlgorithmConstant.LEADER);
+        this.leaderPort.setLibrary(leaderLib);
+        getLibraryMasterPort().add(this.leaderPort);
+        leaderLib.getGroupList().forEach(group -> {
+            String robotIdPortName = makePortName(group,
+                    makePortName(AlgorithmConstant.LEADER, AlgorithmConstant.ROBOT_ID));
+            if (!existMulticastPort(robotIdPortName)) {
+                UEMMulticastPort robotIdPort = new UEMMulticastPort();
+                robotIdPort.setName(robotIdPortName);
+                robotIdPort.setGroup(robotIdPortName);
+                robotIdPort.setDirection(PortDirectionType.INPUT);
+                robotIdPort.setMessage(group);
+                getMulticastPort().add(robotIdPort);
+                String heartbeatPortName = makePortName(group,
+                        makePortName(AlgorithmConstant.LEADER, AlgorithmConstant.HEARTBEAT));
+                UEMMulticastPort heartbeatPort = new UEMMulticastPort();
+                heartbeatPort.setName(heartbeatPortName);
+                heartbeatPort.setGroup(heartbeatPortName);
+                heartbeatPort.setDirection(PortDirectionType.INPUT);
+                heartbeatPort.setMessage(group);
+                getMulticastPort().add(heartbeatPort);
+                getLeaderPortMap().put(robotIdPort, heartbeatPort);
+            }
+        });
     }
 }

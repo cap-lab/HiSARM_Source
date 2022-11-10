@@ -1,5 +1,6 @@
 package com.metadata.algorithm.task;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import com.dbmanager.datastructure.task.ChannelPort;
@@ -12,6 +13,9 @@ import com.metadata.constant.AlgorithmConstant;
 import com.scriptparser.parserdatastructure.entity.statement.ActionStatement;
 import com.strategy.strategydatastructure.wrapper.ActionImplWrapper;
 import hopes.cic.xml.LibraryMasterPortType;
+import hopes.cic.xml.PortDirectionType;
+import hopes.cic.xml.PortTypeType;
+import hopes.cic.xml.TaskRateType;
 import hopes.cic.xml.YesNoType;
 
 public class UEMActionTask extends UEMTask {
@@ -19,6 +23,9 @@ public class UEMActionTask extends UEMTask {
     private ActionStatement actionStatement;
     private String scope;
     private List<UEMTaskGraph> subTaskGraphs = new ArrayList<>();
+    private UEMLibraryPort leaderPort;
+    private List<UEMLibraryPort> sharedDataPortList = new ArrayList<>();
+    private UEMChannelPort groupPort;
 
     public UEMActionTask(String robotTask, String groupId, String serviceId,
             ActionImplWrapper actionImpl, ActionStatement actionStatement) {
@@ -43,6 +50,12 @@ public class UEMActionTask extends UEMTask {
             setLanguage(task.getLanguage());
             setChannelPorts(task);
             setLibraryPorts(task);
+            if (task.getLeaderPort() != null) {
+                setLeaderPort();
+            }
+            if (task.getGroupPort() != null) {
+                setGroupPort();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -101,6 +114,39 @@ public class UEMActionTask extends UEMTask {
 
     public void setActionStatement(ActionStatement actionStatement) {
         this.actionStatement = actionStatement;
+    }
+
+    public UEMLibraryPort getLeaderPort() {
+        return leaderPort;
+    }
+
+    private void setLeaderPort() {
+        UEMLibraryPort leaderPort = new UEMLibraryPort();
+        leaderPort.setName("leader");
+        leaderPort.setType("leader");
+        this.leaderPort = leaderPort;
+        getLibraryMasterPort().add(leaderPort);
+    }
+
+    private void setGroupPort() {
+        UEMChannelPort groupPort = new UEMChannelPort();
+        groupPort.setName("group");
+        groupPort.setDirection(PortDirectionType.INPUT);
+        groupPort.setExport(false);
+        groupPort.setSampleSize(BigInteger.valueOf(4));
+        groupPort.setSampleType("int");
+        groupPort.setType(PortTypeType.OVERWRITABLE);
+        groupPort.setIsFeedback(false);
+        TaskRateType rate = new TaskRateType();
+        rate.setMode(AlgorithmConstant.DEFAULT);
+        rate.setRate(BigInteger.ONE);
+        groupPort.getRate().add(rate);
+        this.groupPort = groupPort;
+        getPort().add(groupPort);
+    }
+
+    public List<UEMLibraryPort> getSharedDataPortList() {
+        return sharedDataPortList;
     }
 
 }

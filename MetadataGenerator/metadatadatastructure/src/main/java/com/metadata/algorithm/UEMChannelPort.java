@@ -17,8 +17,6 @@ public class UEMChannelPort extends TaskPortType {
         super();
     }
 
-
-
     public void setPortInfo(ChannelPort port) {
         setSampleSize(BigInteger.valueOf(port.getSampleSize()));
         setDirection(convertPortDirection(port.getDirection()));

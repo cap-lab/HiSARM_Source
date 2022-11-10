@@ -1,9 +1,11 @@
 package com.metadata.algorithm.library;
 
+import com.strategy.strategydatastructure.wrapper.VariableTypeWrapper;
 import hopes.cic.xml.LibraryMasterPortType;
 
 public class UEMLibraryPort extends LibraryMasterPortType {
     UEMLibrary library;
+    VariableTypeWrapper variableType;
     int index;
 
     public int getIndex() {
@@ -20,6 +22,14 @@ public class UEMLibraryPort extends LibraryMasterPortType {
 
     public void setLibrary(UEMLibrary library) {
         this.library = library;
+    }
+
+    public VariableTypeWrapper getVariableType() {
+        return variableType;
+    }
+
+    public void setVariableType(VariableTypeWrapper variableType) {
+        this.variableType = variableType;
     }
 
 }
