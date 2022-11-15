@@ -9,6 +9,7 @@ import com.dbmanager.datastructure.robot.RobotImpl;
 import com.dbmanager.datastructure.variable.PrimitiveType;
 import com.scriptparser.parserdatastructure.util.KeyValue;
 import com.scriptparser.parserdatastructure.wrapper.ServiceWrapper;
+import com.strategy.strategydatastructure.enumeration.AdditionalTaskType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +19,8 @@ public class RobotImplWrapper {
     private RobotImpl robot;
     private int robotIndex;
     private RobotTypeWrapper robotType;
-    private List<String> groupList = new ArrayList<>();
+    private String team;
+    private Map<String, Integer> groupMap = new HashMap<>();
     private List<ControlStrategyWrapper> controlStrategyList = new ArrayList<>();
     private List<ActionTypeWrapper> actionTypeList = new ArrayList<>();
     private Map<KeyValue<ServiceWrapper, String>, VariableTypeWrapper> variableMap =
@@ -36,15 +38,28 @@ public class RobotImplWrapper {
         }
     }
 
-    public void addTeam(String team) {
-        groupList.add(0, team);
+    public void addTeam(String team, int groupIndex) {
+        this.team = team;
+        if (!groupMap.containsKey(team)) {
+            groupMap.put(team, groupIndex);
+        }
     }
 
     public String getTeam() throws Exception {
-        if (groupList.size() > 0) {
-            return groupList.get(0);
+        if (team != null) {
+            return team;
         } else {
             throw new Exception("A team is not yet allocated");
+        }
+    }
+
+    public AdditionalTaskWrapper getAdditionalTask(AdditionalTaskType type) throws Exception {
+        Optional<AdditionalTaskWrapper> task =
+                additionalTaskList.stream().filter(t -> t.getType().equals(type)).findAny();
+        if (task.isPresent()) {
+            return task.get();
+        } else {
+            throw new Exception("No additional task which type is " + type.getValue());
         }
     }
 }

@@ -23,7 +23,7 @@ public class ControlStrategyInfoMaker {
             List<RobotImplWrapper> robotList) {
         try {
             for (RobotImplWrapper robot : robotList) {
-                String team = robot.getGroupList().get(0);
+                String team = robot.getTeam();
                 Set<ControlStrategyWrapper> controlStrategySet = new HashSet<>();
                 for (ActionTypeWrapper actionType : robot.getActionTypeList()) {
                     ControlStrategyWrapper controlStrategy = new ControlStrategyWrapper();

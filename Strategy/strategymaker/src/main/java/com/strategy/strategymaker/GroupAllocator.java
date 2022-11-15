@@ -15,6 +15,7 @@ import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 public class GroupAllocator {
     private static List<String> exploredList = new ArrayList<>();
     private static Map<String, List<RobotImplWrapper>> allocationMap = new HashMap<>();
+    private static Map<String, Integer> groupMap = new HashMap<>();
 
     private static boolean robotMatchWithGroupConstraint(RobotImplWrapper robot,
             GroupWrapper group) {
@@ -27,7 +28,7 @@ public class GroupAllocator {
         for (int i = 0; i < candidateNum && count > 0; i++) {
             RobotImplWrapper robot = candidateRobotList.get(i);
             if (robotMatchWithGroupConstraint(robot, group)) {
-                robot.getGroupList().add(groupId);
+                robot.getGroupMap().put(groupId, groupMap.get(groupId));
                 allocatedList.add(robot);
                 candidateRobotList.remove(i);
                 candidateNum = candidateNum - 1;
@@ -39,7 +40,11 @@ public class GroupAllocator {
     }
 
     public static String makeGroupKey(String previousKey, String choosedGroup) {
-        return previousKey + "_" + choosedGroup;
+        String newGroupKey = previousKey + "_" + choosedGroup;
+        if (!groupMap.containsKey(newGroupKey)) {
+            groupMap.put(newGroupKey, groupMap.size());
+        }
+        return newGroupKey;
     }
 
     public static String makeTransitionId(String previousKey, TransitionWrapper transition) {
@@ -109,6 +114,8 @@ public class GroupAllocator {
 
     public static void allocateGroup(MissionWrapper mission, List<RobotImplWrapper> robotList) {
         try {
+            mission.getTeamList()
+                    .forEach(t -> groupMap.put(t.getTeam().getName(), groupMap.size()));
             for (TeamWrapper team : mission.getTeamList()) {
                 List<RobotImplWrapper> candidateRobotList = new ArrayList<>();
                 for (RobotImplWrapper robot : robotList) {
@@ -120,6 +127,7 @@ public class GroupAllocator {
                 traverseTransition(team.getTeam().getName(), team.getTeam().getName(),
                         mainTransition, candidateRobotList);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

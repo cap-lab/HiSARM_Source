@@ -36,7 +36,7 @@ public class ActionTypeInfoMaker {
     private static Set<ActionTypeWrapper> makeActionTypeList(MissionWrapper mission,
             RobotImplWrapper robot) throws Exception {
         Set<ActionTypeWrapper> actionTypeSet = new HashSet<>();
-        String team = robot.getGroupList().get(0);
+        String team = robot.getTeam();
         actionTypeSet.addAll(traverseTransition(mission.getTransition(team), robot));
         return actionTypeSet;
     }

@@ -12,6 +12,7 @@ import com.scriptparser.parserdatastructure.entity.common.IdentifierSet;
 import com.scriptparser.parserdatastructure.entity.statement.ActionStatement;
 import com.scriptparser.parserdatastructure.entity.statement.CommunicationalStatement;
 import com.scriptparser.parserdatastructure.entity.statement.ConditionalStatement;
+import com.scriptparser.parserdatastructure.entity.statement.Statement;
 import com.scriptparser.parserdatastructure.entity.statement.ThrowStatement;
 import com.scriptparser.parserdatastructure.enumeration.IdentifierType;
 import com.scriptparser.parserdatastructure.util.KeyValue;
@@ -141,6 +142,9 @@ public class VariableInfoMaker {
                     int index) {
                 getVariablesOfOtherStatement(wrapper);
             }
+
+            @Override
+            public void visitOtherStatement(StatementWrapper wrapper, Statement statement, int index) {}
         }
 
         public RobotVariableTypeListMaker(RobotImplWrapper robot, AdditionalInfo additionalInfo) {

@@ -68,12 +68,13 @@ public class RobotInfoMaker {
             Map<String, List<RobotWrapper>> robotList, List<RobotImpl> robotCandidateList) {
         List<RobotImplWrapper> robotImplList = new ArrayList<>();
         int robotIndex = 0;
+        int teamIndex = 0;
         for (String teamName : robotList.keySet()) {
             for (RobotWrapper robot : robotList.get(teamName)) {
                 for (int i = 0; i < robot.getRobot().getCount(); i++) {
                     RobotImplWrapper robotImpl = new RobotImplWrapper();
                     robotImpl.setRobotIndex(robotIndex);
-                    robotImpl.addTeam(teamName);
+                    robotImpl.addTeam(teamName, teamIndex);
                     robotImpl.setRobotType(getRobotType(robot.getRobot().getType()));
                     for (int index = 0; index < robotCandidateList.size(); index++) {
                         if (robotCandidateList.get(index).getRobotClass()
@@ -87,6 +88,7 @@ public class RobotInfoMaker {
                     robotIndex = robotIndex + 1;
                 }
             }
+            teamIndex++;
         }
         return robotImplList;
     }
