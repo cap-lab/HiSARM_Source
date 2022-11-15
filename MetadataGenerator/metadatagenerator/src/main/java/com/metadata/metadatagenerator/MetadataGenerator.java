@@ -6,15 +6,14 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
 import com.metadata.UEMRobot;
 import com.metadata.metadatagenerator.algorithm.AlgorithmGenerator;
 import com.metadata.metadatagenerator.architecture.ArchitectureGenerator;
 import com.metadata.metadatagenerator.constant.MetadataConstant;
 import com.metadata.metadatagenerator.mapping.MappingGenerator;
 import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
-import com.strategy.strategydatastructure.wrapper.StrategyWrapper;
 import com.strategy.strategydatastructure.additionalinfo.AdditionalInfo;
+import com.strategy.strategydatastructure.wrapper.StrategyWrapper;
 
 public class MetadataGenerator {
     private String makeProjectDirName(String projectName) {
@@ -27,15 +26,12 @@ public class MetadataGenerator {
         return projectDir.mkdirs();
     }
 
-    public void metadataGenerate(MissionWrapper mission, StrategyWrapper strategy,
-            AdditionalInfo additionalInfo, String targetDirectory) {
+    public List<UEMRobot> metadataGenerate(MissionWrapper mission, StrategyWrapper strategy,
+            AdditionalInfo additionalInfo, Path projectDir) {
         String projectName = additionalInfo.getProjectName();
-        Path projectDir = null;
-        if (targetDirectory == null) {
+        if (projectDir == null) {
             projectDir = Paths.get(MetadataConstant.GENERATE_DIRECTORY.toString(),
                     makeProjectDirName(projectName));
-        } else {
-            projectDir = Paths.get(targetDirectory);
         }
         makeProjectDirectory(projectDir);
         ConfigurationGenerator.generateConfiguration(projectDir, projectName);
@@ -52,5 +48,7 @@ public class MetadataGenerator {
         MappingGenerator mapping = new MappingGenerator();
         mapping.generate(robotList, algorithm.getAlgorithm());
         mapping.generateMappingXML(projectDir, projectName);
+
+        return robotList;
     }
 }

@@ -28,6 +28,7 @@ import com.metadata.metadatagenerator.constant.MetadataConstant;
 import com.scriptparser.parserdatastructure.entity.statement.ActionStatement;
 import com.scriptparser.parserdatastructure.entity.statement.CommunicationalStatement;
 import com.scriptparser.parserdatastructure.entity.statement.ConditionalStatement;
+import com.scriptparser.parserdatastructure.entity.statement.Statement;
 import com.scriptparser.parserdatastructure.entity.statement.ThrowStatement;
 import com.scriptparser.parserdatastructure.enumeration.StatementType;
 import com.scriptparser.parserdatastructure.util.ModeVisitor;
@@ -83,6 +84,11 @@ public class AlgorithmGenerator {
             private String currentGroup;
             private ModeWrapper mode;
 
+            public TaskMakerForStatement(String currentGroup, ModeWrapper mode) {
+                this.currentGroup = currentGroup;
+                this.mode = mode;
+            }
+
             private List<UEMTaskGraph> recursiveExplore(UEMActionTask actionTask,
                     Path taskServerPrefix) {
                 TaskXMLtoAlgorithm convertor = new TaskXMLtoAlgorithm();
@@ -127,7 +133,7 @@ public class AlgorithmGenerator {
             private void makeSubGraphOfAction(UEMActionTask actionTask, Path taskServerPrefix) {
                 actionTask.setSubTaskGraphs(exploreSubGraph(actionTask, taskServerPrefix));
                 for (UEMTaskGraph taskGraph : actionTask.getSubTaskGraphs()) {
-                    algorithm.getTasks().getTask().addAll(taskGraph.getTaskList());
+                    algorithm.addAllTasks(taskGraph.getTaskList());
                     algorithm.getChannels().getChannel().addAll(taskGraph.getChannelList());
                     algorithm.getLibraries().getLibrary().addAll(taskGraph.getLibraryList());
                     algorithm.getLibraryConnections().getTaskLibraryConnection()
@@ -204,6 +210,9 @@ public class AlgorithmGenerator {
                 algorithm.addMulticastGroup(currentGroup, 4);
             }
 
+            @Override
+            public void visitOtherStatement(StatementWrapper wrapper, Statement statement, int index) {}
+
         }
 
         public RobotInerGraphMaker(UEMRobotTask robot,
@@ -218,22 +227,21 @@ public class AlgorithmGenerator {
         @Override
         public void visitMode(ModeWrapper mode, String modeId, String groupId) {
             for (ParallelServiceWrapper service : mode.getServiceList()) {
-                TaskMakerForStatement taskMaker = new TaskMakerForStatement();
+                TaskMakerForStatement taskMaker = new TaskMakerForStatement(groupId, mode);
                 service.getService().traverseService(taskMaker);
             }
         }
 
     }
 
-    private void makeRobotInterGraph() {
+    private void makeRobotInterGraph() throws Exception {
         for (UEMRobotTask robotTask : algorithm.getRobotTaskList()) {
-            String senderTeam = robotTask.getRobot().getGroupList().get(0);
+            String senderTeam = robotTask.getRobot().getTeam();
             for (TaskPortType p : robotTask.getPort()) {
                 UEMCommPort port = (UEMCommPort) p;
                 if (port.getDirection().equals(PortDirectionType.OUTPUT)) {
                     for (UEMRobotTask counterRobotTask : algorithm.getRobotTaskList()) {
-                        if (counterRobotTask.getRobot().getGroupList().get(0)
-                                .equals(port.getCounterTeam())) {
+                        if (counterRobotTask.getRobot().getTeam().equals(port.getCounterTeam())) {
                             for (TaskPortType cp : counterRobotTask.getPort()) {
                                 UEMCommPort counterPort = (UEMCommPort) cp;
                                 if (counterPort.getCounterTeam().equals(senderTeam)
@@ -329,7 +337,7 @@ public class AlgorithmGenerator {
         RobotInerGraphMaker maker =
                 new RobotInerGraphMaker(robot, controlStrategyList, taskServerPrefix, true);
         transition.traverseTransition(new String(), team, new ArrayList<String>(),
-                robot.getRobot().getGroupList(), maker);
+                new ArrayList<>(robot.getRobot().getGroupMap().keySet()), maker);
     }
 
     private void makeLibraryTask(UEMRobotTask robot) {
@@ -366,7 +374,7 @@ public class AlgorithmGenerator {
         connection.setConnection(leader, leader.getLeaderPort(), leaderLibrary);
         robot.setLeaderTask(leader);
         robot.setLeaderLibraryTask(leaderLibrary);
-        algorithm.getTasks().getTask().add(leader);
+        algorithm.addTask(leader);
         algorithm.getLibraries().getLibrary().add(leaderLibrary);
         algorithm.getLibraryConnections().getTaskLibraryConnection().add(connection);
         for (UEMActionTask actionTask : robot.getActionTaskList()) {
@@ -384,11 +392,11 @@ public class AlgorithmGenerator {
             throws Exception {
         algorithm.addTask(robot.getListenTask());
         algorithm.addTask(robot.getReportTask());
-        String team = robot.getRobot().getGroupList().get(0);
+        String team = robot.getRobot().getTeam();
         TransitionWrapper transition = mission.getTransition(team);
         RobotInerGraphMaker maker = new RobotInerGraphMaker(robot, null, null, false);
         transition.traverseTransition(new String(), team, new ArrayList<String>(),
-                robot.getRobot().getGroupList(), maker);
+                new ArrayList<>(robot.getRobot().getGroupMap().keySet()), maker);
         for (UEMSharedData library : robot.getSharedDataTaskList()) {
             robot.getListenTask().addSharedData(library);
             UEMLibraryConnection listenConnection = new UEMLibraryConnection();
@@ -440,13 +448,16 @@ public class AlgorithmGenerator {
 
         UEMReportTask reportTask = robot.getReportTask();
         channelList.addAll(controlTask.setCommPortInfo(reportTask));
+
+        UEMLeaderTask leaderTask = robot.getLeaderTask();
+        channelList.add(controlTask.setLeaderPortInfo(leaderTask));
         boolean flag = true;
         while (flag) {
             flag = convertChannelToDirect(algorithm.getPortMaps().getPortMap().stream()
                     .map(pm -> (UEMPortMap) pm).collect(Collectors.toList()), channelList);
         }
         algorithm.getChannels().getChannel().addAll(channelList);
-        algorithm.getTasks().getTask().add(controlTask);
+        algorithm.addTask(controlTask);
         robot.setControlTask(controlTask);
     }
 

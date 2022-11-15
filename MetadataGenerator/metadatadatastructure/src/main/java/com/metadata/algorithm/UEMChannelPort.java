@@ -23,11 +23,15 @@ public class UEMChannelPort extends TaskPortType {
         setType(PortTypeType.OVERWRITABLE);
         setName(port.getName());
         setIndex(port.getIndex());
-        setRate();
+        setDefaultRate();
+    }
+
+    public static String makePortNameFromCounterPort(String prefix, UEMChannelPort port) {
+        return prefix + "_" + port.getName();
     }
 
     public void setPortInfo(String prefix, UEMChannelPort counterPort) {
-        setName(prefix + "_" + counterPort.getName());
+        setName(makePortNameFromCounterPort(prefix, counterPort));
         setDirection(counterPort.getDirection().equals(PortDirectionType.INPUT)
                 ? PortDirectionType.OUTPUT
                 : PortDirectionType.INPUT);
@@ -41,7 +45,7 @@ public class UEMChannelPort extends TaskPortType {
                 : PortDirectionType.OUTPUT;
     }
 
-    private void setRate() {
+    public void setDefaultRate() {
         TaskRateType rate = new TaskRateType();
         rate.setMode(AlgorithmConstant.DEFAULT);
         rate.setRate(BigInteger.ONE);
@@ -54,7 +58,7 @@ public class UEMChannelPort extends TaskPortType {
         setDirection(direction);
         setType(PortTypeType.FIFO);
         setName(name);
-        setRate();
+        setDefaultRate();
     }
 
     public void setExport(boolean export) {

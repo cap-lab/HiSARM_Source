@@ -3,13 +3,16 @@ package com.metadata.algorithm.task;
 import java.util.ArrayList;
 import java.util.List;
 import com.metadata.algorithm.UEMCommPort;
+import com.metadata.algorithm.UEMModeTask;
 import com.metadata.algorithm.UEMPortMap;
 import com.metadata.algorithm.library.UEMLeaderLibrary;
 import com.metadata.algorithm.library.UEMSharedData;
 import com.metadata.constant.AlgorithmConstant;
+import com.scriptparser.parserdatastructure.entity.statement.ActionStatement;
 import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 import hopes.cic.xml.PortDirectionType;
 import hopes.cic.xml.RunConditionType;
+import hopes.cic.xml.TimeMetricType;
 import hopes.cic.xml.YesNoType;
 
 public class UEMRobotTask extends UEMTask {
@@ -31,9 +34,20 @@ public class UEMRobotTask extends UEMTask {
         setParentTask(name);
         setIsHardwareDependent(YesNoType.NO);
         setSubGraphProperty(AlgorithmConstant.PROCESS_NETWORK);
+        setMode();
         this.robot = robot;
         listenTask = new UEMListenTask(getName(), AlgorithmConstant.LISTEN);
         reportTask = new UEMReportTask(getName(), AlgorithmConstant.REPORT);
+    }
+
+    private void setMode() {
+        UEMModeTask mode = new UEMModeTask();
+        mode.setName(getName());
+        mode.setDeadline(1);
+        mode.setDeadlineUnit(TimeMetricType.US.value());
+        mode.setPeriod(1);
+        mode.setPeriodUnit(TimeMetricType.US.value());
+        setMode(mode);
     }
 
     public int getRobotIndex() {
@@ -46,6 +60,18 @@ public class UEMRobotTask extends UEMTask {
 
     public List<UEMActionTask> getActionTaskList() {
         return actionTaskList;
+    }
+
+    public List<UEMActionTask> getActionTaskList(String groupId, String ServiceId,
+            ActionStatement statement) {
+        List<UEMActionTask> targetActionTaskList = new ArrayList<>();
+        for (UEMActionTask actionTask : actionTaskList) {
+            if (actionTask.getScope().equals(UEMActionTask.makeScope(groupId, ServiceId))
+                    && actionTask.getActionStatement().equals(statement)) {
+                targetActionTaskList.add(actionTask);
+            }
+        }
+        return targetActionTaskList;
     }
 
     public void setActionTaskList(List<UEMActionTask> actionTaskList) {

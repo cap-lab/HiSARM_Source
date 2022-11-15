@@ -13,8 +13,8 @@ import hopes.cic.xml.TaskType;
 import hopes.cic.xml.YesNoType;
 
 public class UEMTask extends TaskType {
-    UEMModeTask mode;
-    List<UEMPortMap> portMapList = new ArrayList<>();
+    private UEMModeTask uemMode;
+    private List<UEMPortMap> portMapList = new ArrayList<>();
 
     public UEMTask() {
         super();
@@ -72,7 +72,7 @@ public class UEMTask extends TaskType {
     }
 
     public void setMode(UEMModeTask mode) {
-        this.mode = mode;
+        this.uemMode = mode;
     }
 
     public List<UEMPortMap> getPortMapList() {
@@ -82,5 +82,9 @@ public class UEMTask extends TaskType {
     public void setExtraCommonCode(String robotName) {
         getExtraHeader().add(AlgorithmConstant.COMMON_HEADER);
         getExtraHeader().add(robotName + AlgorithmConstant.ROBOT_COMMON_HEADER_SUFFIX);
+    }
+
+    public UEMModeTask getUEMMode() {
+        return uemMode;
     }
 }

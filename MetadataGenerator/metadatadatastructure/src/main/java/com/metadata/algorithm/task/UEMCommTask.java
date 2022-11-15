@@ -6,16 +6,18 @@ import java.util.List;
 import java.util.Map;
 import com.metadata.algorithm.UEMChannelPort;
 import com.metadata.algorithm.UEMCommPort;
+import com.metadata.algorithm.UEMModeTask;
 import com.metadata.algorithm.UEMMulticastPort;
 import com.metadata.algorithm.library.UEMLibraryPort;
 import com.metadata.constant.AlgorithmConstant;
 import hopes.cic.xml.RunConditionType;
+import hopes.cic.xml.TimeMetricType;
 import hopes.cic.xml.YesNoType;
 
 public class UEMCommTask extends UEMTask {
-    private List<UEMChannelPort> controlPortList = new ArrayList<>();
+    private List<UEMCommPort> controlPortList = new ArrayList<>();
     private List<UEMCommPort> exportPortList = new ArrayList<>();
-    private Map<UEMCommPort, UEMChannelPort> channelPortMap = new HashMap<>();
+    private Map<UEMCommPort, UEMCommPort> channelPortMap = new HashMap<>();
     private Map<UEMMulticastPort, UEMChannelPort> multicastPortMap = new HashMap<>();
     private Map<UEMLibraryPort, UEMMulticastPort> sharedDataPortMap = new HashMap<>();
     protected UEMLibraryPort leaderPort;
@@ -25,6 +27,17 @@ public class UEMCommTask extends UEMTask {
         super();
         setName(robotId, name);
         init(robotId);
+        setMode();
+    }
+
+    private void setMode() {
+        UEMModeTask mode = new UEMModeTask();
+        mode.setName(getName());
+        mode.setDeadline(50);
+        mode.setDeadlineUnit(TimeMetricType.US.value());
+        mode.setPeriod(50);
+        mode.setPeriodUnit(TimeMetricType.US.value());
+        setMode(mode);
     }
 
     protected String makePortName(String counterTeamName, String message) {
@@ -52,7 +65,7 @@ public class UEMCommTask extends UEMTask {
         setExtraCommonCode(robotId);
     }
 
-    public List<UEMChannelPort> getControlPortList() {
+    public List<UEMCommPort> getControlPortList() {
         return controlPortList;
     }
 
@@ -60,7 +73,7 @@ public class UEMCommTask extends UEMTask {
         return exportPortList;
     }
 
-    public Map<UEMCommPort, UEMChannelPort> getChannelPortMap() {
+    public Map<UEMCommPort, UEMCommPort> getChannelPortMap() {
         return channelPortMap;
     }
 

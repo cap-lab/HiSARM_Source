@@ -1,6 +1,5 @@
 package com.metadata.algorithm.task;
 
-import com.metadata.algorithm.UEMChannelPort;
 import com.metadata.algorithm.UEMCommPort;
 import com.metadata.algorithm.UEMMulticastPort;
 import com.metadata.algorithm.library.UEMLeaderLibrary;
@@ -35,10 +34,13 @@ public class UEMListenTask extends UEMCommTask {
             inPort.setVariableType(variable);
             getPort().add(inPort);
             getExportPortList().add(inPort);
-            UEMChannelPort outPort = new UEMChannelPort();
+            UEMCommPort outPort = new UEMCommPort();
             outPort.makePortInfo(AlgorithmConstant.CONTROL_TASK + portName,
                     PortDirectionType.OUTPUT, portSize);
             outPort.setExport(false);
+            outPort.setCounterTeam(statement.getCounterTeam());
+            outPort.setMessage(statement.getMessage().getId());
+            outPort.setVariableType(variable);
             getPort().add(outPort);
             getControlPortList().add(outPort);
             getChannelPortMap().put(inPort, outPort);
@@ -60,10 +62,13 @@ public class UEMListenTask extends UEMCommTask {
             inPort.setMessage(statement.getMessage().getId());
             inPort.setVariableType(variable);
             getMulticastPort().add(inPort);
-            UEMChannelPort outPort = new UEMChannelPort();
+            UEMCommPort outPort = new UEMCommPort();
             outPort.makePortInfo(AlgorithmConstant.CONTROL_TASK + portName,
                     PortDirectionType.OUTPUT, portSize);
             outPort.setExport(false);
+            outPort.setCounterTeam(robot.getRobot().getTeam());
+            outPort.setMessage(statement.getMessage().getId());
+            outPort.setVariableType(variable);
             getPort().add(outPort);
             getControlPortList().add(outPort);
             getMulticastPortMap().put(inPort, outPort);
@@ -79,12 +84,15 @@ public class UEMListenTask extends UEMCommTask {
             inPort.setGroup(group);
             inPort.setDirection(PortDirectionType.INPUT);
             inPort.setMessage(statement.getEvent().getName());
-            inPort.setVariableType(robot.getRobot().getVariableMap().get("EVENT"));
+            inPort.setVariableType(VariableTypeWrapper.getEventVariable());
             getMulticastPort().add(inPort);
-            UEMChannelPort outPort = new UEMChannelPort();
+            UEMCommPort outPort = new UEMCommPort();
             outPort.makePortInfo(AlgorithmConstant.CONTROL_TASK + portName,
                     PortDirectionType.OUTPUT, 4);
             outPort.setExport(false);
+            outPort.setCounterTeam(group);
+            outPort.setMessage(statement.getEvent().getName());
+            outPort.setVariableType(VariableTypeWrapper.getEventVariable());
             getPort().add(outPort);
             getControlPortList().add(outPort);
             getMulticastPortMap().put(inPort, outPort);
@@ -92,7 +100,7 @@ public class UEMListenTask extends UEMCommTask {
     }
 
     public void addSharedData(UEMSharedData library) {
-        String portName = library.getName();
+        String portName = library.getGroup();
         if (!existMulticastPort(portName)) {
             UEMMulticastPort inPort = new UEMMulticastPort();
             inPort.setName(portName);

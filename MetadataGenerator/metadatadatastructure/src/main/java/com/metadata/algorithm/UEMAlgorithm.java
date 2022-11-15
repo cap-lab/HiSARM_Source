@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import com.metadata.algorithm.task.UEMRobotTask;
 import com.metadata.algorithm.task.UEMTask;
 import com.metadata.constant.AlgorithmConstant;
@@ -12,6 +11,8 @@ import hopes.cic.xml.CICAlgorithmType;
 import hopes.cic.xml.ChannelListType;
 import hopes.cic.xml.LibraryConnectionListType;
 import hopes.cic.xml.LibraryListType;
+import hopes.cic.xml.ModeListType;
+import hopes.cic.xml.ModeType;
 import hopes.cic.xml.MulticastGroupListType;
 import hopes.cic.xml.MulticastGroupType;
 import hopes.cic.xml.PortMapListType;
@@ -30,23 +31,32 @@ public class UEMAlgorithm extends CICAlgorithmType {
         setMulticastGroups(new MulticastGroupListType());
         setPortMaps(new PortMapListType());
         setTasks(new TaskListType());
+        setModes(new ModeListType());
+        getModes().getMode().add(new ModeType());
+        getModes().getMode().get(0).setName(AlgorithmConstant.DEFAULT);
     }
 
     public void addTask(UEMTask task) {
+        task.setId(getTaskNum());
+        getModes().getMode().get(0).getTask().add(task.getUEMMode());
         getTasks().getTask().add(task);
     }
 
-    public UEMMulticastGroup getMulticastGroup(String groupId){
-        for (MulticastGroupType group: getMulticastGroups().getMulticastGroup()){
-            if (group.getGroupName().equals(groupId)){
+    public void addAllTasks(List<UEMTask> taskList) {
+        taskList.forEach(t -> addTask(t));
+    }
+
+    public UEMMulticastGroup getMulticastGroup(String groupId) {
+        for (MulticastGroupType group : getMulticastGroups().getMulticastGroup()) {
+            if (group.getGroupName().equals(groupId)) {
                 return (UEMMulticastGroup) group;
             }
         }
         return null;
     }
 
-    public void addMulticastGroup(String groupId, int size){
-        if(getMulticastGroup(groupId) == null){
+    public void addMulticastGroup(String groupId, int size) {
+        if (getMulticastGroup(groupId) == null) {
             getMulticastGroups().getMulticastGroup().add(new UEMMulticastGroup(groupId, size));
         }
     }

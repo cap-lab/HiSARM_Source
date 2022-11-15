@@ -1,6 +1,5 @@
 package com.metadata.algorithm.task;
 
-import com.metadata.algorithm.UEMChannelPort;
 import com.metadata.algorithm.UEMCommPort;
 import com.metadata.algorithm.UEMMulticastPort;
 import com.metadata.algorithm.library.UEMLeaderLibrary;
@@ -27,10 +26,13 @@ public class UEMReportTask extends UEMCommTask {
                     robot.getRobot().getVariableMap().get(statement.getOutput().getId());
             int portSize =
                     variable.getVariableType().getSize() * variable.getVariableType().getCount();
-            UEMChannelPort inPort = new UEMChannelPort();
+            UEMCommPort inPort = new UEMCommPort();
             inPort.makePortInfo(AlgorithmConstant.CONTROL_TASK + portName, PortDirectionType.INPUT,
                     portSize);
             inPort.setExport(false);
+            inPort.setCounterTeam(statement.getCounterTeam());
+            inPort.setMessage(statement.getMessage().getId());
+            inPort.setVariableType(variable);
             getPort().add(inPort);
             getControlPortList().add(inPort);
             UEMCommPort outPort = new UEMCommPort();
@@ -45,7 +47,7 @@ public class UEMReportTask extends UEMCommTask {
         }
     }
 
-    public void addPublish(StatementWrapper subscribe, UEMRobotTask robot) {
+    public void addPublish(StatementWrapper subscribe, UEMRobotTask robot) throws Exception {
         CommunicationalStatement statement = (CommunicationalStatement) subscribe.getStatement();
         String portName = makePortName(statement.getCounterTeam(), statement.getMessage().getId());
         if (!existMulticastPort(portName)) {
@@ -53,15 +55,18 @@ public class UEMReportTask extends UEMCommTask {
                     robot.getRobot().getVariableMap().get(statement.getOutput().getId());
             int portSize =
                     variable.getVariableType().getSize() * variable.getVariableType().getCount();
-            UEMChannelPort inPort = new UEMChannelPort();
+            UEMCommPort inPort = new UEMCommPort();
             inPort.makePortInfo(AlgorithmConstant.CONTROL_TASK + portName, PortDirectionType.INPUT,
                     portSize);
             inPort.setExport(false);
+            inPort.setCounterTeam(robot.getRobot().getTeam());
+            inPort.setMessage(statement.getMessage().getId());
+            inPort.setVariableType(variable);
             getPort().add(inPort);
             getControlPortList().add(inPort);
             UEMMulticastPort outPort = new UEMMulticastPort();
             outPort.setName(portName);
-            outPort.setGroup(robot.getRobot().getGroupList().get(0));
+            outPort.setGroup(robot.getRobot().getTeam());
             outPort.setDirection(PortDirectionType.OUTPUT);
             outPort.setMessage(statement.getMessage().getId());
             outPort.setVariableType(variable);
@@ -74,10 +79,13 @@ public class UEMReportTask extends UEMCommTask {
         ThrowStatement statement = (ThrowStatement) throwEvent.getStatement();
         String portName = makePortName(group, statement.getEvent().getName());
         if (statement.broadcast) {
-            UEMChannelPort inPort = new UEMChannelPort();
+            UEMCommPort inPort = new UEMCommPort();
             inPort.makePortInfo(AlgorithmConstant.CONTROL_TASK + portName, PortDirectionType.INPUT,
                     4);
             inPort.setExport(false);
+            inPort.setCounterTeam(group);
+            inPort.setMessage(statement.getEvent().getName());
+            inPort.setVariableType(VariableTypeWrapper.getEventVariable());
             getPort().add(inPort);
             getControlPortList().add(inPort);
             UEMMulticastPort outPort = new UEMMulticastPort();
@@ -85,14 +93,14 @@ public class UEMReportTask extends UEMCommTask {
             outPort.setGroup(group);
             outPort.setDirection(PortDirectionType.OUTPUT);
             outPort.setMessage(statement.getEvent().getName());
-            outPort.setVariableType(robot.getRobot().getVariableMap().get("EVENT"));
+            outPort.setVariableType(VariableTypeWrapper.getEventVariable());
             getMulticastPort().add(outPort);
             getMulticastPortMap().put(outPort, inPort);
         }
     }
 
     public void addSharedData(UEMSharedData library) {
-        String portName = library.getName();
+        String portName = library.getGroup();
         if (!existMulticastPort(portName)) {
             UEMLibraryPort inPort = new UEMLibraryPort();
             inPort.setName(portName);

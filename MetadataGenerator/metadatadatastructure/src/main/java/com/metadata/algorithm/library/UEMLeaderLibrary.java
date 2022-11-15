@@ -16,7 +16,7 @@ public class UEMLeaderLibrary extends UEMLibrary {
         setHeader(robot.getName() + AlgorithmConstant.ROBOT_LEADER_LIBRARY_HEADER_SUFFIX);
         setName(robot.getName(), AlgorithmConstant.LEADER);
         setPort();
-        this.groupList = robot.getRobot().getGroupList();
+        this.groupList = new ArrayList<>(robot.getRobot().getGroupMap().keySet());
     }
 
     private void setPort() {

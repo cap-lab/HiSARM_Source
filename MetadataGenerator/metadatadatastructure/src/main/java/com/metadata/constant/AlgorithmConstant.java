@@ -15,6 +15,7 @@ public class AlgorithmConstant {
     public static final String REPORT = "report";
     public static final String CONTROL = "control";
     public static final String LEADER = "leader";
+    public static final String GROUP = "group";
     public static final String ROBOT_ID = "robotId";
     public static final String HEARTBEAT = "heartbeat";
 
@@ -42,7 +43,6 @@ public class AlgorithmConstant {
     public static final String COMMON_SERVICE_SOURCE = "service.c";
     public static final String COMMUNICATION_HEADER = "semo_communication.h";
     public static final String COMMUNICATION_SOURCE = "semo_communication.c";
-    public static final String COMMON_LEADER_SELECTION_SOURCE = "leader_selection.cic";
     public static final String COMMON_LEADER_SELECTION_HEADER = "semo_leader_selection.h";
 
 }
