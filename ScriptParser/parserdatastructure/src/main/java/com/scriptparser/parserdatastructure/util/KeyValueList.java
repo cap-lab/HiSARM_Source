@@ -61,6 +61,14 @@ public class KeyValueList<K, V> {
         }
     }
 
+    public List<V> values() {
+        List<V> values = new ArrayList<>();
+        for (KeyValue<K, V> kv : list) {
+            values.add(kv.value);
+        }
+        return values;
+    }
+
     public <T> List<T> values(Class<T> classType) {
         List<T> values = new ArrayList<>();
         for (KeyValue<K, V> kv : list) {
@@ -77,6 +85,16 @@ public class KeyValueList<K, V> {
             }
         }
         return values;
+    }
+
+    public List<K> keys() {
+        List<K> keys = new ArrayList<>();
+        for (KeyValue<K, V> kv : list) {
+            if (!keys.contains(kv.key)) {
+                keys.add(kv.key);
+            }
+        }
+        return keys;
     }
 
     public <T> T findFirst(K key, Class<T> classType) {

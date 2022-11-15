@@ -9,5 +9,5 @@ import lombok.Setter;
 @Setter
 public class TransitionModeWrapper {
    private ModeWrapper mode;
-   private List<IdentifierSet> inputList; 
+   private List<IdentifierSet> inputList;
 }

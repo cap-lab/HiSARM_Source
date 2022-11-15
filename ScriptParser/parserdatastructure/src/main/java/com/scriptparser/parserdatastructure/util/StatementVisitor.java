@@ -3,6 +3,7 @@ package com.scriptparser.parserdatastructure.util;
 import com.scriptparser.parserdatastructure.entity.statement.ActionStatement;
 import com.scriptparser.parserdatastructure.entity.statement.CommunicationalStatement;
 import com.scriptparser.parserdatastructure.entity.statement.ConditionalStatement;
+import com.scriptparser.parserdatastructure.entity.statement.Statement;
 import com.scriptparser.parserdatastructure.entity.statement.ThrowStatement;
 import com.scriptparser.parserdatastructure.wrapper.StatementWrapper;
 
@@ -18,4 +19,6 @@ public interface StatementVisitor {
 
     public void visitConditionalStatement(StatementWrapper wrapper, ConditionalStatement statement,
             int statementIndex);
+
+    public void visitOtherStatement(StatementWrapper wrapper, Statement statement, int statementIndex);
 }

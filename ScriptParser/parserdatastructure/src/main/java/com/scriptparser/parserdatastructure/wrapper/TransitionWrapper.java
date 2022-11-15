@@ -26,7 +26,7 @@ public class TransitionWrapper {
 
     public void traverseTransition(String lastId, String currentGroupId, List<String> visitedList,
             List<String> groupList, ModeVisitor visitor) {
-        String id = makeTransitionid(lastId);
+        String id = lastId.length() > 0 ? makeTransitionid(lastId) : transition.getName();
         if (visitedList.contains(id)) {
             return;
         } else {

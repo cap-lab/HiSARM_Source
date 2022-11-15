@@ -45,6 +45,7 @@ public class StatementWrapper {
                 visitor.visitThrowStatement(this, (ThrowStatement) statement, statementIndex);
                 break;
             default:
+                visitor.visitOtherStatement(this, statement, statementIndex);
                 break;
         }
     }
