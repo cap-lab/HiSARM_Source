@@ -12,6 +12,12 @@ typedef struct _PORT
 	VARIABLE *variable;
 } PORT;
 
+typedef struct _COMM_PORT
+{
+	PORT *port;
+	VARIABLE *variable;
+} COMM_PORT;
+
 typedef struct _CHANNEL_PORT
 {
 	char *inPortName;

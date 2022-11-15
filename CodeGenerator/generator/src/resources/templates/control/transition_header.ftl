@@ -6,7 +6,7 @@
 
 typdef enum _TRANSITION_ID {
 <#list transitionList as transition>
-    ID_TRANSITION_${transition.name},
+    ID_TRANSITION_${transition.transitionId},
 </#list>
 } TRANSITION_ID;
 

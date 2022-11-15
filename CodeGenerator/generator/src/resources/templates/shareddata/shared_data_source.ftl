@@ -1,6 +1,8 @@
+#include "UCTreadMutex.h"
+
 typedef struct _${libName} {
     int32 robot_id;
-    <#if variablevariableType.type.value == "enum">VARIABLE_${variableType.name}<#else>${variableType.type.value}</#if> buffer[${variableType.count}];
+    <#if variableType.type.getValue() == "enum">VARIABLE_${variableType.name}<#else>${variableType.type.value}</#if> buffer[${variableType.count}];
     int32 size;
 } VARIABLE_${libName};
 
@@ -16,8 +18,8 @@ STreadMutex action_${libName}_mutex;
 LIBFUNC(void, init, void) {
     listen_${libName}_updated = FALSE;
     action_${libName}_updated = FALSE;
-    listen_${libName}.size = ${variableSize}
-    action_${libName}.size = ${variableSize}
+    listen_${libName}.size = ${variableType.getSize()}
+    action_${libName}.size = ${variableType.getSize()}
     UCTreadMutex_Create(&listen_${libName}_mutex);
     UCTreadMutex_Create(&action_${libName}_mutex);
 }
@@ -54,7 +56,7 @@ LIBFUNC(void, set_${libName}_action, void *buffer) {
     UCTreadMutex_UnLock(action_${libName}_mutex);
 }
 
-LIBFUNC(void, get_${variable.name}_report, void *buffer) {
+LIBFUNC(void, get_${libName}_report, void *buffer) {
     UCTreadMutex_Lock(action_${libName}_mutex);
     action_${libName}_updated = FALSE;
     memcpy(buffer, action_${libName}.buffer, action_${libName}.size);

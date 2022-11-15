@@ -2,6 +2,7 @@ package com.codegenerator.generator;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ public class AdditionalTaskCodeGenerator {
 
         rootHash.put(LeaderTaskConstant.ROBOT_ID, robot.getRobotName());
         rootHash.put(LeaderTaskConstant.GROUP_LIST,
-                robot.getRobot().getRobotTask().getRobot().getGroupList());
+                new ArrayList<>(robot.getRobot().getRobotTask().getRobot().getGroupMap().keySet()));
 
         FTLHandler.getInstance().generateCode(CodeGeneratorConstant.LEADER_HEADER_TEMPLATE,
                 Paths.get(targetDir.toString(),

@@ -3,19 +3,21 @@
 
 // VARIABLE BUFFER DEFINE
 <#list variableList as variable>
-    <#if variable.type.type.getValue() == "enum"">
-VARIABLE_TYPE_${variable.type.name} variable_buffer_of_${variable.id}[${variable.type.count}]<#if variable.defaultValue?exist> = {<#list variable.defaultValue as value> ${value},</#list>}</#if>;
+    <#if variable.type.variableType.type.getValue() == "enum">
+VARIABLE_TYPE_${variable.type.variableType.name} variable_buffer_of_${variable.id}[${variable.type.variableType.count}]<#if variable.defaultValue?has_content> = {<#list variable.defaultValue as value> ${value},</#list>}</#if>;
     <#else>
-${variable.type.type.getValue()} variable_buffer_of_${variable.id}[${variableType.count}]<#if variable.defaultValue?exist> = {<#list variable.defaultValue as value> ${value},</#list>}</#if>;
+${variable.type.variableType.type.getValue()} variable_buffer_of_${variable.id}[${variable.type.variableType.count}]<#if variable.defaultValue?has_content> = {<#list variable.defaultValue as value> ${value},</#list>}</#if>;
     </#if>
 </#list>
+int32 variable_buffer_of_leader[2];
+int32 variable_buffer_of_group[1];
 
 // VARIABEL RELATION DEFINE
 <#list variableList as variable>
-    <#if variable.childVariable?size gt 0>
-void variable_relation_of_${variable.id}[${variable.type.count}] = {
-        <#list variable.childVariable as childVariable>
-    variable_buffer_of_${variable_buffer_of_${childVariable.id}},
+    <#if variable.childVariableList?size gt 0>
+void variable_relation_of_${variable.id}[${variable.type.variableType.count}] = {
+        <#list variable.childVariableList as childVariable>
+    variable_buffer_of_${childVariable.id}},
         </#list>
 };
     </#if>
@@ -24,6 +26,12 @@ void variable_relation_of_${variable.id}[${variable.type.count}] = {
 // VARIABLE DEFINE
 <#list variableList as variable>
 VARIABLE variable_${variable.id} = {
-    ${variable.type.size}, variable_buffer_of_${variable.id}, ${variable.childVariable.type.size}, ${variable.childVariable?size}, variable_relation_of_${variable.id}
+    ${variable.type.variableType.size}, variable_buffer_of_${variable.id}, ${variable.getChildVariableType().getVariableType().getSize()}, ${variable.childVariableList?size}, variable_relation_of_${variable.id}
 };
 </#list>
+VARIABLE variable_leader = {
+    8, variable_buffer_of_leader, 0, 0, NULL
+};
+VARIABLE variable_group = {
+    4, variable_buffer_of_group, 0, 0, NULL
+};

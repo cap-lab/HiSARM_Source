@@ -1,4 +1,4 @@
-package com.codegenerator.mapper;
+package com.codegenerator.generator.mapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +21,10 @@ public class ModeServiceMapper {
             codeService.setService(service.getService());
             codeService.setServiceId(CodeServiceWrapper.makeServiceId(mode.getModeId(),
                     service.getService().getService().getName()));
+            codeService.setGroupId(mode.getGroupId());
             serviceList.add(codeService);
         }
+        mode.setServiceList(serviceList);
         return serviceList;
     }
 }

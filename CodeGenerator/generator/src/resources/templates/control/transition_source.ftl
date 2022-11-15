@@ -1,11 +1,12 @@
 #include "${robotId}_transition.h"
+#include "${robotId}_event.h"
 
 // DEFINE EVENT MODE MAP
-<#list transitionlist as transition>
+<#list transitionList as transition>
     <#list transition.modeList as mode>
-EVENT_MODE_MAP ${transition.name}_${mode.name}_event_mode_map[${transition.transition(mode)?size}] = {
-        <#list transition.transition(mode) as transition>
-    {EVENT_${transition.event.name}, ${transition.modeIndex(transition.mode.name)}, ID_MODE_${mode.name}},
+EVENT_MODE_MAP ${transition.transitionId}_${mode.modeId}_event_mode_map[${transition.getTransitionMapOfMode(mode)?size}] = {
+        <#list transition.getTransitionMapOfMode(mode) as event, mode>
+    {ID_EVENT_${event}, ${transition.getModeIndex(mode)}, ID_MODE_${mode.modeId}},
         </#list>
 };
     </#list>
@@ -13,9 +14,9 @@ EVENT_MODE_MAP ${transition.name}_${mode.name}_event_mode_map[${transition.trans
 
 // DEFINE MODE EVENT MAP
 <#list transitionList as transition>
-MODE_EVENT_MAP ${transition.name}_mode_event_map[${transition.modeList?size}] = {
+MODE_EVENT_MAP ${transition.transitionId}_mode_event_map[${transition.modeList?size}] = {
     <#list transition.modeList as mode>
-    {ID_MODE_${mode.name}, ${transitoin.name}_${mode.name}_event_mode_map},
+    {ID_MODE_${mode.modeId}, ${transition.transitionId}_${mode.modeId}_event_mode_map},
     </#list>
 };
 </#list>
@@ -23,7 +24,7 @@ MODE_EVENT_MAP ${transition.name}_mode_event_map[${transition.modeList?size}] = 
 // DEFINE TRANSITION
 TRANSITION transition_list[${transitionList?size}] = {
     <#list transitionList as transition>
-    {STOP, ID_TRANSITION_{transition.name}, ${transition.depth}, ${transition.modeList?size}, 0, ${transition.name}_mode_event_map},
+    {STOP, ID_TRANSITION_${transition.transitionId}, ${transition.depth}, ${transition.modeList?size}, 0, ${transition.transitionId}_mode_event_map},
     </#list>
 };
 

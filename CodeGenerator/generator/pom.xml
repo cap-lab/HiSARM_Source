@@ -36,8 +36,18 @@
     </dependency>
     <dependency>
       <groupId>com.scriptparser</groupId>
+      <artifactId>parser</artifactId>
+      <version>${project.scriptparser.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.scriptparser</groupId>
       <artifactId>parserdatastructure</artifactId>
       <version>${project.scriptparser.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.strategy</groupId>
+      <artifactId>strategymaker</artifactId>
+      <version>${project.strategy.version}</version>
     </dependency>
     <dependency>
       <groupId>com.strategy</groupId>
@@ -48,6 +58,11 @@
       <groupId>hopes.cic.xml</groupId>
       <artifactId>CICXML4JAVA</artifactId>
       <version>${project.CICXML4JAVA.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.metadata</groupId>
+      <artifactId>metadatagenerator</artifactId>
+      <version>${project.metadata.version}</version>
     </dependency>
     <dependency>
       <groupId>com.metadata</groupId>

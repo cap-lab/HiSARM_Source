@@ -1,5 +1,3 @@
-#include "semo_leader.h"
-
 typedef struct _SEMO_LEADER {
     GROUP group_id;
     LEADER_SELECTION_STATE leader_selection_state;

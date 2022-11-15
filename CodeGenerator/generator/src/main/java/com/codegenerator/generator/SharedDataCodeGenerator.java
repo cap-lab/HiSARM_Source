@@ -15,14 +15,16 @@ public class SharedDataCodeGenerator {
     public void generate(Path targetDir, List<CodeRobotWrapper> robotList) {
         for (CodeRobotWrapper robot : robotList) {
             for (UEMLibrary library : robot.getRobot().getRobotTask().getSharedDataTaskList()) {
-                makeSharedDataTaskCode(targetDir, (UEMSharedData) library);
+                makeSharedDataTaskCode(targetDir, (UEMSharedData) library, robot);
             }
         }
     }
 
-    private void makeSharedDataTaskCode(Path targetDir, UEMSharedData library) {
+    private void makeSharedDataTaskCode(Path targetDir, UEMSharedData library,
+            CodeRobotWrapper robot) {
         Map<String, Object> rootHash = new HashMap<>();
 
+        rootHash.put(SharedDataTaskConstant.ROBOT_ID, robot.getRobotName());
         rootHash.put(SharedDataTaskConstant.LIB_NAME, library.getName());
         rootHash.put(SharedDataTaskConstant.VARIABLE_TYPE,
                 library.getVariableType().getVariableType());

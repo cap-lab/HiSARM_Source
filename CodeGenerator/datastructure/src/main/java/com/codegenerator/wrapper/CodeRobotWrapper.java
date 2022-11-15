@@ -11,6 +11,7 @@ import lombok.Setter;
 public class CodeRobotWrapper {
     private UEMRobot robot;
     private List<CodeModeWrapper> modeList = new ArrayList<>();
+    private List<CodeTransitionWrapper> transitionList = new ArrayList<>();
 
     public String getRobotName() {
         return robot.getRobotName();

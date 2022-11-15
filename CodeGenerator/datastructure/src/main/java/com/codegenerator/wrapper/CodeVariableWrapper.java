@@ -26,4 +26,11 @@ public class CodeVariableWrapper {
     public static String makeVariableId(String serviceId, String statementId, String index) {
         return serviceId + "_" + statementId + "_" + index;
     }
+
+    public VariableTypeWrapper getChildVariableType() {
+        if (childVariableList.size() == 0) {
+            return null;
+        }
+        return childVariableList.get(0).getType();
+    }
 }

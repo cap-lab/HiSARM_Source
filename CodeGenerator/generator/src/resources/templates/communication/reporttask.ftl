@@ -26,7 +26,7 @@ STATIC ${outPort.variableType.variableType.type.getValue()} ${outPort.getVariabl
 <#list multicastPortMap as multicastPort, channelPort>
 STATIC struct _${multicastPort.getVariableName()} {
     MULTICAST_PACKET_HEADER header;
-    <#if multicastPort.variable.variableType.type.getValue() == "enum">
+    <#if multicastPort.variableType.variableType.type.getValue() == "enum">
     VARIABLE_${multicastPort.variableType.variableType.name} body[${multicastPort.variableType.variableType.count}];
     <#else>
     ${multicastPort.variableType.variableType.type.getValue()} body[${multicastPort.variableType.variableType.count}];
@@ -70,10 +70,10 @@ STATIC SHARED_DATA_PORT groupServicePortList[${sharedDataPortMap?size}] = {
 };
 
 // LEADER PORT SECTION
-STATIC LEADER_PORT leaderPortList[${leaderPortList.values()?size}] = {
+STATIC LEADER_PORT leaderPortList[${leaderPortMap?size}] = {
     <#list leaderPortMap as robotIdPort, heartbeatPort>
     {"${robotIdPort.name}", -1, -1, {{-1, THIS_ROBOT_ID}, -1}, -1, l_leader_avail_robot_id_report, l_leader_get_robot_id_report, NULL,
-    "${heartbeatPort.name}", -1, -1, {{-1, THIS_ROBOT_ID}, -1}, -1, l_leader_avail_heartbeat_report, l_leader_get_heartbeat_report, NULL, ${robotIdPort.message}},
+    "${heartbeatPort.name}", -1, -1, {{-1, THIS_ROBOT_ID}, -1}, -1, l_leader_avail_heartbeat_report, l_leader_get_heartbeat_report, NULL, ID_GROUP_${robotIdPort.group}},
     </#list>
 };
 

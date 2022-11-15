@@ -9,9 +9,10 @@ public class CodeGeneratorConstant {
                         Paths.get(PROJECT_DIRECTORY.toString(), "src", "resources");
         public static final Path TEMPLATE_DIRECTORY =
                         Paths.get(RESOURCE_DIRECTORY.toString(), "templates");
+        public static final Path GENERATE_DIRECTORY =
+                        Paths.get(PROJECT_DIRECTORY.toString(), "generated");
 
-        public static final Path COMMON_TEMPLATE_DIRECTORY =
-                        Paths.get(TEMPLATE_DIRECTORY.toString(), "common");
+        public static final Path COMMON_TEMPLATE_DIRECTORY = Paths.get("common");
         public static final Path ROBOT_SPECIFIC_COMMON_TEMPLATE = Paths
                         .get(COMMON_TEMPLATE_DIRECTORY.toString(), "robot_specific_common.ftl");
         public static final Path VARIABLE_HEADER_TEMPLATE =
@@ -20,45 +21,83 @@ public class CodeGeneratorConstant {
                         Paths.get(COMMON_TEMPLATE_DIRECTORY.toString(), "variable_source.ftl");
 
 
-        public static final Path COMMUNICATION_TEMPLATE_DIRECTORY =
-                        Paths.get(TEMPLATE_DIRECTORY.toString(), "communication");
+        public static final Path COMMUNICATION_TEMPLATE_DIRECTORY = Paths.get("communication");
         public static final Path LISTEN_TASK_TEMPLATE =
                         Paths.get(COMMUNICATION_TEMPLATE_DIRECTORY.toString(), "listentask.ftl");
         public static final Path REPORT_TASK_TEMPLATE =
                         Paths.get(COMMUNICATION_TEMPLATE_DIRECTORY.toString(), "reporttask.ftl");
 
-        public static final Path SHARED_DATA_TEMPLATE_DIRECTORY =
-                        Paths.get(TEMPLATE_DIRECTORY.toString(), "shareddata");
-        public static final Path SHARED_DATA_HEADER_TEMPLATE =
-                        Paths.get(TEMPLATE_DIRECTORY.toString(), "shared_data_header.ftl");
-        public static final Path SHARED_DATA_SOURCE_TEMPLATE =
-                        Paths.get(TEMPLATE_DIRECTORY.toString(), "shared_data_source.ftl");
+        public static final Path SHARED_DATA_TEMPLATE_DIRECTORY = Paths.get("shareddata");
+        public static final Path SHARED_DATA_HEADER_TEMPLATE = Paths
+                        .get(SHARED_DATA_TEMPLATE_DIRECTORY.toString(), "shared_data_header.ftl");
+        public static final Path SHARED_DATA_SOURCE_TEMPLATE = Paths
+                        .get(SHARED_DATA_TEMPLATE_DIRECTORY.toString(), "shared_data_source.ftl");
 
-        public static final Path LEADER_TEMPLATE_DIRECTORY =
-                        Paths.get(TEMPLATE_DIRECTORY.toString(), "leader");
+        public static final Path LEADER_TEMPLATE_DIRECTORY = Paths.get("leader");
         public static final Path LEADER_HEADER_TEMPLATE =
-                        Paths.get(TEMPLATE_DIRECTORY.toString(), "leader_header.ftl");
+                        Paths.get(LEADER_TEMPLATE_DIRECTORY.toString(), "leader_header.ftl");
         public static final Path LEADER_SOURCE_TEMPLATE =
-                        Paths.get(TEMPLATE_DIRECTORY.toString(), "leader_source.ftl");
+                        Paths.get(LEADER_TEMPLATE_DIRECTORY.toString(), "leader_source.ftl");
 
-        public static final Path GROUP_TEMPLATE_DIRECTORY =
-                        Paths.get(TEMPLATE_DIRECTORY.toString(), "group");
+        public static final Path GROUP_TEMPLATE_DIRECTORY = Paths.get("group");
         public static final Path GROUP_HEADER_TEMPLATE =
-                        Paths.get(TEMPLATE_DIRECTORY.toString(), "group_header.ftl");
+                        Paths.get(GROUP_TEMPLATE_DIRECTORY.toString(), "group_header.ftl");
         public static final Path GROUP_SOURCE_TEMPLATE =
-                        Paths.get(TEMPLATE_DIRECTORY.toString(), "group_source.ftl");
+                        Paths.get(GROUP_TEMPLATE_DIRECTORY.toString(), "group_source.ftl");
 
-        public static final Path CONTROL_TEMPLATE_DIRECTORY =
-                        Paths.get(TEMPLATE_DIRECTORY.toString(), "control");
-        public static final Path CONTROL_TASK_TEMPLATE =
-                        Paths.get(CONTROL_TEMPLATE_DIRECTORY.toString(), "controltask.ftl");
-
-        public static final Path GENERATE_DIRECTORY =
-                        Paths.get(PROJECT_DIRECTORY.toString(), "generated");
+        public static final Path CONTROL_TEMPLATE_DIRECTORY = Paths.get("control");
+        public static final Path EVENT_HEADER_TEMPLATE =
+                        Paths.get(CONTROL_TEMPLATE_DIRECTORY.toString(), "event_header.ftl");
+        public static final Path EVENT_SOURCE_TEMPLATE =
+                        Paths.get(CONTROL_TEMPLATE_DIRECTORY.toString(), "event_source.ftl");
+        public static final Path PORT_HEADER_TEMPLATE =
+                        Paths.get(CONTROL_TEMPLATE_DIRECTORY.toString(), "port_header.ftl");
+        public static final Path PORT_SOURCE_TEMPLATE =
+                        Paths.get(CONTROL_TEMPLATE_DIRECTORY.toString(), "port_source.ftl");
+        public static final Path RESOURCE_HEADER_TEMPLATE =
+                        Paths.get(CONTROL_TEMPLATE_DIRECTORY.toString(), "resource_header.ftl");
+        public static final Path RESOURCE_SOURCE_TEMPLATE =
+                        Paths.get(CONTROL_TEMPLATE_DIRECTORY.toString(), "resource_source.ftl");
+        public static final Path ACTION_HEADER_TEMPLATE =
+                        Paths.get(CONTROL_TEMPLATE_DIRECTORY.toString(), "action_header.ftl");
+        public static final Path ACTION_SOURCE_TEMPLATE =
+                        Paths.get(CONTROL_TEMPLATE_DIRECTORY.toString(), "action_source.ftl");
+        public static final Path TIMER_HEADER_TEMPLATE =
+                        Paths.get(CONTROL_TEMPLATE_DIRECTORY.toString(), "timer_header.ftl");
+        public static final Path TIMER_SOURCE_TEMPLATE =
+                        Paths.get(CONTROL_TEMPLATE_DIRECTORY.toString(), "timer_source.ftl");
+        public static final Path SERVICE_HEADER_TEMPLATE =
+                        Paths.get(CONTROL_TEMPLATE_DIRECTORY.toString(), "service_header.ftl");
+        public static final Path SERVICE_SOURCE_TEMPLATE =
+                        Paths.get(CONTROL_TEMPLATE_DIRECTORY.toString(), "service_source.ftl");
+        public static final Path MODE_HEADER_TEMPLATE =
+                        Paths.get(CONTROL_TEMPLATE_DIRECTORY.toString(), "mode_header.ftl");
+        public static final Path MODE_SOURCE_TEMPLATE =
+                        Paths.get(CONTROL_TEMPLATE_DIRECTORY.toString(), "mode_source.ftl");
+        public static final Path TRANSITION_HEADER_TEMPLATE =
+                        Paths.get(CONTROL_TEMPLATE_DIRECTORY.toString(), "transition_header.ftl");
+        public static final Path TRANSITION_SOURCE_TEMPLATE =
+                        Paths.get(CONTROL_TEMPLATE_DIRECTORY.toString(), "transition_source.ftl");
 
         public static final String COMMON_HEADER_SUFFIX = "_common.h";
         public static final String VARIABLE_HEADER_SUFFIX = "_variable.h";
         public static final String VARIABLE_SOURCE_SUFFIX = "_variable.c";
         public static final String GROUP_HEADER_SUFFIX = "_group.h";
         public static final String GROUP_SOURCE_SUFFIX = "_group.c";
+        public static final String EVENT_HEADER_SUFFIX = "_event.h";
+        public static final String EVENT_SOURCE_SUFFIX = "_event.c";
+        public static final String PORT_HEADER_SUFFIX = "_port.h";
+        public static final String PORT_SOURCE_SUFFIX = "_port.c";
+        public static final String RESOURCE_HEADER_SUFFIX = "_resource.h";
+        public static final String RESOURCE_SOURCE_SUFFIX = "_resource.c";
+        public static final String ACTION_HEADER_SUFFIX = "_action.h";
+        public static final String ACTION_SOURCE_SUFFIX = "_action.c";
+        public static final String TIMER_HEADER_SUFFIX = "_timer.h";
+        public static final String TIMER_SOURCE_SUFFIX = "_timer.c";
+        public static final String SERVICE_HEADER_SUFFIX = "_service.h";
+        public static final String SERVICE_SOURCE_SUFFIX = "_service.c";
+        public static final String MODE_HEADER_SUFFIX = "_mode.h";
+        public static final String MODE_SOURCE_SUFFIX = "_mode.c";
+        public static final String TRANSITION_HEADER_SUFFIX = "_transition.h";
+        public static final String TRANSITION_SOURCE_SUFFIX = "_transition.c";
 }
