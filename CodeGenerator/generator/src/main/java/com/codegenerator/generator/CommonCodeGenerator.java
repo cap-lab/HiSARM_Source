@@ -10,6 +10,7 @@ import com.codegenerator.constant.GroupCodeConstant;
 import com.codegenerator.constant.RobotSpecificCommonConstant;
 import com.codegenerator.constant.VariableConstant;
 import com.codegenerator.generator.constant.CodeGeneratorConstant;
+import com.codegenerator.generator.util.LocalFileCopier;
 import com.codegenerator.wrapper.CodeModeWrapper;
 import com.codegenerator.wrapper.CodeRobotWrapper;
 import com.codegenerator.wrapper.CodeServiceWrapper;
@@ -24,6 +25,7 @@ public class CommonCodeGenerator {
                 generateRobotSpecificCommon(targetDir, robot.getRobot());
                 generateVariableCode(targetDir, robot);
                 generateGroupCode(targetDir, robot);
+                copyVariableCode(targetDir);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -69,7 +71,6 @@ public class CommonCodeGenerator {
         return variableList;
     }
 
-
     private void generateVariableCode(Path targetDir, CodeRobotWrapper robot) {
         Map<String, Object> rootHash = new HashMap<>();
 
@@ -102,5 +103,16 @@ public class CommonCodeGenerator {
                 Paths.get(targetDir.toString(),
                         robot.getRobotName() + CodeGeneratorConstant.GROUP_SOURCE_SUFFIX),
                 rootHash);
+    }
+
+    private void copyVariableCode(Path targetDir) {
+        try {
+            LocalFileCopier.copyFile(CodeGeneratorConstant.VARIABLE_HEADER_CODE, 
+                Paths.get(targetDir.toString(), CodeGeneratorConstant.VARIABLE_HEADER));
+            LocalFileCopier.copyFile(CodeGeneratorConstant.VARIABLE_SOURCE_CODE, 
+                Paths.get(targetDir.toString(), CodeGeneratorConstant.VARIABLE_SOURCE));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

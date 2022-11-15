@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import com.codegenerator.constant.CommunicationTaskConstant;
 import com.codegenerator.generator.constant.CodeGeneratorConstant;
+import com.codegenerator.generator.util.LocalFileCopier;
 import com.metadata.UEMRobot;
 import com.metadata.algorithm.task.UEMListenTask;
 import com.metadata.algorithm.task.UEMReportTask;
@@ -16,6 +17,8 @@ public class CommunicationCodeGenerator {
         for (UEMRobot robot : robotList) {
             generateListenTaskCode(targetDir, robot);
             generateReportTaskCode(targetDir, robot);
+            copyPortCode(targetDir);
+            copyCommunicationCode(targetDir);
         }
     }
 
@@ -45,5 +48,27 @@ public class CommunicationCodeGenerator {
 
         FTLHandler.getInstance().generateCode(CodeGeneratorConstant.REPORT_TASK_TEMPLATE,
                 Paths.get(targetDir.toString(), task.getFile()), rootHash);
+    }
+
+    private void copyPortCode(Path targetDir) {
+        try {
+            LocalFileCopier.copyFile(CodeGeneratorConstant.PORT_HEADER_CODE,
+                    Paths.get(targetDir.toString(), CodeGeneratorConstant.PORT_HEADER));
+            LocalFileCopier.copyFile(CodeGeneratorConstant.PORT_SOURCE_CODE,
+                    Paths.get(targetDir.toString(), CodeGeneratorConstant.PORT_SOURCE));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void copyCommunicationCode(Path targetDir) {
+        try {
+            LocalFileCopier.copyFile(CodeGeneratorConstant.COMMUNICATION_HEADER_CODE,
+                    Paths.get(targetDir.toString(), CodeGeneratorConstant.COMMUNICATION_HEADER));
+            LocalFileCopier.copyFile(CodeGeneratorConstant.COMMUNICATION_SOURCE_CODE,
+                    Paths.get(targetDir.toString(), CodeGeneratorConstant.COMMUNICATION_SOURCE));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

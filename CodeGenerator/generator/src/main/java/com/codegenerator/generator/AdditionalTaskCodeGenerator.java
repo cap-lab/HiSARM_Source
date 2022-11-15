@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Map;
 import com.codegenerator.constant.LeaderTaskConstant;
 import com.codegenerator.generator.constant.CodeGeneratorConstant;
+import com.codegenerator.generator.util.LocalFileCopier;
 import com.codegenerator.wrapper.CodeRobotWrapper;
 
 public class AdditionalTaskCodeGenerator {
     public void generateAdditionalCode(Path targetDir, List<CodeRobotWrapper> robotList) {
         for (CodeRobotWrapper robot : robotList) {
             generateLeaderLibraryTaskCode(targetDir, robot);
+            copyLeaderHeaderFile(targetDir);
         }
     }
 
@@ -32,5 +34,14 @@ public class AdditionalTaskCodeGenerator {
                 Paths.get(targetDir.toString(),
                         robot.getRobot().getRobotTask().getLeaderLibraryTask().getFile()),
                 rootHash);
+    }
+
+    private void copyLeaderHeaderFile(Path targetDir) {
+        try {
+            LocalFileCopier.copyFile(CodeGeneratorConstant.LEADER_HEADER_CODE, 
+            Paths.get(targetDir.toString(), CodeGeneratorConstant.LEADER_HEADER));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

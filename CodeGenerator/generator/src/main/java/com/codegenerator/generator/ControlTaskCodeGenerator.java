@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import com.codegenerator.constant.ControlTaskConstant;
 import com.codegenerator.generator.constant.CodeGeneratorConstant;
+import com.codegenerator.generator.util.LocalFileCopier;
 import com.codegenerator.wrapper.CodeActionWrapper;
 import com.codegenerator.wrapper.CodeModeWrapper;
 import com.codegenerator.wrapper.CodeRobotWrapper;
@@ -34,6 +35,7 @@ public class ControlTaskCodeGenerator {
                 generateServiceCode(targetDir, robot);
                 generateModeCode(targetDir, robot);
                 generateTransitionCode(targetDir, robot);
+                copyCodeRelatedControlTask(targetDir);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -258,4 +260,12 @@ public class ControlTaskCodeGenerator {
                 rootHash);
     }
 
+    private void copyCodeRelatedControlTask(Path targetDir) {
+        try {
+                LocalFileCopier.copyFile(CodeGeneratorConstant.CONTROL_TASK_CODE, 
+                Paths.get(targetDir.toString(), CodeGeneratorConstant.CONTROL_TASK_CIC));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
