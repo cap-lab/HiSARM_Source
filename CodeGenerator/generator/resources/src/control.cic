@@ -2,7 +2,7 @@ TASK_CODE_BEGIN
 
 TASK_INIT
 {
-	LOG_INFO("INIT");
+	SEMO_LOG_INFO("INIT");
 	port_init();
 	service_init();
 	event_list_init();
@@ -11,6 +11,7 @@ TASK_INIT
 
 TASK_GO
 {
+	semo_int32 transition_id = -1;
 	transition_id = check_group_allocation();
 	if (transition_id != -1)
 	{
@@ -31,7 +32,7 @@ TASK_GO
 
 TASK_WRAPUP
 {
-	LOG_INFO("WRAP UP");
+	SEMO_LOG_INFO("WRAP UP");
 	service_reset(THIS_TASK_ID);
 }
 

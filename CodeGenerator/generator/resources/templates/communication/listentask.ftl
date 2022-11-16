@@ -174,11 +174,11 @@ STATIC void multicastPortReceive() {
         UFMulticastPort_ReadFromBuffer(multicastPortList[i].multicastGroupId, multicastPortList[i].multicastPortId, (unsigned char*) &multicastPortList[i].buffer, multicastPortList[i].size + sizeof(MULTICAST_PACKET_HEADER), &dataLen);
         if (dataLen > 0) 
         {
-            if (multicastPortList[i].beforeTime < multicastPortList[i].buffer.header.time) 
+            if (multicastPortList[i].beforeTime < multicastPortList[i].packet->header->time) 
             {
-                if (channelPortWrite(multicastPortList[i].channelPortId, &multicastPortList[i].buffer.body, multicastPortList[i].size, FALSE) > 0) 
+                if (channelPortWrite(multicastPortList[i].channelPortId, &multicastPortList[i].packet->data, multicastPortList[i].size, FALSE) > 0) 
                 {
-                	    multicastPortList[i].beforeTime = multicastPortList[i].buffer.header.time;
+                	    multicastPortList[i].beforeTime = multicastPortList[i].packet->header->time;
                 }
             }
         }
@@ -194,10 +194,10 @@ STATIC void sharedDataPortReceive() {
         UFMulticastPort_ReadFromBuffer(sharedDataPortList[i].multicastGroupId, sharedDataPortList[i].multicastPortId, (unsigned char*) &(sharedDataPortList[i].buffer), sharedDataPortList[i].size + sizeof(MULTICAST_PACKET_HEADER), &dataLen);
         if (dataLen > 0) 
         {
-	         if (sharedDataPortList[i].beforeTime < sharedDataPortList[i].buffer.header.time) 
+	         if (sharedDataPortList[i].beforeTime < sharedDataPortList[i].packet->header->time) 
 	         {
-        		    sharedDataPortList[i].libSetFunc(sharedDataPortList[i].buffer.body);
-        		    sharedDataPortList[i].beforeTime = sharedDataPortList[i].buffer.header.time;
+        		    sharedDataPortList[i].libSetFunc(sharedDataPortList[i].packet->data);
+        		    sharedDataPortList[i].beforeTime = sharedDataPortList[i].packet->header->time;
          	 }
         }
     }
@@ -213,7 +213,7 @@ STATIC void leaderPortReceive() {
         {
 	         if (leaderPortList[i].robotIdBeforeTime < leaderPortList[i].robotIdBuffer.header.time) 
              {
-        		    leaderPortList[i].robotIdSetFunc(leaderPortList.groupId, leaderPortList[i].robotIdBuffer.body);
+        		    leaderPortList[i].robotIdSetFunc(leaderPortList[i].groupId, leaderPortList[i].robotIdBuffer.body);
         		    leaderPortList[i].robotIdBeforeTime = leaderPortList[i].robotIdBuffer.header.time;
              }
         }
@@ -222,7 +222,7 @@ STATIC void leaderPortReceive() {
         {
 	         if (leaderPortList[i].heartbeatBeforeTime < leaderPortList[i].heartbeatBuffer.header.time) 
              {
-        		    leaderPortList[i].heartbeatSetFunc(leaderPortList.groupId, leaderPortList[i].heartbeatBuffer.body);
+        		    leaderPortList[i].heartbeatSetFunc(leaderPortList[i].groupId, leaderPortList[i].heartbeatBuffer.body);
         		    leaderPortList[i].heartbeatBeforeTime = leaderPortList[i].heartbeatBuffer.header.time;
              }
         }

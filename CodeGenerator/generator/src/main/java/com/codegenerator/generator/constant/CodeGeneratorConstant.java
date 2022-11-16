@@ -30,7 +30,7 @@ public class CodeGeneratorConstant {
         public static final String TRANSITION_HEADER_SUFFIX = "_transition.h";
         public static final String TRANSITION_SOURCE_SUFFIX = "_transition.c";
 
-        public static final String CONTROL_TASK_CIC = "controltask.cic";
+        public static final String CONTROL_TASK_CIC = "control.cic";
         public static final String LEADER_HEADER = "semo_leader.h";
         public static final String VARIABLE_HEADER = "semo_variable.h";
         public static final String VARIABLE_SOURCE = "semo_variable.c";
@@ -136,5 +136,5 @@ public class CodeGeneratorConstant {
         public static final Path TRANSITION_SOURCE_TEMPLATE =
                         Paths.get(CONTROL_TEMPLATE_DIRECTORY.toString(), "transition_source.ftl");
         public static final Path CONTROL_TASK_CODE =
-                        Paths.get(INCLUDE_DIRECTORY.toString(), CONTROL_TASK_CIC);
+                        Paths.get(SOURCE_DIRECTORY.toString(), CONTROL_TASK_CIC);
 }

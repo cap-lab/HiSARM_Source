@@ -11,6 +11,7 @@ typedef enum _EVENT_ID {
 } EVENT_ID;
 
 extern semo_int8 event_list[${eventList?size}];
+extern semo_int8 event_occured;
 
 void event_list_init();
 

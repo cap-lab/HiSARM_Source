@@ -2,6 +2,7 @@
 #include "${robotId}_port.h"
 
 semo_int8 event_list[${eventList?size}] = {<#list 1..eventList?size as i>FALSE,</#list>};
+semo_int8 event_occured = FALSE;
 
 void event_list_init() {
     memset(event_list, FALSE, ${eventList?size}*sizeof(semo_int8));

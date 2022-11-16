@@ -1,5 +1,3 @@
-#include "UCTreadMutex.h"
-
 typedef struct _${variableType.name} {
     semo_int32 robot_id;
     <#if variableType.type.getValue() == "enum">VARIABLE_${variableType.name}<#else>${variableType.type.value}</#if> buffer[${variableType.count}];

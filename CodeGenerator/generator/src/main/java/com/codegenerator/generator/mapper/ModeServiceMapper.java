@@ -8,11 +8,6 @@ import com.codegenerator.wrapper.CodeServiceWrapper;
 import com.scriptparser.parserdatastructure.wrapper.ParallelServiceWrapper;
 
 public class ModeServiceMapper {
-    private CodeRobotWrapper robot;
-
-    public ModeServiceMapper(CodeRobotWrapper robot) {
-        this.robot = robot;
-    }
 
     public List<CodeServiceWrapper> mapModeService(CodeModeWrapper mode) {
         List<CodeServiceWrapper> serviceList = new ArrayList<>();

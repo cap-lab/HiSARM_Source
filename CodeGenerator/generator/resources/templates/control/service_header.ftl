@@ -2,6 +2,7 @@
 #define __${robotId}_SERVICE_HEADER__
 
 #include "semo_common.h"
+#include "${robotId}_group.h"
 
 typedef enum _SERVICE_ID {
 <#list serviceList as service>

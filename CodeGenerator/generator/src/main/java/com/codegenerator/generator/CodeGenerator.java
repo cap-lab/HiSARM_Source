@@ -21,7 +21,7 @@ public class CodeGenerator {
         List<CodeRobotWrapper> codeRobotList = rmMapper.mapRobotMode(mission, robotList);
         for (CodeRobotWrapper codeRobot : codeRobotList) {
             for (CodeModeWrapper codeMode : codeRobot.getModeList()) {
-                ModeServiceMapper msMapper = new ModeServiceMapper(codeRobot);
+                ModeServiceMapper msMapper = new ModeServiceMapper();
                 List<CodeServiceWrapper> serviceList = msMapper.mapModeService(codeMode);
                 for (CodeServiceWrapper service : serviceList) {
                     ServiceStatementMapper ssMapper = new ServiceStatementMapper(codeRobot);
