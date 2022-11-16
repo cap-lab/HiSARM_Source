@@ -1,6 +1,7 @@
 package com.codegenerator.generator;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import com.codegenerator.generator.mapper.ModeServiceMapper;
 import com.codegenerator.generator.mapper.RobotModeMapper;
@@ -10,6 +11,7 @@ import com.codegenerator.wrapper.CodeRobotWrapper;
 import com.codegenerator.wrapper.CodeServiceWrapper;
 import com.metadata.UEMRobot;
 import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
+import com.strategy.strategydatastructure.additionalinfo.AdditionalInfo;
 
 public class CodeGenerator {
 
@@ -30,7 +32,8 @@ public class CodeGenerator {
         return codeRobotList;
     }
 
-    public void codeGenerate(Path targetDir, MissionWrapper mission, List<UEMRobot> robotList) {
+    public void codeGenerate(Path targetDir, MissionWrapper mission, AdditionalInfo additionalInfo,
+            List<UEMRobot> robotList) {
         List<CodeRobotWrapper> codeRobotList = makeDataStructure(mission, robotList);
         CommonCodeGenerator commonCodeGenerator = new CommonCodeGenerator();
         commonCodeGenerator.generate(targetDir, codeRobotList);
@@ -42,5 +45,8 @@ public class CodeGenerator {
         sharedDataCodeGenerator.generate(targetDir, codeRobotList);
         ControlTaskCodeGenerator controlTaskCodeGenerator = new ControlTaskCodeGenerator();
         controlTaskCodeGenerator.generateControlTaskCode(targetDir, codeRobotList);
+        ActionTaskCodeCopier actionTaskCodeCopier = new ActionTaskCodeCopier();
+        actionTaskCodeCopier.copyActionTaskCode(Paths.get(additionalInfo.getTaskServerPrefix()),
+                targetDir, codeRobotList);
     }
 }

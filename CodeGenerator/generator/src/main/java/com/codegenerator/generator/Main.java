@@ -30,6 +30,6 @@ public class Main {
         List<UEMRobot> robotList = generator.metadataGenerate(mission, strategy,
                 strategy.getAdditionalInfo(), projectDir);
         CodeGenerator codeGenerator = new CodeGenerator();
-        codeGenerator.codeGenerate(projectDir, mission, robotList);
+        codeGenerator.codeGenerate(projectDir, mission, strategy.getAdditionalInfo(), robotList);
     }
 }

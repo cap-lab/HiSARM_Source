@@ -3,9 +3,9 @@
 
 // DEFINE ACTION RESOURCE LIST
 <#list actionTaskList as actionTask>
-    <#if actionTask.actionImpl.actionImpl.resourceList?size gt 0>
-RESOURCE_ID resource_list_of_${actionTask.name}[${actionTask.actionImpl.actionImpl.resourceList?size}] = {
-        <#list actionTask.actionImpl.actionImpl.resourceList as resource>
+    <#if actionTask.actionImpl.actionImpl.neededResource?has_content>
+RESOURCE_ID resource_list_of_${actionTask.name}[${actionTask.actionImpl.actionImpl.neededResource?size}] = {
+        <#list actionTask.actionImpl.actionImpl.neededResource as resource>
     ID_RESORUCE_${resource},
         </#list>
 };
@@ -15,8 +15,8 @@ RESOURCE_ID resource_list_of_${actionTask.name}[${actionTask.actionImpl.actionIm
 // DEFINE ACTION TASK
 ACTION_TASK action_task_list[${actionTaskList?size}] = {
 <#list actionTaskList as actionTask>
-    {ID_ACTION_TASK_${actionTask.name}, ID_ACTION_TYPE_${actionTask.actionImpl.actionType.action.name}, ${actionTask.index}, ${actionTask.name}, 
-     STOP, ${actionTask.actionImpl.actionImpl.isReturnImmediate.value}, ${actionTask.actionImpl.actionImpl.needdedResource?size}, <#if actionTask.actionImpl.actionImpl.needdedResource?size gt 0>resource_list_of_${actionTask.name}<#else>NULL</#if>, 
+    {ID_ACTION_TASK_${actionTask.name}, ID_ACTION_TYPE_${actionTask.actionImpl.actionType.action.name}, ${actionTask.id}, ${actionTask.name}, 
+     STOP, <#if actionTask.actionImpl.actionImpl.getReturnImmediate()>TRUE<#else>FALSE</#if>, <#if actionTask.actionImpl.actionImpl.needdedResource?has_content>${actionTask.actionImpl.actionImpl.needdedResource?size}, resource_list_of_${actionTask.name}<#else>0, NULL</#if>, 
      ${actionTask.inputPortList?size}, input_port_of_${actionTask.name}, ${actionTask.outputPortList?size}, output_port_of_${actionTask.name}
      <#if actionTask.groupPort?has_content>&group_port_of_${actionTask.name}<#else>NULL</#if>},
 </#list>

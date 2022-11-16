@@ -145,6 +145,7 @@ public class ServiceStatementMapper {
                 CodeActionWrapper actionImpl = new CodeActionWrapper();
                 UEMControlTask controlTask = robot.getRobot().getRobotTask().getControlTask();
                 actionImpl.setActionTask(actionTask);
+                actionImplList.add(actionImpl);
                 for (int inputIndex = 0; inputIndex < inputVariableList.size(); inputIndex++) {
                     CodeVariableWrapper inputVariable = inputVariableList.get(inputIndex);
                     UEMChannelPort inputPort =
@@ -183,9 +184,8 @@ public class ServiceStatementMapper {
                         makeInputListFromActionInput(action, statementId, actionType);
                 List<CodeVariableWrapper> outputVariableList =
                         makeVariableListFromActionOutput(action, statementId, actionType);
-                List<UEMActionTask> actionTaskList =
-                        robot.getRobot().getRobotTask().getActionTaskList(groupId,
-                                service.getService().getService().getName(), action);
+                List<UEMActionTask> actionTaskList = robot.getRobot().getRobotTask()
+                        .getActionTaskList(service.getServiceId(), action);
                 CodeStatementWrapper codeStatement = new CodeStatementWrapper();
                 codeStatement.setStatement(statement);
                 codeStatement.setStatementId(

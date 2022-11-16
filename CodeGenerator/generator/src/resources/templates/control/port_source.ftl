@@ -13,13 +13,13 @@ PORT input_port_of_${action.actionTask.name}[${action.inputList?size}] = {
 };
     </#if>
     <#if action.outputList?size gt 0 >
-PORT output_port_of_${actionTask.name}[${actionTask.outputList?size}] = {
+PORT output_port_of_${action.actionTask.name}[${action.outputList?size}] = {
         <#list action.outputList as output>
     {"${output.port.name}", -1, &variable_${output.variable.id}},
         </#list>
 };
     </#if>
-    <#if action.actionTask.actionImpl.actionType.groupAction == TRUE>
+    <#if action.actionTask.actionImpl.actionType.isGroupAction()>
 PORT group_port_of_${action.actionTask.name} = {
     "${action.group.port.name}", -1, &variable_group
 };

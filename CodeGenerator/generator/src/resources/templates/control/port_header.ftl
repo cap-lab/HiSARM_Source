@@ -10,7 +10,7 @@ extern PORT input_port_of_${action.actionTask.name}[${action.inputList?size}];
     <#if action.outputList?size gt 0>
 extern PORT output_port_of_${action.actionTask.name}[${action.outputList?size}];
     </#if>
-    <#if action.actionTask.actionImpl.actionType.isGroupAction == TRUE>
+    <#if action.actionTask.actionImpl.actionType.isGroupAction()>
 extern PORT group_port_of_${action.actionTask.name};
     </#if>
 </#list>

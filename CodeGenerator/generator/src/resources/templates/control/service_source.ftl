@@ -46,9 +46,9 @@ STATIC ACTION_TASK_ID action_task_list_${service.serviceId}_${actionType.action.
 // DEFINE SERVICE ACTION LIST
 <#list serviceList as service>
     <#if service.getActionMap()?size gt 0>
-STATIC ACTION_MAP action_list_of_${service.serviecId}[${service.getActionMap()?size}] = {
+STATIC ACTION_MAP action_list_of_${service.serviceId}[${service.getActionMap()?size}] = {
     <#list service.getActionMap() as actionType, actionTaksList>
-    {ID_ACTION_TYPE_${actionType.actionType.name}, ${actionTaksList?size}, action_task_list_${service.serviceId}_${actionType.actionType.name}},
+    {ID_ACTION_TYPE_${actionType.action.name}, ${actionTaksList?size}, action_task_list_${service.serviceId}_${actionType.action.name}},
     </#list>
 };
     </#if>
