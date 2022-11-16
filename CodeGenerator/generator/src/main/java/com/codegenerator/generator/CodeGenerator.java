@@ -48,5 +48,7 @@ public class CodeGenerator {
         ActionTaskCodeCopier actionTaskCodeCopier = new ActionTaskCodeCopier();
         actionTaskCodeCopier.copyActionTaskCode(Paths.get(additionalInfo.getTaskServerPrefix()),
                 targetDir, codeRobotList);
+        TranslatorCode translator = new TranslatorCode();
+        translator.translate(targetDir, additionalInfo);
     }
 }

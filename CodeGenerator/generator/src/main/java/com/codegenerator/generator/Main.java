@@ -31,5 +31,6 @@ public class Main {
                 strategy.getAdditionalInfo(), projectDir);
         CodeGenerator codeGenerator = new CodeGenerator();
         codeGenerator.codeGenerate(projectDir, mission, strategy.getAdditionalInfo(), robotList);
+
     }
 }

@@ -4,6 +4,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class CodeGeneratorConstant {
+        public static final String JAR_EXTENSION = ".jar";
+        public static final String JARS = "jars";
+        public static final String BIN = "bin";
+
         public static final String COMMON_HEADER_SUFFIX = "_common.h";
         public static final String VARIABLE_HEADER_SUFFIX = "_variable.h";
         public static final String VARIABLE_SOURCE_SUFFIX = "_variable.c";
@@ -40,8 +44,7 @@ public class CodeGeneratorConstant {
                         Paths.get(PROJECT_DIRECTORY.toString(), "src", "resources");
         public static final Path INCLUDE_DIRECTORY =
                         Paths.get(RESOURCE_DIRECTORY.toString(), "include");
-        public static final Path SOURCE_DIRECTORY =
-                        Paths.get(RESOURCE_DIRECTORY.toString(), "src");
+        public static final Path SOURCE_DIRECTORY = Paths.get(RESOURCE_DIRECTORY.toString(), "src");
         public static final Path TEMPLATE_DIRECTORY =
                         Paths.get(RESOURCE_DIRECTORY.toString(), "templates");
         public static final Path GENERATE_DIRECTORY =
@@ -54,9 +57,9 @@ public class CodeGeneratorConstant {
                         Paths.get(COMMON_TEMPLATE_DIRECTORY.toString(), "variable_header.ftl");
         public static final Path VARIABLE_SOURCE_TEMPLATE =
                         Paths.get(COMMON_TEMPLATE_DIRECTORY.toString(), "variable_source.ftl");
-        public static final Path VARIABLE_HEADER_CODE = 
+        public static final Path VARIABLE_HEADER_CODE =
                         Paths.get(INCLUDE_DIRECTORY.toString(), VARIABLE_HEADER);
-        public static final Path VARIABLE_SOURCE_CODE = 
+        public static final Path VARIABLE_SOURCE_CODE =
                         Paths.get(SOURCE_DIRECTORY.toString(), VARIABLE_SOURCE);
 
         public static final Path COMMUNICATION_TEMPLATE_DIRECTORY = Paths.get("communication");
@@ -64,13 +67,13 @@ public class CodeGeneratorConstant {
                         Paths.get(COMMUNICATION_TEMPLATE_DIRECTORY.toString(), "listentask.ftl");
         public static final Path REPORT_TASK_TEMPLATE =
                         Paths.get(COMMUNICATION_TEMPLATE_DIRECTORY.toString(), "reporttask.ftl");
-        public static final Path PORT_HEADER_CODE = 
+        public static final Path PORT_HEADER_CODE =
                         Paths.get(INCLUDE_DIRECTORY.toString(), PORT_HEADER);
-        public static final Path PORT_SOURCE_CODE = 
+        public static final Path PORT_SOURCE_CODE =
                         Paths.get(SOURCE_DIRECTORY.toString(), PORT_SOURCE);
-        public static final Path COMMUNICATION_HEADER_CODE = 
+        public static final Path COMMUNICATION_HEADER_CODE =
                         Paths.get(INCLUDE_DIRECTORY.toString(), COMMUNICATION_HEADER);
-        public static final Path COMMUNICATION_SOURCE_CODE = 
+        public static final Path COMMUNICATION_SOURCE_CODE =
                         Paths.get(SOURCE_DIRECTORY.toString(), COMMUNICATION_SOURCE);
 
         public static final Path SHARED_DATA_TEMPLATE_DIRECTORY = Paths.get("shareddata");
