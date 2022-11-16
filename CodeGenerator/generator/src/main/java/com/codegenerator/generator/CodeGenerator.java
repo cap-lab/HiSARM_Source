@@ -36,8 +36,8 @@ public class CodeGenerator {
             List<UEMRobot> robotList) {
         List<CodeRobotWrapper> codeRobotList = makeDataStructure(mission, robotList);
         CommonCodeGenerator commonCodeGenerator = new CommonCodeGenerator();
-        commonCodeGenerator.generate(targetDir, codeRobotList);
-        AdditionalTaskCodeGenerator additionalTaskCodeGenerator = new AdditionalTaskCodeGenerator();
+        commonCodeGenerator.generate(targetDir, codeRobotList, additionalInfo);
+        AdditionalCodeGenerator additionalTaskCodeGenerator = new AdditionalCodeGenerator();
         additionalTaskCodeGenerator.generateAdditionalCode(targetDir, codeRobotList);
         CommunicationCodeGenerator communicationCodeGenerator = new CommunicationCodeGenerator();
         communicationCodeGenerator.generateCommunicationCode(targetDir, robotList);

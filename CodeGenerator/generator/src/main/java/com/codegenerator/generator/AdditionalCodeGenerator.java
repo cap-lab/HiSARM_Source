@@ -11,7 +11,7 @@ import com.codegenerator.generator.constant.CodeGeneratorConstant;
 import com.codegenerator.generator.util.LocalFileCopier;
 import com.codegenerator.wrapper.CodeRobotWrapper;
 
-public class AdditionalTaskCodeGenerator {
+public class AdditionalCodeGenerator {
     public void generateAdditionalCode(Path targetDir, List<CodeRobotWrapper> robotList) {
         for (CodeRobotWrapper robot : robotList) {
             generateLeaderLibraryTaskCode(targetDir, robot);
@@ -38,8 +38,8 @@ public class AdditionalTaskCodeGenerator {
 
     private void copyLeaderHeaderFile(Path targetDir) {
         try {
-            LocalFileCopier.copyFile(CodeGeneratorConstant.LEADER_HEADER_CODE, 
-            Paths.get(targetDir.toString(), CodeGeneratorConstant.LEADER_HEADER));
+            LocalFileCopier.copyFile(CodeGeneratorConstant.LEADER_HEADER_CODE,
+                    Paths.get(targetDir.toString(), CodeGeneratorConstant.LEADER_HEADER));
         } catch (Exception e) {
             e.printStackTrace();
         }

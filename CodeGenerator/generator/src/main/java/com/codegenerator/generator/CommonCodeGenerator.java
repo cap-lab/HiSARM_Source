@@ -16,17 +16,31 @@ import com.codegenerator.wrapper.CodeRobotWrapper;
 import com.codegenerator.wrapper.CodeServiceWrapper;
 import com.codegenerator.wrapper.CodeVariableWrapper;
 import com.metadata.UEMRobot;
+import com.strategy.strategydatastructure.additionalinfo.AdditionalInfo;
 import com.strategy.strategydatastructure.wrapper.VariableTypeWrapper;
 
 public class CommonCodeGenerator {
-    public void generate(Path targetDir, List<CodeRobotWrapper> robotList) {
+    public void generate(Path targetDir, List<CodeRobotWrapper> robotList,
+            AdditionalInfo additionalInfo) {
         try {
+            copyCommonCode(targetDir, additionalInfo);
             for (CodeRobotWrapper robot : robotList) {
                 generateRobotSpecificCommon(targetDir, robot.getRobot());
                 generateVariableCode(targetDir, robot);
                 generateGroupCode(targetDir, robot);
                 copyVariableCode(targetDir);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void copyCommonCode(Path targetDir, AdditionalInfo additionalInfo) {
+        try {
+            LocalFileCopier.copyFile(CodeGeneratorConstant.COMMON_HEADER_CODE,
+                    Paths.get(targetDir.toString(), CodeGeneratorConstant.COMMON_HEADER));
+            LocalFileCopier.copyFile(CodeGeneratorConstant.LOGGER_HEADER_CODE,
+                    Paths.get(targetDir.toString(), CodeGeneratorConstant.LOGGER_HEADER));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -107,10 +121,10 @@ public class CommonCodeGenerator {
 
     private void copyVariableCode(Path targetDir) {
         try {
-            LocalFileCopier.copyFile(CodeGeneratorConstant.VARIABLE_HEADER_CODE, 
-                Paths.get(targetDir.toString(), CodeGeneratorConstant.VARIABLE_HEADER));
-            LocalFileCopier.copyFile(CodeGeneratorConstant.VARIABLE_SOURCE_CODE, 
-                Paths.get(targetDir.toString(), CodeGeneratorConstant.VARIABLE_SOURCE));
+            LocalFileCopier.copyFile(CodeGeneratorConstant.VARIABLE_HEADER_CODE,
+                    Paths.get(targetDir.toString(), CodeGeneratorConstant.VARIABLE_HEADER));
+            LocalFileCopier.copyFile(CodeGeneratorConstant.VARIABLE_SOURCE_CODE,
+                    Paths.get(targetDir.toString(), CodeGeneratorConstant.VARIABLE_SOURCE));
         } catch (Exception e) {
             e.printStackTrace();
         }

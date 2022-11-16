@@ -54,8 +54,6 @@ public class CommunicationCodeGenerator {
         try {
             LocalFileCopier.copyFile(CodeGeneratorConstant.PORT_HEADER_CODE,
                     Paths.get(targetDir.toString(), CodeGeneratorConstant.PORT_HEADER));
-            LocalFileCopier.copyFile(CodeGeneratorConstant.PORT_SOURCE_CODE,
-                    Paths.get(targetDir.toString(), CodeGeneratorConstant.PORT_SOURCE));
         } catch (Exception e) {
             e.printStackTrace();
         }
