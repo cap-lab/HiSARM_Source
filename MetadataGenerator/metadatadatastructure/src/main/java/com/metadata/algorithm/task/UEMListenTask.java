@@ -1,5 +1,6 @@
 package com.metadata.algorithm.task;
 
+import com.dbmanager.datastructure.variable.PrimitiveType;
 import com.metadata.algorithm.UEMCommPort;
 import com.metadata.algorithm.UEMMulticastPort;
 import com.metadata.algorithm.library.UEMLeaderLibrary;
@@ -84,7 +85,8 @@ public class UEMListenTask extends UEMCommTask {
             inPort.setGroup(group);
             inPort.setDirection(PortDirectionType.INPUT);
             inPort.setMessage(statement.getEvent().getName());
-            inPort.setVariableType(VariableTypeWrapper.getEventVariable());
+            inPort.setVariableType(
+                    robot.getRobot().getPrimitiveVariableMap().get(PrimitiveType.INT32));
             getMulticastPort().add(inPort);
             UEMCommPort outPort = new UEMCommPort();
             outPort.makePortInfo(AlgorithmConstant.CONTROL_TASK + portName,
@@ -92,7 +94,8 @@ public class UEMListenTask extends UEMCommTask {
             outPort.setExport(false);
             outPort.setCounterTeam(group);
             outPort.setMessage(statement.getEvent().getName());
-            outPort.setVariableType(VariableTypeWrapper.getEventVariable());
+            outPort.setVariableType(
+                    robot.getRobot().getPrimitiveVariableMap().get(PrimitiveType.INT32));
             getPort().add(outPort);
             getControlPortList().add(outPort);
             getMulticastPortMap().put(inPort, outPort);
@@ -129,7 +132,7 @@ public class UEMListenTask extends UEMCommTask {
             if (!existMulticastPort(robotIdPortName)) {
                 UEMMulticastPort robotIdPort = new UEMMulticastPort();
                 robotIdPort.setName(robotIdPortName);
-                robotIdPort.setGroup(robotIdPortName);
+                robotIdPort.setGroup(group);
                 robotIdPort.setDirection(PortDirectionType.INPUT);
                 robotIdPort.setMessage(group);
                 getMulticastPort().add(robotIdPort);
@@ -137,7 +140,7 @@ public class UEMListenTask extends UEMCommTask {
                         makePortName(AlgorithmConstant.LEADER, AlgorithmConstant.HEARTBEAT));
                 UEMMulticastPort heartbeatPort = new UEMMulticastPort();
                 heartbeatPort.setName(heartbeatPortName);
-                heartbeatPort.setGroup(heartbeatPortName);
+                heartbeatPort.setGroup(group);
                 heartbeatPort.setDirection(PortDirectionType.INPUT);
                 heartbeatPort.setMessage(group);
                 getMulticastPort().add(heartbeatPort);

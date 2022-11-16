@@ -359,7 +359,7 @@ public class AlgorithmGenerator {
                             actionType.getAction().getName() + "_" + String.valueOf(i));
                     UEMSharedData library = robot.getSharedDataTask(libName);
                     if (library == null) {
-                        library = new UEMSharedData();
+                        library = new UEMSharedData(robot);
                         library.makeGeneratedLibrary(libName);
                         library.setGroup(UEMSharedData.makeGroup(actionTask.getScope(),
                                 actionType.getAction().getName(), i));

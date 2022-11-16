@@ -342,7 +342,7 @@ public class TaskXMLtoAlgorithm {
     }
 
     private UEMLibrary convertLibrary(String parentTasks, TaskXMLLibraryType before) {
-        UEMLibrary after = new UEMLibrary();
+        UEMLibrary after = new UEMLibrary(robot.getName());
         after.setName(parentTasks, before.getName());
         convertLibraryConfig(after, before);
         convertLibraryExtraSetting(after, before);

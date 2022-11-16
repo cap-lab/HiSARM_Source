@@ -10,6 +10,7 @@ public class AlgorithmConstant {
     public static final String CONTROL_DRIVEN = "control-driven";
     public static final String DATA_DRIVEN = "data-driven";
     public static final String DEFAULT = "Default";
+    public static final String DEFAULT_FILE = "task.xml";
     public static final String LANGUAGE_C = "C";
     public static final String LISTEN = "listen";
     public static final String REPORT = "report";
@@ -35,15 +36,14 @@ public class AlgorithmConstant {
     public static final String ROBOT_TIMER_HEADER_SUFFIX = "_timer.h";
     public static final String ROBOT_TIMER_SOURCE_SUFFIX = "_timer.c";
     public static final String ROBOT_MODE_SOURCE_SUFFIX = "_mode.c";
+    public static final String ROBOT_GROUP_HEADER_SUFFIX = "_group.h";
+    public static final String ROBOT_GROUP_SOURCE_SUFFIX = "_group.c";
     public static final String ROBOT_LEADER_LIBRARY_SOURCE_SUFFIX = "_leader_lib.cicl";
     public static final String ROBOT_LEADER_LIBRARY_HEADER_SUFFIX = "_leader_lib.cicl.h";
     public static final String COMMON_HEADER = "semo_common.h";
     public static final String LOGGER_HEADER = "semo_logger.h";
+    public static final String LEADER_HEADER = "semo_leader.h";
     public static final String COMMON_PORT_HEADER = "semo_port.h";
-    public static final String COMMON_TIMER_SOURCE = "timer.c";
-    public static final String COMMON_SERVICE_SOURCE = "service.c";
     public static final String COMMUNICATION_HEADER = "semo_communication.h";
     public static final String COMMUNICATION_SOURCE = "semo_communication.c";
-    public static final String COMMON_LEADER_SELECTION_HEADER = "semo_leader_selection.h";
-
 }

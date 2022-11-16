@@ -19,7 +19,7 @@ public class UEMTask extends TaskType {
     public UEMTask(String robotName) {
         super();
         setHasInternalStates(YesNoType.YES);
-        setFile(AlgorithmConstant.DEFAULT);
+        setFile(AlgorithmConstant.DEFAULT_FILE);
         setLanguage(AlgorithmConstant.LANGUAGE_C);
         getExtraHeader().add(AlgorithmConstant.COMMON_HEADER);
         getExtraHeader().add(robotName + AlgorithmConstant.ROBOT_COMMON_HEADER_SUFFIX);
