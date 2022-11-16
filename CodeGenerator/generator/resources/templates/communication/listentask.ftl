@@ -12,6 +12,7 @@ TASK_CODE_BEGIN
 /////////////////////////////////////
 // global definition
 /////////////////////////////////////
+<#if channelPortMap?size gt 0>
 // CHANNEL VARIABLE DEFINE
 <#list channelPortMap as inPort, outPort>
     <#if inPort.variableType.variableType.type.getValue() == "enum">
@@ -21,6 +22,8 @@ STATIC ${inPort.variableType.variableType.type.getValue()} ${inPort.getVariableN
     </#if>
 </#list>
 
+</#if>
+<#if multicastPortMap?size gt 0>
 // MULTICAST VARIABLE DEFINE
 <#list multicastPortMap as multicastPort, channelPort>
 STATIC struct _${multicastPort.getVariableName()} {
@@ -34,6 +37,8 @@ STATIC struct _${multicastPort.getVariableName()} {
 STATIC MULTICAST_PACKET packet_${multicastPort.getVariableName()} = {&${multicastPort.getVariableName()}.header, ${multicastPort.getVariableName()}.body};
 </#list>
 
+</#if>
+<#if sharedDataPortMap?size gt 0>
 // SHARED DATA VARIABLE DEFINE
 <#list sharedDataPortMap as libPort, multicastPort>
 STATIC struct _${libPort.library.name} {
@@ -44,9 +49,11 @@ STATIC struct _${libPort.library.name} {
     ${libPort.variableType.variableType.type.getValue()} body[${libPort.variableType.variableType.count}];
     </#if>
 } ${libPort.library.name} = {{-1, -1}, {0,}};
-STATIC MULTICAST_PACKET packet_${libPort.library.name} = {&${libPort.library.name}.header, ${libPort.library.name}.body}
+STATIC MULTICAST_PACKET packet_${libPort.library.name} = {&${libPort.library.name}.header, ${libPort.library.name}.body};
 </#list>
 
+</#if>
+<#if channelPortMap?size gt 0>
 // CHANNEL PORT SECTION
 STATIC CHANNEL_PORT channelPortList[${channelPortMap?size}] = {
 <#list channelPortMap as inPort, outPort>
@@ -54,76 +61,92 @@ STATIC CHANNEL_PORT channelPortList[${channelPortMap?size}] = {
 </#list>
 };
 
+</#if>
+<#if multicastPortMap?size gt 0>
 // MULTICAST PORT SECTION
 STATIC MULTICAST_PORT multicastPortList[${multicastPortMap?size}] = {
 <#list multicastPortMap as multicastPort, channelPort>
-    {"${multicastPort.name}", -1, -1, "${channelPort.name}", -1, ${multicastPort.getVariableName()}, packet_${multicastPort.getVariableName()}, ${multicastPort.variableType.getSize()}, -1},
+    {"${multicastPort.name}", -1, -1, "${channelPort.name}", -1, &${multicastPort.getVariableName()}, &packet_${multicastPort.getVariableName()}, ${multicastPort.variableType.getSize()}, -1},
 </#list>
 };
 
-// GROUP SERVICE PORT SECTION
-STATIC GROUP_SERVICE_PORT sharedDataPortList[${sharedDataPortMap?size}] = {
+</#if>
+<#if sharedDataPortMap?size gt 0>
+// SHARED DATA PORT SECTION
+STATIC SHARED_DATA_PORT sharedDataPortList[${sharedDataPortMap?size}] = {
 <#list sharedDataPortMap as libPort, multicastPort>
-    {"${multicastPort.name}", -1, -1, NULL, NULL, l_${libPort.library.name}_set_${libPort.library.name}_listen, ${libPort.library.name}, packet_${libPort.library.name}, ${libPort.variableType.getSize()}, -1},
+    {"${multicastPort.name}", -1, -1, NULL, NULL, l_${libPort.library.name}_set_${libPort.variableType.variableType.name}_listen, &${libPort.library.name}, &packet_${libPort.library.name}, ${libPort.variableType.getSize()}, -1},
 </#list>
 };
 
+</#if>
 // LEADER PORT SECTION
 STATIC LEADER_PORT leaderPortList[${leaderPortMap?size}] = {
 <#list leaderPortMap as robotIdPort, heartbeatPort>
-    {"${robotIdPort.name}", -1, -1, {{-1, -1}, -1}, -1, NULL, NULL, l_leader_set_robot_id_listen, 
-    "${heartbeatPort.name}", -1, -1, {{-1, -1}, -1}, -1, NULL, NULL, l_leader_set_heartbeat_listen, ID_GROUP_${robotIdPort.group}},
+    {"${robotIdPort.name}", -1, -1, {{-1, -1}, -1}, -1, NULL, NULL, l_${robotId}leader_set_robot_id_listen, 
+    "${heartbeatPort.name}", -1, -1, {{-1, -1}, -1}, -1, NULL, NULL, l_${robotId}leader_set_heartbeat_listen, ID_GROUP_${robotIdPort.group}},
 </#list>
 };
 
 /////////////////////////////////////
 // init code
 /////////////////////////////////////
-
+<#if channelPortMap?size gt 0>
 STATIC void channelPortInit() {
     for (int i = 0 ; i<sizeof(channelPortList)/sizeof(CHANNEL_PORT) ; i++)
     {
-        UFPort_Initialize(TASK_ID, channelPortList[i].inPortName, &(channelPortList[i].inPortId));
-        UFPort_Initialize(TASK_ID, channelPortList[i].outPortName, &(channelPortList[i].outPortId));
+        UFPort_Initialize(THIS_TASK_ID, channelPortList[i].inPortName, &(channelPortList[i].inPortId));
+        UFPort_Initialize(THIS_TASK_ID, channelPortList[i].outPortName, &(channelPortList[i].outPortId));
     }
 }
 
+</#if>
+<#if multicastPortMap?size gt 0>
 STATIC void multicastPortInit() {
     for (int i = 0 ; i<sizeof(multicastPortList)/sizeof(MULTICAST_PORT) ; i++)
     {
-        UFPort_Initialize(TASK_ID, multicastPortList[i].channelPortName, &(multicastPortList[i].channelPortId));
-        UFMulticastPort_Initialize(TASK_ID, multicastPortList[i].multicastPortName, &(multicastPortList[i].multicastGroupId), &(multicastPortList[i].multicastPortId));
+        UFPort_Initialize(THIS_TASK_ID, multicastPortList[i].channelPortName, &(multicastPortList[i].channelPortId));
+        UFMulticastPort_Initialize(THIS_TASK_ID, multicastPortList[i].multicastPortName, &(multicastPortList[i].multicastGroupId), &(multicastPortList[i].multicastPortId));
     }
 }
 
-STATIC void libraryPortInit() {
-    for (int i = 0 ; i<sizeof(sharedDataPortList)/sizeof(GROUP_SERVICE_PORT) ; i++)
+</#if>
+<#if sharedDataPortMap?size gt 0>
+STATIC void sharedDataPortInit() {
+    for (int i = 0 ; i<sizeof(sharedDataPortList)/sizeof(SHARED_DATA_PORT) ; i++)
     {
-        UFMulticastPort_Initialize(TASK_ID, sharedDataPortList[i].multicastPortName, &(sharedDataPortList[i].multicastGroupId), &(sharedDataPortList[i].multicastPortId));
+        UFMulticastPort_Initialize(THIS_TASK_ID, sharedDataPortList[i].multicastPortName, &(sharedDataPortList[i].multicastGroupId), &(sharedDataPortList[i].multicastPortId));
     }
 }
 
+</#if>
 STATIC void leaderPortInit() {
     for (int i = 0 ; i < sizeof(leaderPortList)/sizeof(LEADER_PORT) ; i++)
     {
-        UFMulticastPort_Initialize(TASK_ID, leaderPortList[i].robotIdPortName, &(leaderPortList[i].robotIdGroupId), &(leaderPortList[i].robotIdPortId));
-        UFMulticastPort_Initialize(TASK_ID, leaderPortList[i].heartbeatPortName, &(leaderPortList[i].heartbeatGroupId), &(leaderPortList[i].heartbeatPortId));
+        UFMulticastPort_Initialize(THIS_TASK_ID, leaderPortList[i].robotIdPortName, &(leaderPortList[i].robotIdGroupId), &(leaderPortList[i].robotIdPortId));
+        UFMulticastPort_Initialize(THIS_TASK_ID, leaderPortList[i].heartbeatPortName, &(leaderPortList[i].heartbeatGroupId), &(leaderPortList[i].heartbeatPortId));
     }
 }
 
 TASK_INIT
 {
 	SEMO_LOG_INFO("INIT");
+<#if channelPortMap?size gt 0>
     channelPortInit();
+</#if>
+<#if multicastPortMap?size gt 0>
     multicastPortInit();
-    libraryPortInit();
+</#if>
+<#if sharedDataPortMap?size gt 0>
+    sharedDataPortInit();
+</#if>
     leaderPortInit();
 }
 
 /////////////////////////////////////
 // go code
 /////////////////////////////////////
-
+<#if channelPortMap?size gt 0>
 STATIC void channelPortReceive() {
     int dataLen;
     for (int i = 0 ; i<sizeof(channelPortList)/sizeof(CHANNEL_PORT) ; i++)
@@ -142,6 +165,8 @@ STATIC void channelPortReceive() {
     }
 }
 
+</#if>
+<#if multicastPortMap?size gt 0>
 STATIC void multicastPortReceive() {
     int dataLen;
     for (int i = 0 ; i<sizeof(multicastPortList)/sizeof(MULTICAST_PORT) ; i++)
@@ -160,9 +185,11 @@ STATIC void multicastPortReceive() {
     }
 }
 
-STATIC void groupServicePortReceive() {
+</#if>
+<#if sharedDataPortMap?size gt 0>
+STATIC void sharedDataPortReceive() {
     int dataLen;
-    for (int i = 0 ; i<sizeof(sharedDataPortList)/sizeof(GROUP_SERVICE_PORT) ; i++)
+    for (int i = 0 ; i<sizeof(sharedDataPortList)/sizeof(SHARED_DATA_PORT) ; i++)
     {
         UFMulticastPort_ReadFromBuffer(sharedDataPortList[i].multicastGroupId, sharedDataPortList[i].multicastPortId, (unsigned char*) &(sharedDataPortList[i].buffer), sharedDataPortList[i].size + sizeof(MULTICAST_PACKET_HEADER), &dataLen);
         if (dataLen > 0) 
@@ -176,6 +203,7 @@ STATIC void groupServicePortReceive() {
     }
 }
 
+</#if>
 STATIC void leaderPortReceive() {
     int dataLen;
     for (int i = 0 ; i < sizeof(leaderPortList)/sizeof(LEADER_PORT) ; i++)
@@ -203,9 +231,15 @@ STATIC void leaderPortReceive() {
 
 TASK_GO
 {
+<#if channelPortMap?size gt 0>
     channelPortReceive();
+</#if>
+<#if multicastPortMap?size gt 0>
     multicastPortReceive();
-    groupServicePortReceive();
+</#if>
+<#if sharedDataPortMap?size gt 0>
+    sharedDataPortReceive();
+</#if>
     leaderPortReceive();
 }
 
