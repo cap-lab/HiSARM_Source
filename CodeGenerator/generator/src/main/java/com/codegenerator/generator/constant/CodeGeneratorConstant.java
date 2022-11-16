@@ -38,10 +38,12 @@ public class CodeGeneratorConstant {
         public static final String PORT_SOURCE = "semo_port.c";
         public static final String COMMUNICATION_HEADER = "semo_communication.h";
         public static final String COMMUNICATION_SOURCE = "semo_communication.c";
+        public static final String COMMON_HEADER = "semo_common.h";
+        public static final String LOGGER_HEADER = "semo_logger.h";
 
         public static final Path PROJECT_DIRECTORY = Paths.get("");
         public static final Path RESOURCE_DIRECTORY =
-                        Paths.get(PROJECT_DIRECTORY.toString(), "src", "resources");
+                        Paths.get(PROJECT_DIRECTORY.toString(), "resources");
         public static final Path INCLUDE_DIRECTORY =
                         Paths.get(RESOURCE_DIRECTORY.toString(), "include");
         public static final Path SOURCE_DIRECTORY = Paths.get(RESOURCE_DIRECTORY.toString(), "src");
@@ -61,6 +63,10 @@ public class CodeGeneratorConstant {
                         Paths.get(INCLUDE_DIRECTORY.toString(), VARIABLE_HEADER);
         public static final Path VARIABLE_SOURCE_CODE =
                         Paths.get(SOURCE_DIRECTORY.toString(), VARIABLE_SOURCE);
+        public static final Path COMMON_HEADER_CODE =
+                        Paths.get(INCLUDE_DIRECTORY.toString(), COMMON_HEADER);
+        public static final Path LOGGER_HEADER_CODE =
+                        Paths.get(INCLUDE_DIRECTORY.toString(), LOGGER_HEADER);
 
         public static final Path COMMUNICATION_TEMPLATE_DIRECTORY = Paths.get("communication");
         public static final Path LISTEN_TASK_TEMPLATE =
