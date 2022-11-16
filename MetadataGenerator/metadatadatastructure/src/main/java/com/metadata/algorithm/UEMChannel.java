@@ -1,9 +1,7 @@
 package com.metadata.algorithm;
 
 import java.math.BigInteger;
-
 import com.metadata.algorithm.task.UEMTask;
-
 import hopes.cic.xml.ChannelPortType;
 import hopes.cic.xml.ChannelType;
 import hopes.cic.xml.ChannelTypeType;
@@ -36,6 +34,7 @@ public class UEMChannel extends ChannelType {
             UEMChannelPort counterPort) {
         UEMChannel channel = new UEMChannel();
         channel.setSampleSize(port.getSampleSize());
+        channel.setSize(channel.getSampleSize());
         channel.setType(port.getType().value());
         if (port.getDirection().equals(PortDirectionType.INPUT)) {
             channel.setSrc(counterTask.getName(), counterPort.getName());

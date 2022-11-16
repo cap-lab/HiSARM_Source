@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.metadata.algorithm.library.UEMLibrary;
 import com.metadata.algorithm.task.UEMRobotTask;
 import com.metadata.algorithm.task.UEMTask;
 import com.metadata.constant.AlgorithmConstant;
@@ -30,7 +31,6 @@ public class UEMAlgorithm {
         algorithm.setLibraryConnections(new LibraryConnectionListType());
         algorithm.setChannels(new ChannelListType());
         algorithm.setMulticastGroups(new MulticastGroupListType());
-        algorithm.setPortMaps(new PortMapListType());
         algorithm.setTasks(new TaskListType());
         algorithm.setModes(new ModeListType());
         algorithm.getModes().getMode().add(new ModeType());
@@ -41,10 +41,20 @@ public class UEMAlgorithm {
         task.setId(getTaskNum());
         algorithm.getModes().getMode().get(0).getTask().add(task.getUEMMode());
         algorithm.getTasks().getTask().add(task);
+        addAllPortMaps(task.getPortMapList());
     }
 
     public void addAllTasks(List<UEMTask> taskList) {
         taskList.forEach(t -> addTask(t));
+    }
+
+    public void addLibrary(UEMLibrary library) {
+        library.setId(getTaskNum());
+        algorithm.getLibraries().getLibrary().add(library);
+    }
+
+    public void addAllLibraries(List<UEMLibrary> libraryList) {
+        libraryList.forEach(l -> addLibrary(l));
     }
 
     public UEMMulticastGroup getMulticastGroup(String groupId) {
@@ -64,7 +74,7 @@ public class UEMAlgorithm {
     }
 
     public int getTaskNum() {
-        return algorithm.getTasks().getTask().size();
+        return algorithm.getTasks().getTask().size() + algorithm.getLibraries().getLibrary().size();
     }
 
     public List<UEMRobotTask> getRobotTaskList() {
@@ -88,5 +98,16 @@ public class UEMAlgorithm {
 
     public CICAlgorithmType getAlgorithm() {
         return algorithm;
+    }
+
+    public void addPortMap(UEMPortMap portMap) {
+        if (algorithm.getPortMaps() == null) {
+            algorithm.setPortMaps(new PortMapListType());
+        }
+        algorithm.getPortMaps().getPortMap().add(portMap);
+    }
+
+    public void addAllPortMaps(List<UEMPortMap> portMapList) {
+        portMapList.forEach(p -> addPortMap(p));
     }
 }

@@ -1,5 +1,6 @@
 package com.metadata.algorithm.task;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -114,7 +115,7 @@ public class UEMControlTask extends UEMTask {
         return channelList;
     }
 
-    public UEMChannel setLeaderPortInfo(UEMLeaderTask leaderTask) {
+    public UEMChannel setLeaderPortInfo(UEMLeaderTask leaderTask, int groupNum) {
         List<UEMChannelPort> portList = new ArrayList<>();
         channelPortMap.put(leaderTask, new HashMap<>());
         channelPortMap.get(leaderTask).put(portList, portList);
@@ -122,7 +123,10 @@ public class UEMControlTask extends UEMTask {
         port.setPortInfo(leaderTask.getName(), leaderTask.getControlTaskPort());
         getPort().add(port);
         portList.add(port);
-        return UEMChannel.makeChannel(this, port, leaderTask, leaderTask.getControlTaskPort());
+        UEMChannel channel =
+                UEMChannel.makeChannel(this, port, leaderTask, leaderTask.getControlTaskPort());
+        channel.setSize(port.getSampleSize().multiply(BigInteger.valueOf(groupNum)));
+        return channel;
     }
 
     public List<UEMChannelPort> getInputPortList(UEMTask task) {

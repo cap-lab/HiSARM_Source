@@ -42,6 +42,14 @@ public class MappingGenerator {
                         }
                     }
                 }
+                mapping.getTask()
+                        .add(mappingTaskToDevice(robot.getRobotTask().getListenTask(), robot));
+                mapping.getTask()
+                        .add(mappingTaskToDevice(robot.getRobotTask().getReportTask(), robot));
+                mapping.getTask()
+                        .add(mappingTaskToDevice(robot.getRobotTask().getControlTask(), robot));
+                mapping.getTask()
+                        .add(mappingTaskToDevice(robot.getRobotTask().getLeaderTask(), robot));
                 for (MulticastGroupType multicast : algorithm.getAlgorithm().getMulticastGroups()
                         .getMulticastGroup()) {
                     mapping.addMulticast(multicast.getGroupName());

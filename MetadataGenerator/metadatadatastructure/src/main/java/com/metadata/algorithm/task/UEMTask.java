@@ -20,6 +20,7 @@ public class UEMTask extends TaskType {
         super();
         setHasInternalStates(YesNoType.YES);
         setFile(AlgorithmConstant.DEFAULT);
+        setLanguage(AlgorithmConstant.LANGUAGE_C);
     }
 
     public void setId(int index) {

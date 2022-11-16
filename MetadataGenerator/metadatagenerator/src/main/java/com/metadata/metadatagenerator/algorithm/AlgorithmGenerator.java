@@ -53,7 +53,7 @@ import hopes.cic.xml.handler.CICAlgorithmXMLHandler;
 
 public class AlgorithmGenerator {
     private UEMAlgorithm algorithm;
-    CICAlgorithmXMLHandler handler = new CICAlgorithmXMLHandler();
+    private CICAlgorithmXMLHandler handler = new CICAlgorithmXMLHandler();
 
     public AlgorithmGenerator() {
         algorithm = new UEMAlgorithm(handler.getAlgorithm());
@@ -139,10 +139,9 @@ public class AlgorithmGenerator {
                 actionTask.setSubTaskGraphs(exploreSubGraph(actionTask, taskServerPrefix));
                 for (UEMTaskGraph taskGraph : actionTask.getSubTaskGraphs()) {
                     algorithm.addAllTasks(taskGraph.getTaskList());
+                    algorithm.addAllLibraries(taskGraph.getLibraryList());
                     algorithm.getAlgorithm().getChannels().getChannel()
                             .addAll(taskGraph.getChannelList());
-                    algorithm.getAlgorithm().getLibraries().getLibrary()
-                            .addAll(taskGraph.getLibraryList());
                     algorithm.getAlgorithm().getLibraryConnections().getTaskLibraryConnection()
                             .addAll(taskGraph.getLibraryConnectionList());
                 }
@@ -364,7 +363,7 @@ public class AlgorithmGenerator {
                         library.makeGeneratedLibrary(libName);
                         library.setGroup(UEMSharedData.makeGroup(actionTask.getScope(),
                                 actionType.getAction().getName(), i));
-                        algorithm.getAlgorithm().getLibraries().getLibrary().add(library);
+                        algorithm.addLibrary(library);
                         robot.getSharedDataTaskList().add(library);
                         library.setVariableType(variable);
                     }
@@ -385,7 +384,7 @@ public class AlgorithmGenerator {
         robot.setLeaderTask(leader);
         robot.setLeaderLibraryTask(leaderLibrary);
         algorithm.addTask(leader);
-        algorithm.getAlgorithm().getLibraries().getLibrary().add(leaderLibrary);
+        algorithm.addLibrary(leaderLibrary);
         algorithm.getAlgorithm().getLibraryConnections().getTaskLibraryConnection().add(connection);
         for (UEMActionTask actionTask : robot.getActionTaskList()) {
             if (actionTask.getLeaderPort() != null) {
@@ -465,11 +464,18 @@ public class AlgorithmGenerator {
         channelList.addAll(controlTask.setCommPortInfo(reportTask));
 
         UEMLeaderTask leaderTask = robot.getLeaderTask();
-        channelList.add(controlTask.setLeaderPortInfo(leaderTask));
+        channelList.add(
+                controlTask.setLeaderPortInfo(leaderTask, robot.getRobot().getGroupMap().size()));
         boolean flag = true;
         while (flag) {
-            flag = convertChannelToDirect(algorithm.getAlgorithm().getPortMaps().getPortMap()
-                    .stream().map(pm -> (UEMPortMap) pm).collect(Collectors.toList()), channelList);
+            if (algorithm.getAlgorithm().getPortMaps() == null) {
+                flag = false;
+            } else {
+                flag = convertChannelToDirect(
+                        algorithm.getAlgorithm().getPortMaps().getPortMap().stream()
+                                .map(pm -> (UEMPortMap) pm).collect(Collectors.toList()),
+                        channelList);
+            }
         }
         algorithm.getAlgorithm().getChannels().getChannel().addAll(channelList);
         algorithm.addTask(controlTask);
