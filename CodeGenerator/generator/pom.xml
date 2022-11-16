@@ -14,6 +14,13 @@
   <groupId>com.codegenerator</groupId>
   <artifactId>generator</artifactId>
 
+  <properties>
+    <project.basedir>${project.basedir}</project.basedir>
+    <deploy.target.dir>${project.basedir}/dist</deploy.target.dir>
+    <lib.dir>semo_lib</lib.dir>
+    <jar.name>semo</jar.name>
+  </properties>
+
   <name>generator</name>
 
   <dependencies>
@@ -77,6 +84,25 @@
   </dependencies>
 
   <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.3</version>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>install</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <outputDirectory>${deploy.target.dir}/${lib.dir}</outputDirectory>
+          <overWriteIfNewer>true</overWriteIfNewer>
+        </configuration>
+      </plugin>
+    </plugins>
     <pluginManagement>
       <!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
@@ -84,11 +110,37 @@
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.1.0</version>
+          <configuration>
+            <filesets>
+              <fileset>
+                <directory>${deploy.target.dir}</directory>
+              </fileset>
+            </filesets>
+          </configuration>
         </plugin>
         <!-- default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
           <version>3.0.2</version>
+          <executions>
+            <execution>
+              <id>copy-resources</id>
+              <phase>install</phase>
+              <goals>
+                <goal>copy-resources</goal>
+              </goals>
+              <configuration>
+                <outputDirectory>${deploy.target.dir}</outputDirectory>
+                <resources>
+                  <resource>
+                    <targetPath>${deploy.target.dir}/resources</targetPath>
+                    <directory>resources</directory>
+                    <filtering>true</filtering>
+                  </resource>
+                </resources>
+              </configuration>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -101,6 +153,17 @@
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
           <version>3.0.2</version>
+          <configuration>
+            <finalName>${jar.name}</finalName>
+            <outputDirectory>${deploy.target.dir}</outputDirectory>
+            <archive>
+              <manifest>
+                <mainClass>com.codegenerator.generator.Main</mainClass>
+                <addClasspath>true</addClasspath>
+                <classpathPrefix>${lib.dir}/</classpathPrefix>
+              </manifest>
+            </archive>
+          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
