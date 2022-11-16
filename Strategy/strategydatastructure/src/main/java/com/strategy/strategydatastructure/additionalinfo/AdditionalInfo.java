@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.Nulls;
 public class AdditionalInfo {
     private String projectName;
     private String taskServerPrefix;
+    private String jarDirectory;
+    private String translatorDirectory;
     private List<DatabaseInfo> dbInfo;
     private List<String> robotList;
     private List<ControlStrategyInfo> strategyList;
@@ -82,6 +84,22 @@ public class AdditionalInfo {
 
     public void setDbInfo(List<DatabaseInfo> dbInfo) {
         this.dbInfo = dbInfo;
+    }
+
+    public String getJarDirectory() {
+        return jarDirectory;
+    }
+
+    public void setJarDirectory(String jarDirectory) {
+        this.jarDirectory = jarDirectory;
+    }
+
+    public String getTranslatorDirectory() {
+        return translatorDirectory;
+    }
+
+    public void setTranslatorDirectory(String translatorDirectory) {
+        this.translatorDirectory = translatorDirectory;
     }
 
 }
