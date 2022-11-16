@@ -3,7 +3,6 @@ package com.metadata.metadatagenerator.mapping;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-
 import com.metadata.UEMRobot;
 import com.metadata.algorithm.UEMAlgorithm;
 import com.metadata.algorithm.UEMTaskGraph;
@@ -43,7 +42,7 @@ public class MappingGenerator {
                         }
                     }
                 }
-                for (MulticastGroupType multicast : algorithm.getMulticastGroups()
+                for (MulticastGroupType multicast : algorithm.getAlgorithm().getMulticastGroups()
                         .getMulticastGroup()) {
                     mapping.addMulticast(multicast.getGroupName());
                 }

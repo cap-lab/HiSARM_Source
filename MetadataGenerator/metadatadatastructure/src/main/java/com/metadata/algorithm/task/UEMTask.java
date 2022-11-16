@@ -19,6 +19,7 @@ public class UEMTask extends TaskType {
     public UEMTask() {
         super();
         setHasInternalStates(YesNoType.YES);
+        setFile(AlgorithmConstant.DEFAULT);
     }
 
     public void setId(int index) {

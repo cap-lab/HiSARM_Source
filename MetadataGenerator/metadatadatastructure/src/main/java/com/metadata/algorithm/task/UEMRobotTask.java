@@ -62,12 +62,11 @@ public class UEMRobotTask extends UEMTask {
         return actionTaskList;
     }
 
-    public List<UEMActionTask> getActionTaskList(String groupId, String ServiceId,
-            ActionStatement statement) {
+    public List<UEMActionTask> getActionTaskList(String scope, ActionStatement statement) {
         List<UEMActionTask> targetActionTaskList = new ArrayList<>();
         for (UEMActionTask actionTask : actionTaskList) {
-            if (actionTask.getScope().equals(UEMActionTask.makeScope(groupId, ServiceId))
-                    && actionTask.getActionStatement().equals(statement)) {
+            if (actionTask.getScope().equals(scope) && actionTask.getActionStatement()
+                    .getActionName().equals(statement.getActionName())) {
                 targetActionTaskList.add(actionTask);
             }
         }
