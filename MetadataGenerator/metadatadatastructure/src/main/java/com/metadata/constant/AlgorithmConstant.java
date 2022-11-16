@@ -38,6 +38,7 @@ public class AlgorithmConstant {
     public static final String ROBOT_LEADER_LIBRARY_SOURCE_SUFFIX = "_leader_lib.cicl";
     public static final String ROBOT_LEADER_LIBRARY_HEADER_SUFFIX = "_leader_lib.cicl.h";
     public static final String COMMON_HEADER = "semo_common.h";
+    public static final String LOGGER_HEADER = "semo_logger.h";
     public static final String COMMON_PORT_HEADER = "semo_port.h";
     public static final String COMMON_TIMER_SOURCE = "timer.c";
     public static final String COMMON_SERVICE_SOURCE = "service.c";

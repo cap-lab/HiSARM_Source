@@ -32,7 +32,7 @@ public class UEMActionTask extends UEMTask {
 
     public UEMActionTask(String robotTask, String groupId, String serviceId,
             ActionImplWrapper actionImpl, ActionStatement actionStatement) {
-        super();
+        super(robotTask);
         this.scope = makeScope(groupId, serviceId);
         setName(robotTask, scope + "_" + actionImpl.getActionImpl().getActionImplId());
         this.actionImpl = actionImpl;

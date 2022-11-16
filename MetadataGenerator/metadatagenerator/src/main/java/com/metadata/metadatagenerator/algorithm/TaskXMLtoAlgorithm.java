@@ -4,7 +4,6 @@ import java.com.xmlparser.xml.handler.TaskXMLTaskGraphHandler;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.metadata.algorithm.UEMChannel;
 import com.metadata.algorithm.UEMChannelPort;
 import com.metadata.algorithm.UEMModeTask;
@@ -12,6 +11,7 @@ import com.metadata.algorithm.UEMPortMap;
 import com.metadata.algorithm.UEMTaskGraph;
 import com.metadata.algorithm.library.UEMLibrary;
 import com.metadata.algorithm.library.UEMLibraryConnection;
+import com.metadata.algorithm.task.UEMRobotTask;
 import com.metadata.algorithm.task.UEMTask;
 import com.metadata.constant.AlgorithmConstant;
 import com.xmlparser.TaskXMLChannelType;
@@ -46,9 +46,11 @@ import hopes.cic.xml.YesNoType;
 
 public class TaskXMLtoAlgorithm {
     private TaskXMLTaskGraphHandler taskXMLHandler;
+    private UEMRobotTask robot;
 
-    public TaskXMLtoAlgorithm() {
+    public TaskXMLtoAlgorithm(UEMRobotTask robot) {
         taskXMLHandler = new TaskXMLTaskGraphHandler();
+        this.robot = robot;
     }
 
     private YesNoType convertYesNoString(String bool) {
@@ -230,7 +232,7 @@ public class TaskXMLtoAlgorithm {
     }
 
     private UEMTask convertTask(String parentTasks, TaskXMLTaskType before) throws Exception {
-        UEMTask after = new UEMTask();
+        UEMTask after = new UEMTask(robot.getName());
         after.setName(parentTasks, before.getName());
         after.setHasInternalStates(YesNoType.YES);
         after.setHasSubGraph(before.getType().value());

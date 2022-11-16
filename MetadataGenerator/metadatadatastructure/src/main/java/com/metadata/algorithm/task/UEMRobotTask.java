@@ -26,7 +26,7 @@ public class UEMRobotTask extends UEMTask {
     private UEMLeaderTask leaderTask;
 
     public UEMRobotTask(String name, RobotImplWrapper robot) {
-        super();
+        super(name);
         setName(name);
         setRunCondition(RunConditionType.TIME_DRIVEN);
         setTaskType(AlgorithmConstant.COMPUTATION_TASK);

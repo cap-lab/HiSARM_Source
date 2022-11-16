@@ -16,11 +16,14 @@ public class UEMTask extends TaskType {
     private UEMModeTask uemMode;
     private List<UEMPortMap> portMapList = new ArrayList<>();
 
-    public UEMTask() {
+    public UEMTask(String robotName) {
         super();
         setHasInternalStates(YesNoType.YES);
         setFile(AlgorithmConstant.DEFAULT);
         setLanguage(AlgorithmConstant.LANGUAGE_C);
+        getExtraHeader().add(AlgorithmConstant.COMMON_HEADER);
+        getExtraHeader().add(robotName + AlgorithmConstant.ROBOT_COMMON_HEADER_SUFFIX);
+        getExtraHeader().add(AlgorithmConstant.LOGGER_HEADER);
     }
 
     public void setId(int index) {
@@ -81,10 +84,7 @@ public class UEMTask extends TaskType {
         return portMapList;
     }
 
-    public void setExtraCommonCode(String robotName) {
-        getExtraHeader().add(AlgorithmConstant.COMMON_HEADER);
-        getExtraHeader().add(robotName + AlgorithmConstant.ROBOT_COMMON_HEADER_SUFFIX);
-    }
+    public void setExtraCommonCode(String robotName) {}
 
     public UEMModeTask getUEMMode() {
         return uemMode;

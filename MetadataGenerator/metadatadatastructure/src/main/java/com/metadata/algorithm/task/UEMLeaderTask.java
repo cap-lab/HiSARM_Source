@@ -18,7 +18,7 @@ public class UEMLeaderTask extends UEMTask {
     private UEMChannelPort controlTaskPort;
 
     public UEMLeaderTask(UEMRobotTask robotTask) {
-        super();
+        super(robotTask.getName());
         leaderTask = robotTask.getRobot().getAdditionalTaskList().get(0).getTask();
         setFile(leaderTask.getCICFile());
         setName(robotTask.getName(), AlgorithmConstant.LEADER);

@@ -20,7 +20,7 @@ public class UEMControlTask extends UEMTask {
     private Map<UEMTask, UEMChannelPort> gorupPortMap = new HashMap<>();
 
     public UEMControlTask(UEMRobotTask robot) {
-        super();
+        super(robot.getName());
         setName(robot.getName(), AlgorithmConstant.CONTROL);
         setCflags("");
         setLdflags("");
@@ -38,7 +38,6 @@ public class UEMControlTask extends UEMTask {
     private void setExtraFile(String robotId) {
         getExtraSource().add(AlgorithmConstant.COMMON_TIMER_SOURCE);
         getExtraSource().add(AlgorithmConstant.COMMON_SERVICE_SOURCE);
-        getExtraHeader().add(AlgorithmConstant.COMMON_HEADER);
         getExtraSource().add(robotId + AlgorithmConstant.ROBOT_PORT_SOURCE_SUFFIX);
         getExtraHeader().add(robotId + AlgorithmConstant.ROBOT_PORT_HEADER_SUFFIX);
         getExtraSource().add(robotId + AlgorithmConstant.ROBOT_EVENT_SOURCE_SUFFIX);

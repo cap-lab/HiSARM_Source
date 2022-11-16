@@ -24,7 +24,7 @@ public class UEMCommTask extends UEMTask {
     private Map<UEMMulticastPort, UEMMulticastPort> leaderPortMap = new HashMap<>();
 
     public UEMCommTask(String robotId, String name) {
-        super();
+        super(robotId);
         setName(robotId, name);
         init(robotId);
         setMode();
@@ -55,8 +55,6 @@ public class UEMCommTask extends UEMTask {
     }
 
     private void setCommRelatedFile(String robotId) {
-        getExtraHeader().add(AlgorithmConstant.COMMON_HEADER);
-        getExtraHeader().add(AlgorithmConstant.COMMON_HEADER);
         getExtraSource().add(AlgorithmConstant.COMMUNICATION_SOURCE);
         getExtraSource().add(robotId + AlgorithmConstant.ROBOT_VARIABLE_SOURCE_SUFFIX);
         getExtraHeader().add(AlgorithmConstant.COMMUNICATION_HEADER);

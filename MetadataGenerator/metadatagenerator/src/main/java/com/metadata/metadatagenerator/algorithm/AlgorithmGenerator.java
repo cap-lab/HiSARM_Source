@@ -96,7 +96,7 @@ public class AlgorithmGenerator {
 
             private List<UEMTaskGraph> recursiveExplore(UEMActionTask actionTask,
                     Path taskServerPrefix) {
-                TaskXMLtoAlgorithm convertor = new TaskXMLtoAlgorithm();
+                TaskXMLtoAlgorithm convertor = new TaskXMLtoAlgorithm(robot);
                 List<UEMTaskGraph> taskGraphList = new ArrayList<>();
                 int exploreIndex = 0;
                 taskGraphList.add(convertor.convertTaskXMLtoAlgorithm(2, actionTask.getName(),
