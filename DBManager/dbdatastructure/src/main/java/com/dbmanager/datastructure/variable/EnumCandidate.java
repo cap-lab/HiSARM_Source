@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EnumCandidate implements Candidate {
-    private List<String> candidates;
+    private List<String> candidates = new ArrayList<>();
 
     public EnumCandidate() {
         candidates = new ArrayList<String>();

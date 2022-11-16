@@ -1,12 +1,12 @@
 package com.dbmanager.datastructure.robot;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 public class RobotImpl {
     private String robotId;
     private String robotClass;
-    private Map<ConnectionType, CommunicationAddress> communicationInfoMap;
+    private Map<ConnectionType, CommunicationAddress> communicationInfoMap = new HashMap<>();
 
     public String getRobotId() {
         return robotId;

@@ -1,8 +1,8 @@
 package com.dbmanager.datastructure.variable;
 
 public enum PrimitiveType {
-    INT8("int8", 1), INT16("int16", 2), INT32("int32", 4), INT64("int64", 8), FLOAT("float",
-            8), ENUM("enum", 4);
+    INT8("semo_int8", 1), INT16("semo_int16", 2), INT32("semo_int32", 4), INT64("semo_int64",
+            8), FLOAT("float", 8), ENUM("enum", 4);
 
     private final String value;
     private final int size;

@@ -7,4 +7,20 @@ public class HardwareDependency {
     private SWPlatform swPlatform;
     private CPUArchitecture architecture;
 
+    public SWPlatform getSwPlatform() {
+        return swPlatform;
+    }
+
+    public void setSwPlatform(SWPlatform swPlatform) {
+        this.swPlatform = swPlatform;
+    }
+
+    public CPUArchitecture getArchitecture() {
+        return architecture;
+    }
+
+    public void setArchitecture(CPUArchitecture architecture) {
+        this.architecture = architecture;
+    }
+
 }

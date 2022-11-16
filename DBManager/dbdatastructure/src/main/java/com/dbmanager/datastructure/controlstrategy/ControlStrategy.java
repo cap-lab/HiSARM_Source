@@ -6,7 +6,7 @@ import java.util.List;
 public class ControlStrategy {
     private String actionName;
     private String robotClass;
-    private List<ControlStrategyElement> strategyImplList;
+    private List<ControlStrategyElement> strategyImplList = new ArrayList<>();
 
     public ControlStrategy() {
         strategyImplList = new ArrayList<ControlStrategyElement>();

@@ -1,5 +1,7 @@
 package com.dbmanager.datastructure.task;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -16,11 +18,11 @@ public class Task {
     private String RunCondition;
     private ChannelPort groupPort;
     private LibraryPort leaderPort;
-    private List<ExtraSetting> extraSettings;
-    private Set<ChannelPort> channelPortSet;
-    private Set<LibraryPort> libraryPortSet;
-    private Set<PortMap> portMapSet;
-    private Set<TaskFile> taskFiles;
+    private List<ExtraSetting> extraSettings = new ArrayList<>();
+    private Set<ChannelPort> channelPortSet = new HashSet<>();
+    private Set<LibraryPort> libraryPortSet = new HashSet<>();
+    private Set<PortMap> portMapSet = new HashSet<>();
+    private Set<TaskFile> taskFiles = new HashSet<>();
 
     public String getTaskId() {
         return taskId;

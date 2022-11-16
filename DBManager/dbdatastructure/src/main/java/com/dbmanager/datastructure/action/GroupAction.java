@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GroupAction extends Action {
-    private List<String> sharedDataList;
+    private List<String> sharedDataList = new ArrayList<>();
 
     public GroupAction() {
         super();

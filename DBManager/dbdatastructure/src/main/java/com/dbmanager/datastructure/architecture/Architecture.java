@@ -7,10 +7,10 @@ public class Architecture {
 	private String deviceName;
 	private SWPlatform swPlatform;
 	private CPUArchitecture CPU;
-	private List<Processor> processorList;
+	private List<Processor> processorList = new ArrayList<>();
 	private Memory memory;
-	private List<String> moduleList;
-	private List<EnvironmentVariable> environmentVariableList;
+	private List<String> moduleList = new ArrayList<>();
+	private List<EnvironmentVariable> environmentVariableList = new ArrayList<>();
 
 	public Architecture() {
 		processorList = new ArrayList<Processor>();

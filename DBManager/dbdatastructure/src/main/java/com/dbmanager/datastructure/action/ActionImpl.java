@@ -1,5 +1,6 @@
 package com.dbmanager.datastructure.action;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ActionImpl {
@@ -7,7 +8,7 @@ public class ActionImpl {
     private String robotClass;
     private String actionName;
     private String taskId;
-    private List<String> neededResource;
+    private List<String> neededResource = new ArrayList<>();
     private boolean returnImmediate;
 
     public void setActionImplId(String actionId) {

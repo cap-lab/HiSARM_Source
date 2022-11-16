@@ -1,12 +1,13 @@
 package com.dbmanager.datastructure.robot;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Robot {
     private String robotClass;
     private String primaryArchitecture;
-    private List<String> architectureList;
-    private List<String> resourceList;
+    private List<String> architectureList = new ArrayList<>();
+    private List<String> resourceList = new ArrayList<>();
 
     public String getRobotClass() {
         return robotClass;

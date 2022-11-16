@@ -1,12 +1,13 @@
 package com.dbmanager.datastructure.action;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Action {
     private String name;
     private String description;
-    private List<String> inputList;
-    private List<String> outputList;
+    private List<String> inputList = new ArrayList<>();
+    private List<String> outputList = new ArrayList<>();
 
     public String getName() {
         return name;
