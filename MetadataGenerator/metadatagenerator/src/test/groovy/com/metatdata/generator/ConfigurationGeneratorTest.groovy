@@ -11,7 +11,7 @@ class ConfigurationGeneratorTest extends spock.lang.Specification {
         given:
         MetadataGenerator generator = new MetadataGenerator()
         Path projectDir = Paths.get(MetadataConstant.GENERATE_DIRECTORY.toString(),
-                    generator.makeProjectDirName("test"));
+                    generator.makeProjectDirName("configuration"));
         generator.makeProjectDirectory(projectDir)
 
         when:
