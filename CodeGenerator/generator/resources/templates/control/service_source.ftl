@@ -7,6 +7,7 @@
 #include "${robotId}_variable.h"
 #include "${robotId}_timer.h"
 #include "semo_logger.h"
+#include "UFControl.h"
 
 typedef void (*SERVICE_EXECUTION_FUNC)(int service_index);
 
