@@ -10,12 +10,17 @@ import com.codegenerator.constant.LeaderTaskConstant;
 import com.codegenerator.generator.constant.CodeGeneratorConstant;
 import com.codegenerator.generator.util.LocalFileCopier;
 import com.codegenerator.wrapper.CodeRobotWrapper;
+import com.metadata.algorithm.task.UEMLeaderTask;
+import com.strategy.strategydatastructure.additionalinfo.AdditionalInfo;
 
 public class AdditionalCodeGenerator {
-    public void generateAdditionalCode(Path targetDir, List<CodeRobotWrapper> robotList) {
+    public void generateAdditionalCode(Path targetDir, AdditionalInfo additionalInfo,
+            List<CodeRobotWrapper> robotList) {
         for (CodeRobotWrapper robot : robotList) {
             generateLeaderLibraryTaskCode(targetDir, robot);
             copyLeaderHeaderFile(targetDir);
+            copyLeaderSourceFile(targetDir, Paths.get(additionalInfo.getTaskServerPrefix()),
+                    robot.getRobot().getRobotTask().getLeaderTask());
         }
     }
 
@@ -40,6 +45,17 @@ public class AdditionalCodeGenerator {
         try {
             LocalFileCopier.copyFile(CodeGeneratorConstant.LEADER_HEADER_CODE,
                     Paths.get(targetDir.toString(), CodeGeneratorConstant.LEADER_HEADER));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void copyLeaderSourceFile(Path targetDir, Path taskServer, UEMLeaderTask leaderTask) {
+        try {
+            LocalFileCopier.copyFile(
+                    Paths.get(taskServer.toString(),
+                            CodeGeneratorConstant.LEADER_SOURCE_CODE.toString()),
+                    Paths.get(targetDir.toString(), leaderTask.getFile()));
         } catch (Exception e) {
             e.printStackTrace();
         }

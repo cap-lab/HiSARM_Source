@@ -95,6 +95,8 @@ public class CodeGeneratorConstant {
                         Paths.get(LEADER_TEMPLATE_DIRECTORY.toString(), "leader_source.ftl");
         public static final Path LEADER_HEADER_CODE =
                         Paths.get(INCLUDE_DIRECTORY.toString(), LEADER_HEADER);
+        public static final Path LEADER_SOURCE_CODE = Paths.get("additional_task",
+                        LEADER_TEMPLATE_DIRECTORY.toString(), "leader_selection.cic");
 
         public static final Path GROUP_TEMPLATE_DIRECTORY = Paths.get("group");
         public static final Path GROUP_HEADER_TEMPLATE =

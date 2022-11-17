@@ -38,7 +38,8 @@ public class CodeGenerator {
         CommonCodeGenerator commonCodeGenerator = new CommonCodeGenerator();
         commonCodeGenerator.generate(targetDir, codeRobotList, additionalInfo);
         AdditionalCodeGenerator additionalTaskCodeGenerator = new AdditionalCodeGenerator();
-        additionalTaskCodeGenerator.generateAdditionalCode(targetDir, codeRobotList);
+        additionalTaskCodeGenerator.generateAdditionalCode(targetDir, additionalInfo,
+                codeRobotList);
         CommunicationCodeGenerator communicationCodeGenerator = new CommunicationCodeGenerator();
         communicationCodeGenerator.generateCommunicationCode(targetDir, robotList);
         SharedDataCodeGenerator sharedDataCodeGenerator = new SharedDataCodeGenerator();
