@@ -55,9 +55,9 @@ public class UEMCommTask extends UEMTask {
     }
 
     private void setCommRelatedFile(String robotId) {
-        getExtraSource().add(AlgorithmConstant.COMMUNICATION_SOURCE);
+        getExtraSource().add(AlgorithmConstant.COMMON_COMMUNICATION_SOURCE);
         getExtraSource().add(robotId + AlgorithmConstant.ROBOT_VARIABLE_SOURCE_SUFFIX);
-        getExtraHeader().add(AlgorithmConstant.COMMUNICATION_HEADER);
+        getExtraHeader().add(AlgorithmConstant.COMMON_COMMUNICATION_HEADER);
         getExtraHeader().add(AlgorithmConstant.COMMON_PORT_HEADER);
         getExtraHeader().add(robotId + AlgorithmConstant.ROBOT_VARIABLE_HEADER_SUFFIX);
         setExtraCommonCode(robotId);

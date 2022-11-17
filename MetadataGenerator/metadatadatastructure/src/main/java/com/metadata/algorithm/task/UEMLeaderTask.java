@@ -28,7 +28,7 @@ public class UEMLeaderTask extends UEMTask {
         setLanguage(leaderTask.getLanguage());
         setIsHardwareDependent(YesNoType.NO);
         setTaskType(AlgorithmConstant.COMPUTATION_TASK);
-        getExtraHeader().add(AlgorithmConstant.LEADER_HEADER);
+        getExtraHeader().add(AlgorithmConstant.COMMON_LEADER_HEADER);
         setPort();
         setLibraryPort();
         setMode();

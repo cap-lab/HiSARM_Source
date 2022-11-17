@@ -29,8 +29,7 @@ public class UEMLibraryFunction extends LibraryFunctionType {
             String caller) {
         UEMLibraryFunction libraryFunction = new UEMLibraryFunction();
         libraryFunction.setName("get_" + variableType.getVariableType().getName() + "_" + caller);
-        libraryFunction.setReturnType(PrimitiveType.INT8.getValue());
-        libraryFunction.setReturnSize(BigInteger.valueOf(PrimitiveType.INT8.getSize()));
+        libraryFunction.setReturnType("void");
         LibraryFunctionArgumentType argument = new LibraryFunctionArgumentType();
         argument.setName("buffer");
         argument.setType("void*");
@@ -77,7 +76,7 @@ public class UEMLibraryFunction extends LibraryFunctionType {
         libraryFunction.setReturnSize(BigInteger.valueOf(PrimitiveType.INT8.getSize()));
         LibraryFunctionArgumentType argument = new LibraryFunctionArgumentType();
         argument.setName("group_id");
-        argument.setType("GROUP_ID");
+        argument.setType(PrimitiveType.INT32.getValue());
         argument.setPointer(YesNoType.NO);
         argument.setOutput(YesNoType.NO);
         libraryFunction.getArgument().add(argument);
@@ -107,7 +106,7 @@ public class UEMLibraryFunction extends LibraryFunctionType {
         libraryFunction.setReturnSize(BigInteger.valueOf(PrimitiveType.INT32.getSize()));
         LibraryFunctionArgumentType argument = new LibraryFunctionArgumentType();
         argument.setName("group_id");
-        argument.setType("GROUP_ID");
+        argument.setType(PrimitiveType.INT32.getValue());
         argument.setPointer(YesNoType.NO);
         argument.setOutput(YesNoType.NO);
         libraryFunction.getArgument().add(argument);
@@ -136,7 +135,7 @@ public class UEMLibraryFunction extends LibraryFunctionType {
         libraryFunction.setReturnType("void");
         LibraryFunctionArgumentType argument1 = new LibraryFunctionArgumentType();
         argument1.setName("group_id");
-        argument1.setType("GROUP_ID");
+        argument1.setType(PrimitiveType.INT32.getValue());
         argument1.setPointer(YesNoType.NO);
         argument1.setOutput(YesNoType.NO);
         libraryFunction.getArgument().add(argument1);
@@ -172,7 +171,7 @@ public class UEMLibraryFunction extends LibraryFunctionType {
         libraryFunction.setReturnType("void");
         LibraryFunctionArgumentType argument1 = new LibraryFunctionArgumentType();
         argument1.setName("group_id");
-        argument1.setType("GROUP_ID");
+        argument1.setType(PrimitiveType.INT32.getValue());
         argument1.setPointer(YesNoType.NO);
         argument1.setOutput(YesNoType.NO);
         libraryFunction.getArgument().add(argument1);
@@ -191,7 +190,7 @@ public class UEMLibraryFunction extends LibraryFunctionType {
         libraryFunction.setReturnType("LEADER_SELECTION_STATE");
         LibraryFunctionArgumentType argument1 = new LibraryFunctionArgumentType();
         argument1.setName("group_id");
-        argument1.setType("GROUP_ID");
+        argument1.setType(PrimitiveType.INT32.getValue());
         argument1.setPointer(YesNoType.NO);
         argument1.setOutput(YesNoType.NO);
         libraryFunction.getArgument().add(argument1);
@@ -205,7 +204,7 @@ public class UEMLibraryFunction extends LibraryFunctionType {
         libraryFunction.setReturnSize(BigInteger.valueOf(PrimitiveType.INT64.getSize()));
         LibraryFunctionArgumentType argument = new LibraryFunctionArgumentType();
         argument.setName("group_id");
-        argument.setType("GROUP_ID");
+        argument.setType(PrimitiveType.INT32.getValue());
         argument.setPointer(YesNoType.NO);
         argument.setOutput(YesNoType.NO);
         libraryFunction.getArgument().add(argument);
@@ -218,7 +217,7 @@ public class UEMLibraryFunction extends LibraryFunctionType {
         libraryFunction.setReturnType("void");
         LibraryFunctionArgumentType argument1 = new LibraryFunctionArgumentType();
         argument1.setName("group_id");
-        argument1.setType("GROUP_ID");
+        argument1.setType(PrimitiveType.INT32.getValue());
         argument1.setPointer(YesNoType.NO);
         argument1.setOutput(YesNoType.NO);
         libraryFunction.getArgument().add(argument1);
@@ -239,7 +238,7 @@ public class UEMLibraryFunction extends LibraryFunctionType {
         libraryFunction.setReturnSize(BigInteger.valueOf(PrimitiveType.INT32.getSize()));
         LibraryFunctionArgumentType argument = new LibraryFunctionArgumentType();
         argument.setName("group_id");
-        argument.setType("GROUP_ID");
+        argument.setType(PrimitiveType.INT32.getValue());
         argument.setPointer(YesNoType.NO);
         argument.setOutput(YesNoType.NO);
         libraryFunction.getArgument().add(argument);
@@ -252,7 +251,7 @@ public class UEMLibraryFunction extends LibraryFunctionType {
         libraryFunction.setReturnType("void");
         LibraryFunctionArgumentType argument1 = new LibraryFunctionArgumentType();
         argument1.setName("group_id");
-        argument1.setType("GROUP_ID");
+        argument1.setType(PrimitiveType.INT32.getValue());
         argument1.setPointer(YesNoType.NO);
         argument1.setOutput(YesNoType.NO);
         libraryFunction.getArgument().add(argument1);

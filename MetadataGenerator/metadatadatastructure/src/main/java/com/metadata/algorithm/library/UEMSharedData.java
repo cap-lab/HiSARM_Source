@@ -11,6 +11,7 @@ public class UEMSharedData extends UEMLibrary {
 
     public UEMSharedData(UEMRobotTask robot) {
         super(robot.getName());
+        getExtraHeader().add(AlgorithmConstant.MUTEX_HEADER);
     }
 
     public static String makeGroup(String groupScope, String actionName, int argIndex) {
