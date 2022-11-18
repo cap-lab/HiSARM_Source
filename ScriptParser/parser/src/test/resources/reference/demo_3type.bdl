@@ -6,107 +6,103 @@
 
 Main.Searcher {
     case(REMOTE_CONTROL):
-        catch(START): mode = SEARCH
-        catch(FINISH): mode = FINISH
+        catch(START): mode = SEARCH("RED", "Guard")
     case(SEARCH):
-        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
-        catch(HIDE): mode = HIDE
         catch(FINISH): mode = FINISH
-    case(HIDE):
+        catch(HIDE): mode = HIDE("Guard")
         catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
-        catch(RESTART): mode = SEARCH
+    case(HIDE):
+        catch(RESTART): mode = PREVIOUS_MODE
+        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
     default: mode = REMOTE_CONTROL
 }
 
 Main.Assistant {
     case(REMOTE_CONTROL):
         catch(START): mode = FOLLOW
-        catch(FINISH): mode = FINISH
     case(FOLLOW):
-        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
-        catch(HIDE): mode = COVER
         catch(FINISH): mode = FINISH
-    case(COVER):
+        catch(HIDE): mode = COVER("Guard")
         catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
-        catch(RESTART): mode = FOLLOW
+    case(COVER):
+        catch(RESTART): mode = PREVIOUS_MODE
+        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
     default: mode = REMOTE_CONTROL
 }
 
 Main.Guard {
     case(REMOTE_CONTROL):
-        catch(START): mode = OBSERVE
-        catch(FINISH): mode = FINISH
+        catch(START): mode = OBSERVE("Searcher", "Assistant")
     case(OBSERVE):
-        catch(HIDE): mode = GUARD
         catch(FINISH): mode = FINISH
+        catch(HIDE): mode = GUARD("Searcher", "Assistant")
     case(GUARD):
-        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
-        catch(RESTART): mode = OBSERVE
+        catch(RESTART): mode = PREVIOUS_MODE
     default: mode = REMOTE_CONTROL
 }
 
 Mode.REMOTE_CONTROL {
     services:
-        RemoteControl
+        RemoteControlGroup
+        ReceiveCommandFromOperator
         SendImageToOperator
-        ReceiveCommandFromOperator
 }
 
-Mode.SEARCH {
+Mode.SEARCH(target, sender) {
     services:
-        Search("YELLOW")
-        ListenAlarmFrom("Guard")
+        Search(target)
+        ListenAlarm(sender)
         ReceiveCommandFromOperator
 }
 
-Mode.HIDE {
+Mode.HIDE(sender) {
     services:
         Hide
-        ListenAlarmFrom("Guard")
+        ListenAlarm(sender)
         ReceiveCommandFromOperator
 }
 
 Mode.FOLLOW {
     services:
         Follow
-        ListenAlarmFrom(sender)
         ReceiveCommandFromOperator
 }
 
-Mode.COVER {
+Mode.COVER(sender) {
     services:
         Attack
-        ListenAlarmFrom("Guard")
+        ListenAlarm(sender)
         ReceiveCommandFromOperator
 }
 
-Mode.OBSERVE {
+Mode.OBSERVE(receiver1, receiver2) {
     services:
-        ObserveAndShareWith("Searcher", "Assistant")
+        ObserveAndShare(receiver1, receiver2)
         ReceiveCommandFromOperator
 }
 
-Mode.GUARD {
+Mode.GUARD(receiver1, receiver2) {
     services:
-        TurnOffAlarmOn("Searcher", "Assistant")
+        ReleaseAlarm(receiver1, receiver2)
         Attack
         ReceiveCommandFromOperator
 }
 
-RemoteControl {
-    remoteControl()
+RemoteControlGroup {
+    direction = getDirection()
+    moveByRemoteControl(direction)
 } repeat(100 MSEC)
 
 ReceiveCommandFromOperator {
     cmd = getModeTrasferCommand()
-    if (cmd == "RC"){
+    if (cmd == "REMOTE_CONTROL"){
         throw REMOTE_CONTROL broadcast
     } else if (cmd == "START") {
         throw START broadcast
     } else if (cmd == "FINISH") {
         throw FINISH broadcast
     }
-} repeat(100 MSEC)
+} repeat(500 MSEC)
 
 SendImageToOperator {
     sendImageToOperator()
@@ -117,21 +113,21 @@ Search(target) {
     if (isFound == "TRUE") {
         throw FINISH broadcast
     }
-} repeat(100 MSEC)
+}
 
 Hide {
     hide()
-} repeat(100 MSEC)
+}
 
 Follow {
     follow()
-} repeat(100 MSEC)
+}
 
 Attack {
     attack()
-} repeat(100 MSEC)
+}
 
-ObserveAndShareWith(receiver1, receiver2) {
+ObserveAndShare(receiver1, receiver2) {
     isEnemy = checkEnemy()
     if (isEnemy == "TRUE") {
         send(receiver1, isEnemy)
@@ -140,7 +136,7 @@ ObserveAndShareWith(receiver1, receiver2) {
     }
 }
 
-TurnOffAlarmOn(receiver1, receiver2) {
+ReleaseAlarm(receiver1, receiver2) {
     isEnemy = checkEnemy()
     if (isEnemy == "FALSE") {
         send(receiver1, isEnemy)
@@ -149,7 +145,7 @@ TurnOffAlarmOn(receiver1, receiver2) {
     }
 }
 
-ListenAlarmFrom(sender) {
+ListenAlarm(sender) {
     isEnemy = receive(sender, isEnemy)
     if (isEnemy == "TRUE") {
         throw HIDE broadcast
@@ -157,4 +153,4 @@ ListenAlarmFrom(sender) {
     if (isEnemy == "FALSE") {
         throw RESTART broadcast
     }
-} 
+}

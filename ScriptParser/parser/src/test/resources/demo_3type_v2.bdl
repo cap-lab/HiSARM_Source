@@ -6,11 +6,11 @@
 
 Main.Searcher {
     case(REMOTE_CONTROL):
-        catch(START): mode = SEARCH
+        catch(START): mode = SEARCH("YELLOW", "Guard")
         catch(FINISH): mode = FINISH
     case(SEARCH):
         catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
-        catch(HIDE): mode = HIDE
+        catch(HIDE): mode = HIDE("Guard")
         catch(FINISH): mode = FINISH
     case(HIDE):
         catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
@@ -24,7 +24,7 @@ Main.Assistant {
         catch(FINISH): mode = FINISH
     case(FOLLOW):
         catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
-        catch(HIDE): mode = COVER
+        catch(HIDE): mode = COVER("Guard")
         catch(FINISH): mode = FINISH
     case(COVER):
         catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
@@ -34,10 +34,10 @@ Main.Assistant {
 
 Main.Guard {
     case(REMOTE_CONTROL):
-        catch(START): mode = OBSERVE
+        catch(START): mode = OBSERVE("Searcher", "Assistant")
         catch(FINISH): mode = FINISH
     case(OBSERVE):
-        catch(HIDE): mode = GUARD
+        catch(HIDE): mode = GUARD("Searcher", "Assistant")
         catch(FINISH): mode = FINISH
     case(GUARD):
         catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
@@ -52,17 +52,17 @@ Mode.REMOTE_CONTROL {
         ReceiveCommandFromOperator
 }
 
-Mode.SEARCH {
+Mode.SEARCH(target, sender) {
     services:
-        Search("YELLOW")
-        ListenAlarmFrom("Guard")
+        Search(target)
+        ListenAlarmFrom(sender)
         ReceiveCommandFromOperator
 }
 
-Mode.HIDE {
+Mode.HIDE(sender) {
     services:
         Hide
-        ListenAlarmFrom("Guard")
+        ListenAlarmFrom(sender)
         ReceiveCommandFromOperator
 }
 
@@ -73,22 +73,22 @@ Mode.FOLLOW {
         ReceiveCommandFromOperator
 }
 
-Mode.COVER {
+Mode.COVER(sender) {
     services:
         Attack
-        ListenAlarmFrom("Guard")
+        ListenAlarmFrom(sender)
         ReceiveCommandFromOperator
 }
 
-Mode.OBSERVE {
+Mode.OBSERVE(receiver1, receiver2) {
     services:
-        ObserveAndShareWith("Searcher", "Assistant")
+        ObserveAndShareWith(receiver1, receiver2)
         ReceiveCommandFromOperator
 }
 
-Mode.GUARD {
+Mode.GUARD(receiver1, receiver2) {
     services:
-        TurnOffAlarmOn("Searcher", "Assistant")
+        TurnOffAlarmOn(receiver1, receiver2)
         Attack
         ReceiveCommandFromOperator
 }
