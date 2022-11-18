@@ -60,7 +60,7 @@ ReceiveCommandFromOperator {
     } else if (cmd == "FINISH") {
         throw FINISH
     }
-} repeat(100 MSEC)
+} 
 
 SendImageToOperator {
     sendImageToOperator()

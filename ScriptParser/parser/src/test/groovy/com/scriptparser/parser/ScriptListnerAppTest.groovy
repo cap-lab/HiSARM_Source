@@ -36,7 +36,7 @@ class ScriptListnerAppTest extends spock.lang.Specification {
         where:
             script            || teamNum | serviceNum | modeNum | transitionNum
             "demo_3type.bdl"  || 3       | 10         | 7       | 3
-            "demo_6num.bdl"   || 1       | 4          | 4       | 2
+            "demo_6num.bdl"   || 1       | 5          | 4       | 2
             //"cooperation.bdl" || 3       | 16         | 9       | 3
             //"indoor.bdl"      || 1       | 9          | 18      | 4
             //"on_the_move.bdl" || 1       | 9          | 11      | 4
