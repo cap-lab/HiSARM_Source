@@ -69,7 +69,7 @@ Mode.HIDE {
 Mode.FOLLOW {
     services:
         Follow
-        ListenAlarmFrom(sender)
+        ListenAlarmFrom("Guard")
         ReceiveCommandFromOperator
 }
 
@@ -95,66 +95,66 @@ Mode.GUARD {
 
 RemoteControl {
     remoteControl()
-} repeat(100 MSEC)
+}
 
 ReceiveCommandFromOperator {
     cmd = getModeTrasferCommand()
     if (cmd == "RC"){
-        throw REMOTE_CONTROL broadcast
+        throw REMOTE_CONTROL 
     } else if (cmd == "START") {
-        throw START broadcast
+        throw START 
     } else if (cmd == "FINISH") {
-        throw FINISH broadcast
+        throw FINISH 
     }
 } repeat(100 MSEC)
 
 SendImageToOperator {
     sendImageToOperator()
-} repeat(100 MSEC)
+}
 
 Search(target) {
     isFound = search(target)
     if (isFound == "TRUE") {
-        throw FINISH broadcast
+        throw FINISH 
     }
-} repeat(100 MSEC)
+} repeat(200 MSEC)
 
 Hide {
     hide()
-} repeat(100 MSEC)
+} 
 
 Follow {
     follow()
-} repeat(100 MSEC)
+} 
 
 Attack {
     attack()
-} repeat(100 MSEC)
+} 
 
 ObserveAndShareWith(receiver1, receiver2) {
     isEnemy = checkEnemy()
     if (isEnemy == "TRUE") {
         send(receiver1, isEnemy)
         send(receiver2, isEnemy)
-        throw HIDE broadcast
+        throw HIDE 
     }
-}
+} repeat(200 MSEC)
 
 TurnOffAlarmOn(receiver1, receiver2) {
     isEnemy = checkEnemy()
     if (isEnemy == "FALSE") {
         send(receiver1, isEnemy)
         send(receiver2, isEnemy)
-        throw RESTART broadcast
+        throw RESTART 
     }
-}
+} repeat(200 MSEC)
 
 ListenAlarmFrom(sender) {
     isEnemy = receive(sender, isEnemy)
     if (isEnemy == "TRUE") {
-        throw HIDE broadcast
+        throw HIDE 
     }
     if (isEnemy == "FALSE") {
-        throw RESTART broadcast
+        throw RESTART 
     }
 } 

@@ -2,67 +2,83 @@
     Robot: Burger burger[6]
 }
 
-RemoteControlGroup {
-    direction = group_remote_control()
-    group_move(direction)
-} repeat(100 MSEC)
-
-ReceiveCommand {
-    cmd = group_get_cmd()
-    if (cmd == "REMOTE_CONTROL"){
-        throw REMOTE_CONTROL broadcast
-    } else if (cmd == "START") {
-        throw START broadcast
-    } else if (cmd == "FINISH") {
-        throw FINISH broadcast
-    }
-} repeat(500 MSEC)
-
-
-Search(target) {
-    group_search(target)
+Main.Robot {
+    case(REMOTE_CONTROL):
+        catch(START): mode = SEARCH_GROUPING
+        catch(FINISH): mode = FINISH
+    case(SEARCH_GROUPING):
+        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
+        catch(FINISH): mode = FINISH
+    default: mode = REMOTE_CONTROL
 }
 
-MoveTo(area) {
-    move_to(area)
-    throw ARRIVED
-}
 
 Mode.REMOTE_CONTROL {
     services:
-        ReceiveCommand
-        RemoteControlGroup
+        RemoteControl
+        SendImageToOperator
+        ReceiveCommandFromOperator
 }
 
-Mode.SEARCH_GROUPING(target) {
+
+Mode.SEARCH_GROUPING {
     group(groupA, min=2):
-        ModeTransition.SEARCH("room1",target)
+        ModeTransition.SEARCH("R1", "YELLOW")
     group(groupB, min=2, proper=4):
-        ModeTransition.SEARCH("room2",target)
+        ModeTransition.SEARCH("R2", "YELLOW")
     services:
-        ReceiveCommand
+        ReceiveCommandFromOperator
 }
+
+ModeTransition.SEARCH(area, target) {
+    case(MOVE_TO_MISSION_AREA):
+        catch(ARRIVED): mode = SEARCH
+    default: mode = MOVE_TO_MISSION_AREA(area)
+}
+
 
 Mode.MOVE_TO_MISSION_AREA(area) {
     services:
         MoveTo(area)
 }
 
-Mode.SEARCH(target) {
+Mode.SEARCH {
     services:
-        Search(target), timeout = 10 MINUTE
+        Search("YELLOW")
 }
 
-ModeTransition.SEARCH(area, target) {
-    case(MOVE_TO_MISSION_AREA):
-        catch(ARRIVED): mode = SEARCH(target)
-    default: mode = MOVE_TO_MISSION_AREA(area)
+RemoteControl {
+    remoteControl()
 }
 
-Main.Robot {
-    case(REMOTE_CONTROL):
-        catch(START): mode = SEARCH_GROUPING(target)
-    case(SEARCH_GROUPING):
-        catch(FINISH): mode = FINISH
-    default: mode = REMOTE_CONTROL
+ReceiveCommandFromOperator {
+    cmd = getModeTrasferCommand()
+    if (cmd == "RC"){
+        throw REMOTE_CONTROL
+    } else if (cmd == "START") {
+        throw START
+    } else if (cmd == "FINISH") {
+        throw FINISH
+    }
+} repeat(100 MSEC)
+
+SendImageToOperator {
+    sendImageToOperator()
 }
+
+Search(target) {
+    isFound = search(target)
+    if (isFound == "TRUE") {
+        throw FINISH broadcast
+    }
+} repeat(200 MSEC)
+
+MoveTo(area) {
+    arrive = moveTo(area)
+    if (arrive == "TRUE") {
+        throw ARRIVED
+    }
+} repeat(200 MSEC)
+
+
+

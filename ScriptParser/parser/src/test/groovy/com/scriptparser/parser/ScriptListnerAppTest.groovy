@@ -11,7 +11,7 @@ class ScriptListnerAppTest extends spock.lang.Specification {
         Parser parser = new Parser()
 
         when:
-        MissionWrapper mission = parser.parseScript(prefix + "simple_test.bdl")
+        MissionWrapper mission = parser.parseScript(prefix + "reference/simple_test.bdl")
 
         then:
         mission != null 
