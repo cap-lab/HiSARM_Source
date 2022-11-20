@@ -2,49 +2,73 @@ package com.codegenerator.generator.mapper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import com.codegenerator.wrapper.CodeModeWrapper;
 import com.codegenerator.wrapper.CodeRobotWrapper;
 import com.codegenerator.wrapper.CodeTransitionWrapper;
+import com.codegenerator.wrapper.CodeVariableWrapper;
 import com.metadata.UEMRobot;
-import com.scriptparser.parserdatastructure.util.ModeVisitor;
+import com.scriptparser.parserdatastructure.util.ModeTransitionVisitor;
 import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
 import com.scriptparser.parserdatastructure.wrapper.ModeWrapper;
 import com.scriptparser.parserdatastructure.wrapper.TransitionWrapper;
-import com.strategy.strategymaker.GroupAllocator;
 
 public class RobotModeMapper {
-    private class ModeListMaker implements ModeVisitor {
+    private class ModeListMaker implements ModeTransitionVisitor {
         List<CodeModeWrapper> modeList = new ArrayList<CodeModeWrapper>();
         Map<String, CodeTransitionWrapper> transitionMap = new HashMap<>();
-        Set<String> groupList = new HashSet<String>();
+        Map<String, CodeModeWrapper> modeMap = new HashMap<>();
 
-        public ModeListMaker(Set<String> groupList) {
-            this.groupList = groupList;
+        @Override
+        public void visitMode(ModeWrapper mode, String modeId, String groupId) {
+            CodeModeWrapper codeMode = new CodeModeWrapper();
+            codeMode.setModeId(groupId, mode.getMode().getName());
+            codeMode.setMode(mode);
+            codeMode.setGroupId(groupId);
+            modeList.add(codeMode);
+            transitionMap.get(groupId).addMode(codeMode);
+            if (mode.getParameterList() != null) {
+                mode.getParameterList().forEach(param -> {
+                    String variableId =
+                            CodeVariableWrapper.makeVariableId(codeMode.getModeId(), param.getId());
+                    CodeVariableWrapper variable = new CodeVariableWrapper();
+                    variable.setName(param.getId());
+                    variable.getChildVariableList().add(variable);
+                    variable.setId(variableId);
+                    codeMode.getParameterList().add(variable);
+                    codeMode.getVariableList().add(variable);
+                });
+            }
+            modeMap.put(codeMode.getGroupId(), codeMode);
         }
 
         @Override
-        public void visitMode(ModeWrapper mw, String modeId, String groupId) {
-            CodeModeWrapper mode = new CodeModeWrapper();
-            mode.setModeId(modeId);
-            mode.setMode(mw);
-            mode.setGroupId(groupId);
-            modeList.add(mode);
-            transitionMap.get(groupId).getModeList().add(mode);
-
-            mw.getGroupList().forEach(g -> {
-                CodeTransitionWrapper transition = new CodeTransitionWrapper();
-                transition.setTransition(g.getModeTransition().getModeTransition());
-                transition.setTransitionId(transition.getTransition().makeTransitionid(modeId));
-                transition.setGroupId(GroupAllocator.makeGroupKey(groupId, g.getGroup().getName()));
-                transition.setDepth(transition.getGroupId().split("_").length - 1);
-                if (groupList.contains(transition.getGroupId())) {
-                    transitionMap.put(transition.getGroupId(), transition);
-                }
-            });
+        public void visitTransition(TransitionWrapper transition, String transitionId,
+                String groupId) {
+            CodeTransitionWrapper codeTransition = new CodeTransitionWrapper();
+            codeTransition.setTransition(transition);
+            codeTransition.setGroupId(groupId);
+            codeTransition.setTransitionId(groupId, transition.getTransition().getName());
+            codeTransition.setDepth(groupId.split("_").length - 1);
+            if (transition.getParameterList() != null) {
+                transition.getParameterList().forEach(param -> {
+                    String variableId = CodeVariableWrapper
+                            .makeVariableId(codeTransition.getTransitionId(), param.getId());
+                    CodeVariableWrapper variable = new CodeVariableWrapper();
+                    variable.setName(param.getId());
+                    variable.getChildVariableList().add(variable);
+                    variable.setId(variableId);
+                    codeTransition.getParameterList().add(variable);
+                    codeTransition.getVariableList().add(variable);
+                });
+            }
+            String previousGroup =
+                    groupId.contains("_") ? groupId.substring(0, groupId.lastIndexOf("_"))
+                            : groupId;
+            if (modeMap.containsKey(previousGroup))
+                modeMap.get(previousGroup).addTransition(codeTransition);
+            transitionMap.put(groupId, codeTransition);
         }
 
         public List<CodeModeWrapper> getModeList() {
@@ -54,7 +78,6 @@ public class RobotModeMapper {
         public Map<String, CodeTransitionWrapper> getTransitionMap() {
             return transitionMap;
         }
-
     }
 
     public List<CodeRobotWrapper> mapRobotMode(MissionWrapper mission, List<UEMRobot> robotList) {
@@ -62,12 +85,11 @@ public class RobotModeMapper {
         try {
             for (UEMRobot robot : robotList) {
                 CodeRobotWrapper codeRobot = new CodeRobotWrapper();
-                ModeListMaker maker =
-                        new ModeListMaker(robot.getRobotTask().getRobot().getGroupMap().keySet());
-                codeRobot.setRobot(robot);
                 TransitionWrapper transition =
                         mission.getTransition(robot.getRobotTask().getRobot().getTeam());
+                codeRobot.setRobot(robot);
                 CodeTransitionWrapper codeTransition = new CodeTransitionWrapper();
+                ModeListMaker maker = new ModeListMaker();
                 codeTransition.setTransition(transition);
                 codeTransition.setGroupId(robot.getRobotTask().getRobot().getTeam());
                 codeTransition.setTransitionId(robot.getRobotTask().getRobot().getTeam());
@@ -77,7 +99,7 @@ public class RobotModeMapper {
                 transition.traverseTransition(new String(),
                         robot.getRobotTask().getRobot().getTeam(), new ArrayList<String>(),
                         new ArrayList<>(robot.getRobotTask().getRobot().getGroupMap().keySet()),
-                        maker);
+                        maker, null);
                 codeRobot.setModeList(maker.getModeList());
                 codeRobot.setTransitionList(new ArrayList<>(maker.getTransitionMap().values()));
                 codeRobotList.add(codeRobot);

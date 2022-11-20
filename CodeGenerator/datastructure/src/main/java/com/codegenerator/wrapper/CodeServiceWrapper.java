@@ -12,11 +12,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CodeServiceWrapper {
-    ServiceWrapper service;
-    String serviceId;
-    String groupId;
-    List<CodeVariableWrapper> variableList;
-    List<CodeStatementWrapper> statementList;
+    private ServiceWrapper service;
+    private String serviceId;
+    private String groupId;
+    private List<CodeVariableWrapper> parameterList = new ArrayList<>();
+    private List<CodeVariableWrapper> variableList = new ArrayList<>();
+    private List<CodeStatementWrapper> statementList = new ArrayList<>();
 
     public static String makeServiceId(String modeId, String serviceId) {
         return modeId + "_" + serviceId;

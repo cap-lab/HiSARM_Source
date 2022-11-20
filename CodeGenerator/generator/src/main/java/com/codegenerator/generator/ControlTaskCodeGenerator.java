@@ -13,7 +13,6 @@ import com.codegenerator.constant.ControlTaskConstant;
 import com.codegenerator.generator.constant.CodeGeneratorConstant;
 import com.codegenerator.generator.util.LocalFileCopier;
 import com.codegenerator.wrapper.CodeActionWrapper;
-import com.codegenerator.wrapper.CodeModeWrapper;
 import com.codegenerator.wrapper.CodeRobotWrapper;
 import com.codegenerator.wrapper.CodeServiceWrapper;
 import com.codegenerator.wrapper.CodeStatementWrapper;
@@ -72,17 +71,15 @@ public class ControlTaskCodeGenerator {
         List<CodeStatementWrapper> commStatementList = new ArrayList<>();
         List<CodeStatementWrapper> throwStatementList = new ArrayList<>();
 
-        robot.getModeList().forEach(m -> {
-            m.getServiceList().forEach(service -> {
-                service.getStatementList().forEach(st -> {
-                    actionList.addAll(st.getActionList());
-                    if (st.getComm() != null) {
-                        commStatementList.add(st);
-                    }
-                    if (st.getTh() != null) {
-                        throwStatementList.add(st);
-                    }
-                });
+        robot.getServiceList().forEach(service -> {
+            service.getStatementList().forEach(st -> {
+                actionList.addAll(st.getActionList());
+                if (st.getComm() != null) {
+                    commStatementList.add(st);
+                }
+                if (st.getTh() != null) {
+                    throwStatementList.add(st);
+                }
             });
         });
         commPortList.addAll(robot.getRobot().getRobotTask().getControlTask()
@@ -134,15 +131,13 @@ public class ControlTaskCodeGenerator {
         List<UEMActionTask> actionTaskList = new ArrayList<>();
         Set<ActionTypeWrapper> actionTypeSet = new HashSet<>();
 
-        robot.getModeList().forEach(m -> {
-            m.getServiceList().forEach(service -> {
-                service.getStatementList().forEach(st -> {
-                    actionTaskList.addAll(st.getActionList().stream().map(a -> a.getActionTask())
-                            .collect(Collectors.toList()));
-                    actionTypeSet.addAll(st.getActionList().stream()
-                            .map(a -> a.getActionTask().getActionImpl().getActionType())
-                            .collect(Collectors.toList()));
-                });
+        robot.getServiceList().forEach(service -> {
+            service.getStatementList().forEach(st -> {
+                actionTaskList.addAll(st.getActionList().stream().map(a -> a.getActionTask())
+                        .collect(Collectors.toList()));
+                actionTypeSet.addAll(st.getActionList().stream()
+                        .map(a -> a.getActionTask().getActionImpl().getActionType())
+                        .collect(Collectors.toList()));
             });
         });
 
@@ -165,19 +160,17 @@ public class ControlTaskCodeGenerator {
         Map<String, Object> rootHash = new HashMap<>();
         int timerCount = 0;
 
-        for (CodeModeWrapper mode : robot.getModeList()) {
-            for (CodeServiceWrapper codeService : mode.getServiceList()) {
-                for (CodeActionWrapper action : codeService.getActionList()) {
-                    if (action.getActionTask().getActionStatement().getDeadline() != null) {
-                        timerCount++;
-                    }
+        for (CodeServiceWrapper codeService : robot.getServiceList()) {
+            for (CodeActionWrapper action : codeService.getActionList()) {
+                if (action.getActionTask().getActionStatement().getDeadline() != null) {
+                    timerCount++;
                 }
-                for (CodeStatementWrapper statement : codeService.getConditionStatementList()) {
-                    ConditionalStatement cond =
-                            (ConditionalStatement) statement.getStatement().getStatement();
-                    if (cond.getPeriod() != null) {
-                        timerCount++;
-                    }
+            }
+            for (CodeStatementWrapper statement : codeService.getConditionStatementList()) {
+                ConditionalStatement cond =
+                        (ConditionalStatement) statement.getStatement().getStatement();
+                if (cond.getPeriod() != null) {
+                    timerCount++;
                 }
             }
         }
@@ -197,16 +190,9 @@ public class ControlTaskCodeGenerator {
 
     private void generateServiceCode(Path targetDir, CodeRobotWrapper robot) {
         Map<String, Object> rootHash = new HashMap<>();
-        List<CodeServiceWrapper> serviceList = new ArrayList<>();
-
-        robot.getModeList().forEach(m -> {
-            m.getServiceList().forEach(service -> {
-                serviceList.add(service);
-            });
-        });
 
         rootHash.put(ControlTaskConstant.ROBOT_ID, robot.getRobotName());
-        rootHash.put(ControlTaskConstant.SERVICE_LIST, serviceList);
+        rootHash.put(ControlTaskConstant.SERVICE_LIST, robot.getServiceList());
 
         FTLHandler.getInstance().generateCode(CodeGeneratorConstant.SERVICE_HEADER_TEMPLATE,
                 Paths.get(targetDir.toString(),

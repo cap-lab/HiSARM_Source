@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CodeConditionalWrapper {
-    CodeVariableWrapper leftVariable;
-    CodeVariableWrapper rightVariable;
+    private CodeVariableWrapper leftVariable;
+    private CodeVariableWrapper rightVariable;
 }

@@ -16,7 +16,7 @@ public class ActionTaskCodeCopier {
         try {
             for (CodeRobotWrapper codeRobot : codeRobotList) {
                 for (CodeModeWrapper codeMode : codeRobot.getModeList()) {
-                    for (CodeServiceWrapper service : codeMode.getServiceList()) {
+                    for (CodeServiceWrapper service : codeMode.getServiceMap().keySet()) {
                         for (CodeActionWrapper action : service.getActionList()) {
                             for (TaskFile file : action.getActionTask().getActionImpl().getTask()
                                     .getTaskFiles()) {

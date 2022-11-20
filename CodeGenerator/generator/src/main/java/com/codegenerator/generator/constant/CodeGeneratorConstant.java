@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class CodeGeneratorConstant {
+        public static final String ID_TEAM = "ID_TEAM_";
         public static final String JAR_EXTENSION = ".jar";
         public static final String JARS = "jars";
         public static final String BIN = "bin";

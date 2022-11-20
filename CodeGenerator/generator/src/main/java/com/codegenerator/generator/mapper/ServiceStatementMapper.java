@@ -11,6 +11,7 @@ import com.codegenerator.wrapper.CodeServiceWrapper;
 import com.codegenerator.wrapper.CodeStatementWrapper;
 import com.codegenerator.wrapper.CodeThrowWrapper;
 import com.codegenerator.wrapper.CodeVariableWrapper;
+import com.dbmanager.datastructure.variable.PrimitiveType;
 import com.metadata.algorithm.UEMChannelPort;
 import com.metadata.algorithm.UEMCommPort;
 import com.metadata.algorithm.task.UEMActionTask;
@@ -45,11 +46,12 @@ public class ServiceStatementMapper {
         public StatementListmaker(CodeServiceWrapper service, String groupId) {
             this.service = service;
             this.groupId = groupId;
+            variableList = service.getVariableList();
         }
 
-        private CodeVariableWrapper findVariable(String id) {
+        private CodeVariableWrapper findVariable(String name) {
             for (CodeVariableWrapper variable : variableList) {
-                if (variable.getId().equals(id)) {
+                if (variable.getName().equals(name)) {
                     return variable;
                 }
             }
@@ -64,24 +66,28 @@ public class ServiceStatementMapper {
                 Identifier element = input.getIdentifierSet().get(elementIndex);
                 CodeVariableWrapper childVariable = null;
                 String variableId = null;
+                String name = null;
                 String defaultValue = null;
                 if (element.getType().equals(IdentifierType.VARIABLE)) {
                     variableId = CodeVariableWrapper.makeVariableId(service.getServiceId(),
                             element.getId());
-                    childVariable = findVariable(variableId);
+                    name = element.getId();
+                    childVariable = findVariable(name);
                 } else {
                     variableId = CodeVariableWrapper.makeVariableId(service.getServiceId(),
-                            String.valueOf(statementId), String.valueOf(inputIndex),
-                            String.valueOf(elementIndex));
+                            statementId, inputIndex, elementIndex);
                     defaultValue = element.getId();
+                    name = variableId;
                 }
                 if (childVariable == null) {
                     childVariable = new CodeVariableWrapper();
                     childVariable.setId(variableId);
-                    childVariable.setType(elementType);
+                    childVariable.setName(name);
                     childVariable.setDefaultValue(defaultValue);
                     variableList.add(childVariable);
                 }
+                childVariable.setType(elementType);
+                childVariable.setRealVariable(true);
                 childVariableList.add(childVariable);
             }
             return childVariableList;
@@ -102,8 +108,10 @@ public class ServiceStatementMapper {
                 if (childVariableList.size() > 1) {
                     variable = new CodeVariableWrapper();
                     variable.setId(CodeVariableWrapper.makeVariableId(service.getServiceId(),
-                            String.valueOf(statementId), String.valueOf(inputIndex)));
+                            String.valueOf(statementId), inputIndex));
+                    variable.setName(variable.getName());
                     variable.setType(inputType);
+                    variable.setRealVariable(true);
                     variableList.add(variable);
                 } else {
                     variable = childVariableList.get(0);
@@ -122,19 +130,29 @@ public class ServiceStatementMapper {
             List<Identifier> outputList = action.getOutputList();
             for (int outputIndex = 0; outputIndex < outputList.size(); outputIndex++) {
                 Identifier output = outputList.get(outputIndex);
-                CodeVariableWrapper variable = findVariable(
-                        CodeVariableWrapper.makeVariableId(service.getServiceId(), output.getId()));
+                CodeVariableWrapper variable = findVariable(output.getId());
                 if (variable == null) {
                     variable = new CodeVariableWrapper();
                     variable.setId(CodeVariableWrapper.makeVariableId(service.getServiceId(),
                             output.getId()));
+                    variable.setName(output.getId());
                     variable.setType(actionType.getVariableOutputList().get(outputIndex));
+                    variable.setRealVariable(true);
                     variable.getChildVariableList().add(variable);
                     variableList.add(variable);
                 }
                 outputVariableList.add(variable);
             }
             return outputVariableList;
+        }
+
+        private UEMChannelPort getChannelPort(List<UEMChannelPort> portList, int index) {
+            for (UEMChannelPort port : portList) {
+                if (port.getIndex() == index) {
+                    return port;
+                }
+            }
+            return null;
         }
 
         private List<CodeActionWrapper> makeActionImplList(List<UEMActionTask> actionTaskList,
@@ -149,7 +167,7 @@ public class ServiceStatementMapper {
                 for (int inputIndex = 0; inputIndex < inputVariableList.size(); inputIndex++) {
                     CodeVariableWrapper inputVariable = inputVariableList.get(inputIndex);
                     UEMChannelPort inputPort =
-                            controlTask.getInputPortList(actionTask).get(inputIndex);
+                            getChannelPort(controlTask.getInputPortList(actionTask), inputIndex);
                     CodePortWrapper codePort = new CodePortWrapper();
                     codePort.setPort(inputPort);
                     codePort.setVariable(inputVariable);
@@ -158,7 +176,7 @@ public class ServiceStatementMapper {
                 for (int outputIndex = 0; outputIndex < outputVariableList.size(); outputIndex++) {
                     CodeVariableWrapper outputVariable = outputVariableList.get(outputIndex);
                     UEMChannelPort outputPort =
-                            controlTask.getOutputPortList(actionTask).get(outputIndex);
+                            getChannelPort(controlTask.getOutputPortList(actionTask), outputIndex);
                     CodePortWrapper codePort = new CodePortWrapper();
                     codePort.setPort(outputPort);
                     codePort.setVariable(outputVariable);
@@ -200,54 +218,75 @@ public class ServiceStatementMapper {
             }
         }
 
+        private CodeVariableWrapper makeVariableForComm(String variableName) {
+            CodeVariableWrapper codeVariable = new CodeVariableWrapper();
+            codeVariable.setId(
+                    CodeVariableWrapper.makeVariableId(service.getServiceId(), variableName));
+            codeVariable.setName(variableName);
+            codeVariable.setType(robot.getRobot().getRobotTask().getRobot()
+                    .getVariableType(service.getService(), variableName));
+            codeVariable.setRealVariable(true);
+            codeVariable.getChildVariableList().add(codeVariable);
+            variableList.add(codeVariable);
+            return codeVariable;
+        }
+
         @Override
         public void visitCommunicationalStatement(StatementWrapper statement,
                 CommunicationalStatement comm, int statementId) {
             try {
                 Identifier variable =
                         comm.getOutput() == null ? comm.getMessage() : comm.getOutput();
-                CodeVariableWrapper codeVariable = findVariable(CodeVariableWrapper
-                        .makeVariableId(service.getServiceId(), variable.getId()));
+                CodeVariableWrapper codeVariable = findVariable(variable.getId());
                 if (codeVariable == null) {
-                    codeVariable = new CodeVariableWrapper();
-                    codeVariable.setId(CodeVariableWrapper.makeVariableId(service.getServiceId(),
-                            variable.getId()));
-                    codeVariable.setType(robot.getRobot().getRobotTask().getRobot().getVariableMap()
-                            .get(new KeyValue<ServiceWrapper, String>(service.getService(),
-                                    variable.getId())));
-                    codeVariable.getChildVariableList().add(codeVariable);
-                    variableList.add(codeVariable);
+                    codeVariable = makeVariableForComm(variable.getId());
                 }
-                UEMCommPort port = null;
+
+                String team = comm.getCounterTeam();
+                CodeVariableWrapper codeTeamVariable = findVariable(team);
+                if (codeTeamVariable == null) {
+                    codeTeamVariable = makeVariableForComm(team);
+                    codeTeamVariable.setRealVariable(false);
+                    codeTeamVariable.setType(robot.getRobot().getRobotTask().getRobot()
+                            .getPrimitiveVariableMap().get(PrimitiveType.INT32));
+                }
+
+                List<UEMCommPort> portList = new ArrayList<>();
                 if (comm.getStatementType().equals(StatementType.RECEIVE)
                         || comm.getStatementType().equals(StatementType.SUBSCRIBE)) {
                     for (UEMChannelPort p : robot.getRobot().getRobotTask().getControlTask()
                             .getInputPortList(robot.getRobot().getRobotTask().getListenTask())) {
                         if (((UEMCommPort) p).getMessage().equals(comm.getMessage())
-                                && ((UEMCommPort) p).getCounterTeam()
+                                && ((UEMCommPort) p).getCounterTeamVariable()
                                         .equals(comm.getCounterTeam())) {
-                            port = (UEMCommPort) p;
+                            portList.add((UEMCommPort) p);
                         }
                     }
                 } else {
                     for (UEMChannelPort p : robot.getRobot().getRobotTask().getControlTask()
                             .getOutputPortList(robot.getRobot().getRobotTask().getReportTask())) {
                         if (((UEMCommPort) p).getMessage().equals(comm.getMessage())
-                                && ((UEMCommPort) p).getCounterTeam()
+                                && ((UEMCommPort) p).getCounterTeamVariable()
                                         .equals(comm.getCounterTeam())) {
-                            port = (UEMCommPort) p;
+                            portList.add((UEMCommPort) p);
                         }
                     }
                 }
                 CodeStatementWrapper codeStatement = new CodeStatementWrapper();
-                codeStatement.getVariableList().add(codeVariable);
+                codeStatement.setComm(new CodeCommunicationWrapper());
                 codeStatement.setStatement(statement);
                 codeStatement.setStatementId(
                         CodeStatementWrapper.makeStatementId(service.getServiceId(), statementId));
-                codeStatement.setComm(new CodeCommunicationWrapper());
-                codeStatement.getComm().setPort(new CodePortWrapper());
-                codeStatement.getComm().getPort().setVariable(codeVariable);
-                codeStatement.getComm().getPort().setPort(port);
+                codeStatement.getVariableList().add(codeVariable);
+                codeStatement.getVariableList().add(codeTeamVariable);
+                codeStatement.getComm().setTeam(codeTeamVariable);
+                codeStatement.getComm().setMessage(codeVariable);
+                for (UEMCommPort p : portList) {
+                    CodePortWrapper codePort = new CodePortWrapper();
+                    codePort.setPort(p);
+                    codePort.setVariable(codeVariable);
+                    codeStatement.getComm().getPortList().add(codePort);
+                }
                 statementList.add(codeStatement);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -268,23 +307,26 @@ public class ServiceStatementMapper {
             private CodeVariableWrapper makeVariable(Identifier identifier, int conditionId) {
                 CodeVariableWrapper variable = null;
                 if (identifier.getType().equals(IdentifierType.VARIABLE)) {
-                    variable = findVariable(CodeVariableWrapper
-                            .makeVariableId(service.getServiceId(), identifier.getId()));
+                    variable = findVariable(identifier.getId());
                     if (variable == null) {
                         variable = new CodeVariableWrapper();
                         variable.setId(CodeVariableWrapper.makeVariableId(service.getServiceId(),
                                 identifier.getId()));
+                        variable.setName(identifier.getId());
                         variable.setType(robot.getRobot().getRobotTask().getRobot().getVariableMap()
                                 .get(new KeyValue<ServiceWrapper, String>(service.getService(),
                                         identifier.getId())));
                         variable.getChildVariableList().add(variable);
+                        variable.setRealVariable(true);
                         variableList.add(variable);
                     }
                 } else {
                     variable = new CodeVariableWrapper();
                     variable.setId(CodeVariableWrapper.makeVariableId(service.getServiceId(),
-                            String.valueOf(statementId), String.valueOf(conditionId)));
+                            statementId, conditionId));
+                    variable.setName(variable.getId());
                     variable.setDefaultValue(identifier.getId());
+                    variable.setRealVariable(true);
                     variable.getChildVariableList().add(variable);
                     variableList.add(variable);
                 }
