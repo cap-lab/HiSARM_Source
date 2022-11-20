@@ -4,6 +4,7 @@ import com.strategy.strategydatastructure.wrapper.VariableTypeWrapper;
 
 public class UEMCommPort extends UEMChannelPort {
     private String counterTeam;
+    private String counterTeamVariable;
     private String message;
     private VariableTypeWrapper variableType;
 
@@ -46,6 +47,14 @@ public class UEMCommPort extends UEMChannelPort {
         setSampleType(port.getSampleType());
         setType(port.getType());
         getRate().add(port.getRate().get(0));
+    }
+
+    public String getCounterTeamVariable() {
+        return counterTeamVariable;
+    }
+
+    public void setCounterTeamVariable(String counterTeamVariable) {
+        this.counterTeamVariable = counterTeamVariable;
     }
 
 }

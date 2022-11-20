@@ -10,6 +10,7 @@ import com.metadata.algorithm.UEMChannelPort;
 import com.metadata.algorithm.UEMCommPort;
 import com.metadata.algorithm.UEMModeTask;
 import com.metadata.constant.AlgorithmConstant;
+import hopes.cic.xml.PortTypeType;
 import hopes.cic.xml.RunConditionType;
 import hopes.cic.xml.TimeMetricType;
 import hopes.cic.xml.YesNoType;
@@ -26,6 +27,7 @@ public class UEMControlTask extends UEMTask {
         setLdflags("");
         setExtraCommonCode(robot.getName());
         setFile(AlgorithmConstant.CONTROL + AlgorithmConstant.TASK_FILE_EXTENSION);
+        setHasSubGraph(AlgorithmConstant.NO);
         setLanguage(AlgorithmConstant.LANGUAGE_C);
         setIsHardwareDependent(YesNoType.NO);
         setParentTask(robot.getName());
@@ -91,6 +93,7 @@ public class UEMControlTask extends UEMTask {
         for (UEMChannelPort counterPort : actionTask.getOutputPortList()) {
             UEMChannelPort port = new UEMChannelPort();
             port.setPortInfo(actionTask.getName(), (UEMChannelPort) counterPort);
+            port.setType(PortTypeType.FIFO);
             getPort().add(port);
             outputPortList.add(port);
             channelList.add(

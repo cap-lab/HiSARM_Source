@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import com.metadata.UEMRobot;
+import com.metadata.algorithm.UEMAlgorithm;
 import com.metadata.metadatagenerator.algorithm.AlgorithmGenerator;
 import com.metadata.metadatagenerator.architecture.ArchitectureGenerator;
 import com.metadata.metadatagenerator.constant.MetadataConstant;
@@ -16,6 +17,8 @@ import com.strategy.strategydatastructure.additionalinfo.AdditionalInfo;
 import com.strategy.strategydatastructure.wrapper.StrategyWrapper;
 
 public class MetadataGenerator {
+    private UEMAlgorithm uemAlgorithm;
+
     private String makeProjectDirName(String projectName) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_");
         return formatter.format(new Date()) + projectName;
@@ -39,6 +42,7 @@ public class MetadataGenerator {
         AlgorithmGenerator algorithm = new AlgorithmGenerator();
         algorithm.generate(mission, strategy, additionalInfo, projectDir);
         algorithm.generateAlgorithmXML(projectDir, projectName);
+        uemAlgorithm = algorithm.getAlgorithm();
 
         ArchitectureGenerator architecture = new ArchitectureGenerator();
         List<UEMRobot> robotList =
@@ -51,4 +55,9 @@ public class MetadataGenerator {
 
         return robotList;
     }
+
+    public UEMAlgorithm getUemAlgorithm() {
+        return uemAlgorithm;
+    }
+
 }

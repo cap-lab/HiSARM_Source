@@ -1,5 +1,6 @@
 package com.metadata.algorithm.task;
 
+import java.util.Map;
 import com.dbmanager.datastructure.variable.PrimitiveType;
 import com.metadata.algorithm.UEMCommPort;
 import com.metadata.algorithm.UEMMulticastPort;
@@ -9,6 +10,7 @@ import com.metadata.algorithm.library.UEMSharedData;
 import com.metadata.constant.AlgorithmConstant;
 import com.scriptparser.parserdatastructure.entity.statement.CommunicationalStatement;
 import com.scriptparser.parserdatastructure.entity.statement.ThrowStatement;
+import com.scriptparser.parserdatastructure.wrapper.ServiceWrapper;
 import com.scriptparser.parserdatastructure.wrapper.StatementWrapper;
 import com.strategy.strategydatastructure.wrapper.VariableTypeWrapper;
 import hopes.cic.xml.PortDirectionType;
@@ -19,12 +21,16 @@ public class UEMListenTask extends UEMCommTask {
         super(robotId, name);
     }
 
-    public void addReceive(StatementWrapper receive, UEMRobotTask robot) {
+    public void addReceive(StatementWrapper receive, UEMRobotTask robot, ServiceWrapper service,
+            Map<String, String> argumentMap) {
         CommunicationalStatement statement = (CommunicationalStatement) receive.getStatement();
-        String portName = makePortName(statement.getCounterTeam(), statement.getMessage().getId());
+        String counterTeamName = argumentMap.containsKey(statement.getCounterTeam())
+                ? argumentMap.get(statement.getCounterTeam())
+                : statement.getCounterTeam();
+        String portName = makePortName(counterTeamName, statement.getMessage().getId());
         if (!existChannelPort(portName)) {
             VariableTypeWrapper variable =
-                    robot.getRobot().getVariableMap().get(statement.getOutput().getId());
+                    robot.getRobot().getVariableType(service, statement.getOutput().getId());
             int portSize =
                     variable.getVariableType().getSize() * variable.getVariableType().getCount();
             UEMCommPort inPort = new UEMCommPort();
@@ -35,25 +41,30 @@ public class UEMListenTask extends UEMCommTask {
             inPort.setVariableType(variable);
             getPort().add(inPort);
             getExportPortList().add(inPort);
+            String outPortName = AlgorithmConstant.CONTROL_TASK + portName;
             UEMCommPort outPort = new UEMCommPort();
-            outPort.makePortInfo(AlgorithmConstant.CONTROL_TASK + portName,
-                    PortDirectionType.OUTPUT, portSize);
+            outPort.makePortInfo(outPortName, PortDirectionType.OUTPUT, portSize);
             outPort.setExport(false);
             outPort.setCounterTeam(statement.getCounterTeam());
             outPort.setMessage(statement.getMessage().getId());
             outPort.setVariableType(variable);
+            outPort.setCounterTeamVariable(statement.getCounterTeam());
             getPort().add(outPort);
             getControlPortList().add(outPort);
             getChannelPortMap().put(inPort, outPort);
         }
     }
 
-    public void addSubscribe(StatementWrapper subscribe, UEMRobotTask robot) throws Exception {
+    public void addSubscribe(StatementWrapper subscribe, UEMRobotTask robot, ServiceWrapper service,
+            Map<String, String> argumentMap) throws Exception {
         CommunicationalStatement statement = (CommunicationalStatement) subscribe.getStatement();
-        String portName = makePortName(statement.getCounterTeam(), statement.getMessage().getId());
+        String counterTeamName = argumentMap.containsKey(statement.getCounterTeam())
+                ? argumentMap.get(statement.getCounterTeam())
+                : statement.getCounterTeam();
+        String portName = makePortName(counterTeamName, statement.getMessage().getId());
         if (!existMulticastPort(portName)) {
             VariableTypeWrapper variable =
-                    robot.getRobot().getVariableMap().get(statement.getOutput().getId());
+                    robot.getRobot().getVariableType(service, statement.getOutput().getId());
             int portSize =
                     variable.getVariableType().getSize() * variable.getVariableType().getCount();
             UEMMulticastPort inPort = new UEMMulticastPort();
@@ -63,16 +74,17 @@ public class UEMListenTask extends UEMCommTask {
             inPort.setMessage(statement.getMessage().getId());
             inPort.setVariableType(variable);
             getMulticastPort().add(inPort);
-            UEMCommPort outPort = new UEMCommPort();
-            outPort.makePortInfo(AlgorithmConstant.CONTROL_TASK + portName,
-                    PortDirectionType.OUTPUT, portSize);
+            String outPortName = AlgorithmConstant.CONTROL_TASK + portName;
+            UEMCommPort outPort = new UEMCommPort();;
+            outPort.makePortInfo(outPortName, PortDirectionType.OUTPUT, portSize);
             outPort.setExport(false);
             outPort.setCounterTeam(robot.getRobot().getTeam());
             outPort.setMessage(statement.getMessage().getId());
             outPort.setVariableType(variable);
+            outPort.setCounterTeamVariable(statement.getCounterTeam());
             getPort().add(outPort);
             getControlPortList().add(outPort);
-            getMulticastPortMap().put(inPort, outPort);
+            getMulticastPortMap().put(outPort, inPort);
         }
     }
 
@@ -98,7 +110,7 @@ public class UEMListenTask extends UEMCommTask {
                     robot.getRobot().getPrimitiveVariableMap().get(PrimitiveType.INT32));
             getPort().add(outPort);
             getControlPortList().add(outPort);
-            getMulticastPortMap().put(inPort, outPort);
+            getMulticastPortMap().put(outPort, inPort);
         }
     }
 

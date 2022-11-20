@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import com.metadata.algorithm.UEMChannelPort;
 import com.metadata.algorithm.UEMCommPort;
 import com.metadata.algorithm.UEMModeTask;
 import com.metadata.algorithm.UEMMulticastPort;
@@ -18,7 +17,7 @@ public class UEMCommTask extends UEMTask {
     private List<UEMCommPort> controlPortList = new ArrayList<>();
     private List<UEMCommPort> exportPortList = new ArrayList<>();
     private Map<UEMCommPort, UEMCommPort> channelPortMap = new HashMap<>();
-    private Map<UEMMulticastPort, UEMChannelPort> multicastPortMap = new HashMap<>();
+    private Map<UEMCommPort, UEMMulticastPort> multicastPortMap = new HashMap<>();
     private Map<UEMLibraryPort, UEMMulticastPort> sharedDataPortMap = new HashMap<>();
     protected UEMLibraryPort leaderPort;
     private Map<UEMMulticastPort, UEMMulticastPort> leaderPortMap = new HashMap<>();
@@ -52,6 +51,7 @@ public class UEMCommTask extends UEMTask {
         setRunCondition(RunConditionType.TIME_DRIVEN);
         setFile(getName() + AlgorithmConstant.TASK_FILE_EXTENSION);
         setCommRelatedFile(robotId);
+        setHasSubGraph(AlgorithmConstant.NO);
     }
 
     private void setCommRelatedFile(String robotId) {
@@ -67,6 +67,15 @@ public class UEMCommTask extends UEMTask {
         return controlPortList;
     }
 
+    public UEMCommPort getControlPort(String name) {
+        for (UEMCommPort port : controlPortList) {
+            if (port.getName().equals(name)) {
+                return port;
+            }
+        }
+        return null;
+    }
+
     public List<UEMCommPort> getExportPortList() {
         return exportPortList;
     }
@@ -75,7 +84,7 @@ public class UEMCommTask extends UEMTask {
         return channelPortMap;
     }
 
-    public Map<UEMMulticastPort, UEMChannelPort> getMulticastPortMap() {
+    public Map<UEMCommPort, UEMMulticastPort> getMulticastPortMap() {
         return multicastPortMap;
     }
 

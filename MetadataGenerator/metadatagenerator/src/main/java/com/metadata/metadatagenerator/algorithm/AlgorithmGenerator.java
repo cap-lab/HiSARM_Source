@@ -3,7 +3,10 @@ package com.metadata.metadatagenerator.algorithm;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 import java.util.stream.Collectors;
 import com.dbmanager.datastructure.variable.PrimitiveType;
 import com.metadata.algorithm.UEMAlgorithm;
@@ -31,12 +34,16 @@ import com.scriptparser.parserdatastructure.entity.statement.ConditionalStatemen
 import com.scriptparser.parserdatastructure.entity.statement.Statement;
 import com.scriptparser.parserdatastructure.entity.statement.ThrowStatement;
 import com.scriptparser.parserdatastructure.enumeration.StatementType;
-import com.scriptparser.parserdatastructure.util.ModeVisitor;
+import com.scriptparser.parserdatastructure.util.ModeTransitionVisitor;
 import com.scriptparser.parserdatastructure.util.StatementVisitor;
+import com.scriptparser.parserdatastructure.util.VariableVisitor;
+import com.scriptparser.parserdatastructure.wrapper.GroupModeTransitionWrapper;
 import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
 import com.scriptparser.parserdatastructure.wrapper.ModeWrapper;
 import com.scriptparser.parserdatastructure.wrapper.ParallelServiceWrapper;
+import com.scriptparser.parserdatastructure.wrapper.ServiceWrapper;
 import com.scriptparser.parserdatastructure.wrapper.StatementWrapper;
+import com.scriptparser.parserdatastructure.wrapper.TransitionModeWrapper;
 import com.scriptparser.parserdatastructure.wrapper.TransitionWrapper;
 import com.strategy.strategydatastructure.additionalinfo.AdditionalInfo;
 import com.strategy.strategydatastructure.wrapper.ActionImplWrapper;
@@ -73,25 +80,35 @@ public class AlgorithmGenerator {
                 algorithm.addTask(robotTask);
                 algorithm.getRobotTaskList().add(robotTask);
             }
+
             makeRobotInterGraph();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private class RobotInerGraphMaker implements ModeVisitor {
+    private class RobotInerGraphMaker implements ModeTransitionVisitor, VariableVisitor {
         private UEMRobotTask robot;
         private List<ControlStrategyWrapper> controlStrategyList;
         private Path taskServerPrefix;
         private boolean isActionTask;
+        private Map<String, Map<String, String>> transitionArgumentMap = new HashMap<>();
+        private Map<String, Map<String, String>> modeArgumentMap = new HashMap<>();
+        private Stack<List<String>> variableStack = new Stack<>();
+
 
         private class TaskMakerForStatement implements StatementVisitor {
             private String currentGroup;
             private ModeWrapper mode;
+            private Map<String, String> argumentMap;
+            private ServiceWrapper service;
 
-            public TaskMakerForStatement(String currentGroup, ModeWrapper mode) {
+            public TaskMakerForStatement(String currentGroup, ModeWrapper mode,
+                    Map<String, String> argumentMap, ServiceWrapper service) {
                 this.currentGroup = currentGroup;
                 this.mode = mode;
+                this.argumentMap = argumentMap;
+                this.service = service;
             }
 
             private List<UEMTaskGraph> recursiveExplore(UEMActionTask actionTask,
@@ -180,21 +197,36 @@ public class AlgorithmGenerator {
                 }
                 try {
                     if (comm.getStatementType().equals(StatementType.RECEIVE)) {
-                        robot.getListenTask().addReceive(statement, robot);
+                        robot.getListenTask().addReceive(statement, robot, service, argumentMap);
                     } else if (statement.getStatement().getStatementType()
                             .equals(StatementType.SUBSCRIBE)) {
-                        robot.getListenTask().addSubscribe(statement, robot);
-                        VariableTypeWrapper variable = robot.getRobot().getVariableMap()
-                                .get(statement.getVariableList().get(0).getName());
-                        algorithm.addMulticastGroup(robot.getRobot().getTeam(),
-                                variable.getVariableType().getSize()
-                                        * variable.getVariableType().getCount());
+                        String counterTeamName = argumentMap.containsKey(comm.getCounterTeam())
+                                ? argumentMap.get(comm.getCounterTeam())
+                                : comm.getCounterTeam();
+                        robot.getListenTask().addSubscribe(statement, robot, service, argumentMap);
+                        if (algorithm.getMulticastGroup(counterTeamName) == null) {
+                            VariableTypeWrapper variable = robot.getRobot().getVariableType(service,
+                                    comm.getOutput().getId());
+                            algorithm.addMulticastGroup(counterTeamName,
+                                    variable.getVariableType().getSize()
+                                            * variable.getVariableType().getCount());
+                        }
                     } else if (statement.getStatement().getStatementType()
                             .equals(StatementType.SEND)) {
-                        robot.getReportTask().addSend(statement, robot);
+                        robot.getReportTask().addSend(statement, robot, service, argumentMap);
                     } else if (statement.getStatement().getStatementType()
                             .equals(StatementType.PUBLISH)) {
-                        robot.getReportTask().addPublish(statement, robot);
+                        robot.getReportTask().addPublish(statement, robot, service, argumentMap);
+                        String counterTeamName = argumentMap.containsKey(comm.getCounterTeam())
+                                ? argumentMap.get(comm.getCounterTeam())
+                                : comm.getCounterTeam();
+                        if (algorithm.getMulticastGroup(counterTeamName) == null) {
+                            VariableTypeWrapper variable = robot.getRobot().getVariableType(service,
+                                    comm.getMessage().getId());
+                            algorithm.addMulticastGroup(counterTeamName,
+                                    variable.getVariableType().getSize()
+                                            * variable.getVariableType().getCount());
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -224,7 +256,9 @@ public class AlgorithmGenerator {
 
         public RobotInerGraphMaker(UEMRobotTask robot,
                 List<ControlStrategyWrapper> controlStrategyList, Path taskServerPrefix,
-                boolean isActionTask) {
+                boolean isActionTask) throws Exception {
+            transitionArgumentMap.put(robot.getRobot().getTeam(), new HashMap<>());
+            variableStack.add(new ArrayList<>());
             this.robot = robot;
             this.controlStrategyList = controlStrategyList;
             this.taskServerPrefix = taskServerPrefix;
@@ -232,11 +266,36 @@ public class AlgorithmGenerator {
         }
 
         @Override
+        public void visitModeToService(ModeWrapper mode, ParallelServiceWrapper service,
+                String groupId) {
+            TaskMakerForStatement taskMaker = new TaskMakerForStatement(groupId, mode,
+                    service.getService().makeArgumentMap(
+                            service.makeArgumentList(modeArgumentMap.get(groupId))),
+                    service.getService());
+            service.getService().traverseService(taskMaker);
+        }
+
+        @Override
+        public void visitModeToTransition(ModeWrapper mode, GroupModeTransitionWrapper transition,
+                String groupId) {
+            variableStack.add(transition.makeArgumentList(modeArgumentMap.get(groupId)));
+        }
+
+        @Override
+        public void visitTransitionToMode(TransitionWrapper transition, ModeWrapper previousMode,
+                String event, TransitionModeWrapper mode, String groupId) {
+            variableStack.add(mode.makeArgumentList(transitionArgumentMap.get(groupId)));
+        }
+
+        @Override
         public void visitMode(ModeWrapper mode, String modeId, String groupId) {
-            for (ParallelServiceWrapper service : mode.getServiceList()) {
-                TaskMakerForStatement taskMaker = new TaskMakerForStatement(groupId, mode);
-                service.getService().traverseService(taskMaker);
-            }
+            modeArgumentMap.put(groupId, mode.makeArgumentMap(variableStack.pop()));
+        }
+
+        @Override
+        public void visitTransition(TransitionWrapper transition, String transitionId,
+                String groupId) {
+            transitionArgumentMap.put(groupId, transition.makeArgumentMap(variableStack.pop()));
         }
 
     }
@@ -345,7 +404,7 @@ public class AlgorithmGenerator {
         RobotInerGraphMaker maker =
                 new RobotInerGraphMaker(robot, controlStrategyList, taskServerPrefix, true);
         transition.traverseTransition(new String(), team, new ArrayList<String>(),
-                new ArrayList<>(robot.getRobot().getGroupMap().keySet()), maker);
+                new ArrayList<>(robot.getRobot().getGroupMap().keySet()), maker, maker);
     }
 
     private void makeLibraryTask(UEMRobotTask robot) {
@@ -405,8 +464,8 @@ public class AlgorithmGenerator {
         String team = robot.getRobot().getTeam();
         TransitionWrapper transition = mission.getTransition(team);
         RobotInerGraphMaker maker = new RobotInerGraphMaker(robot, null, null, false);
-        transition.traverseTransition(new String(), team, new ArrayList<String>(),
-                new ArrayList<>(robot.getRobot().getGroupMap().keySet()), maker);
+        transition.traverseTransition(new String(), team, null,
+                new ArrayList<>(robot.getRobot().getGroupMap().keySet()), maker, maker);
         for (UEMSharedData library : robot.getSharedDataTaskList()) {
             robot.getListenTask().addSharedData(library);
             UEMLibraryConnection listenConnection = new UEMLibraryConnection();

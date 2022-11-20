@@ -38,6 +38,7 @@ public class UEMChannelPort extends TaskPortType {
         setType(counterPort.getType());
         setSampleSize(counterPort.getSampleSize());
         getRate().add(counterPort.getRate().get(0));
+        setIndex(counterPort.getIndex());
     }
 
     private PortDirectionType convertPortDirection(PortDirection direction) {
