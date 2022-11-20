@@ -2,10 +2,12 @@ package com.scriptparser.parserdatastructure.wrapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import com.scriptparser.parserdatastructure.entity.Mode;
 import com.scriptparser.parserdatastructure.entity.common.Identifier;
-import com.scriptparser.parserdatastructure.util.ModeVisitor;
+import com.scriptparser.parserdatastructure.util.ModeTransitionVisitor;
+import com.scriptparser.parserdatastructure.util.VariableVisitor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -40,15 +42,33 @@ public class ModeWrapper {
         return lastGroupId + "_" + currentGroupId;
     }
 
-    public void visitMode(String lastId, String currentGroupId, List<String> visitedId,
-            List<String> groupList, ModeVisitor visitor) {
-        String id = makeModeId(lastId);
-        if (visitedId.contains(id)) {
-            return;
-        } else {
-            visitedId.add(id);
+    public Map<String, String> makeArgumentMap(List<String> argumentList) {
+        Map<String, String> argumentMap = new java.util.HashMap<>();
+        if (parameterList != null) {
+            for (int i = 0; i < parameterList.size(); i++) {
+                argumentMap.put(parameterList.get(i).getId(), argumentList.get(i));
+            }
         }
-        visitor.visitMode(this, id, currentGroupId);
+        return argumentMap;
+    }
+
+    public void visitMode(String lastId, String currentGroupId, List<String> visitedList,
+            List<String> groupList, ModeTransitionVisitor visitor,
+            VariableVisitor variableVisitor) {
+        String id = makeModeId(lastId);
+        if (visitedList != null) {
+            if (visitedList.contains(id)) {
+                return;
+            } else {
+                visitedList.add(id);
+            }
+        }
+        if (visitor != null) {
+            visitor.visitMode(this, id, currentGroupId);
+        }
+        for (ParallelServiceWrapper service : this.serviceList) {
+            service.visitModeService(this, currentGroupId, variableVisitor);
+        }
         for (GroupWrapper group : this.groupList) {
             String newGroupId = makeGroupId(currentGroupId, group.getGroup().getName());
             if (groupList != null) {
@@ -56,8 +76,8 @@ public class ModeWrapper {
                     continue;
                 }
             }
-            group.getModeTransition().getModeTransition().traverseTransition(id, newGroupId,
-                    visitedId, groupList, visitor);
+            group.getModeTransition().traverseModeTransition(id, newGroupId, this, visitedList,
+                    groupList, visitor, variableVisitor);
         }
     }
 }

@@ -1,7 +1,9 @@
 package com.scriptparser.parserdatastructure.wrapper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import com.scriptparser.parserdatastructure.entity.Service;
 import com.scriptparser.parserdatastructure.entity.common.Identifier;
 import com.scriptparser.parserdatastructure.util.StatementVisitor;
@@ -17,6 +19,16 @@ public class ServiceWrapper {
 
     public ServiceWrapper(Service service) {
         setService(service);
+    }
+
+    public Map<String, String> makeArgumentMap(List<String> argumentList) {
+        Map<String, String> argumentMap = new HashMap<>();
+        if (parameterList != null) {
+            for (int i = 0; i < parameterList.size(); i++) {
+                argumentMap.put(parameterList.get(i).getId(), argumentList.get(i));
+            }
+        }
+        return argumentMap;
     }
 
     public void traverseService(StatementVisitor visitor) {

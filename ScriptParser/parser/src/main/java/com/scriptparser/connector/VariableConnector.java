@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import com.scriptparser.parserdatastructure.entity.common.Condition;
 import com.scriptparser.parserdatastructure.entity.common.Identifier;
 import com.scriptparser.parserdatastructure.entity.common.IdentifierSet;
@@ -31,35 +32,6 @@ public class VariableConnector {
             Set<VariableWrapper> figuredVariables = new HashSet<>();
             traverseStatement(service, firstStatement, figuredVariables, visitedStatements);
         }
-        for (ServiceWrapper service : mission.getServiceList()) {
-            StatementWrapper firstStatement = service.getStatementList().get(0);
-            List<StatementWrapper> visitedStatements = new ArrayList<>();
-            Set<VariableWrapper> figuredVariables = new HashSet<>();
-            traverseReceiveStatement(service, firstStatement, figuredVariables, visitedStatements);
-        }
-    }
-
-    private static List<StatementWrapper> traverseReceiveStatement(ServiceWrapper service,
-            StatementWrapper statement, Set<VariableWrapper> figuredVariables,
-            List<StatementWrapper> visitedStatements) {
-        if (visitedStatements.contains(statement)) {
-            return visitedStatements;
-        } else {
-            visitedStatements.add(statement);
-        }
-        switch (statement.getStatement().getStatementType()) {
-            case RECEIVE:
-            case SUBSCRIBE:
-                extractVariableFromReceiveStatement(service, statement, figuredVariables);
-                break;
-            default:
-                break;
-        }
-        for (StatementWrapper nextStatement : statement.getConnectedStatements()
-                .values(StatementWrapper.class)) {
-            traverseStatement(service, nextStatement, figuredVariables, visitedStatements);
-        }
-        return visitedStatements;
     }
 
     private static List<StatementWrapper> traverseStatement(ServiceWrapper service,
@@ -188,16 +160,14 @@ public class VariableConnector {
             StatementWrapper statement, Set<VariableWrapper> figuredVariables) {
         CommunicationalStatement cStatement = (CommunicationalStatement) statement.getStatement();
         VariableWrapper variable = new VariableWrapper();
-        if (statement.getVariableList().size() > 0
-                && statement.getCounterStatements().get(0).getVariableList().size() > 0) {
-            variable = statement.getVariableList().get(0);
-            variable.setCreator(new KeyValue<ServiceWrapper, VariableWrapper>(
-                    statement.getCounterStatements().get(0).getService(),
-                    statement.getCounterStatements().get(0).getVariableList().get(0)));
-        } else {
-            variable.setName(cStatement.getOutput().getId());
-            figuredVariables.add(variable);
-            statement.getVariableList().add(variable);
-        }
+        variable.setName(cStatement.getOutput().getId());
+        figuredVariables.add(variable);
+        statement.getVariableList().add(variable);
+        VariableWrapper message = new VariableWrapper();
+        message.setName(cStatement.getMessage().getId());
+        figuredVariables.add(message);
+        statement.getVariableList().add(message);
+        variable.setCreator(new KeyValue<ServiceWrapper, VariableWrapper>(service, message));
+        message.setCreator(new KeyValue<ServiceWrapper, VariableWrapper>(service, variable));
     }
 }

@@ -1,6 +1,15 @@
 package com.scriptparser.parser;
 
-import com.scriptparser.connector.CommunicationConnector;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
+
 import com.scriptparser.connector.StatementConnector;
 import com.scriptparser.connector.VariableConnector;
 import com.scriptparser.grammar.ScriptListenerApp;
@@ -14,14 +23,6 @@ import com.scriptparser.parserdatastructure.wrapper.ParallelServiceWrapper;
 import com.scriptparser.parserdatastructure.wrapper.ServiceWrapper;
 import com.scriptparser.parserdatastructure.wrapper.StatementWrapper;
 import com.scriptparser.parserdatastructure.wrapper.TransitionWrapper;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 public class Parser {
 
@@ -88,10 +89,6 @@ public class Parser {
         }
     }
 
-    private void connectCommunication(MissionWrapper mission) throws Exception {
-        CommunicationConnector.connectCommunication(mission);
-    }
-
     private void connectServiceToStatement(MissionWrapper mission) throws Exception {
         for (ServiceWrapper service : mission.getServiceList()) {
             for (StatementWrapper statement : service.getStatementList()) {
@@ -108,7 +105,6 @@ public class Parser {
             connectServiceToMode(mission);
             connectTransitionToMode(mission);
             connectModeToTransition(mission);
-            connectCommunication(mission);
             connectVariables(mission);
             return mission;
         } catch (Exception e) {
