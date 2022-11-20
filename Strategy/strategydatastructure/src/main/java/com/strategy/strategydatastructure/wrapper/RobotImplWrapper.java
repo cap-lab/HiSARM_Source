@@ -5,11 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 import com.dbmanager.datastructure.robot.RobotImpl;
 import com.dbmanager.datastructure.variable.PrimitiveType;
 import com.scriptparser.parserdatastructure.util.KeyValue;
 import com.scriptparser.parserdatastructure.wrapper.ServiceWrapper;
 import com.strategy.strategydatastructure.enumeration.AdditionalTaskType;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,8 +25,7 @@ public class RobotImplWrapper {
     private Map<String, Integer> groupMap = new HashMap<>();
     private List<ControlStrategyWrapper> controlStrategyList = new ArrayList<>();
     private List<ActionTypeWrapper> actionTypeList = new ArrayList<>();
-    private Map<KeyValue<ServiceWrapper, String>, VariableTypeWrapper> variableMap =
-            new HashMap<>();
+    private Map<KeyValue<ServiceWrapper, String>, VariableTypeWrapper> variableMap = new HashMap<>();
     private Map<PrimitiveType, VariableTypeWrapper> primitiveVariableMap = new HashMap<>();
     private List<AdditionalTaskWrapper> additionalTaskList = new ArrayList<>();
 
@@ -54,12 +55,22 @@ public class RobotImplWrapper {
     }
 
     public AdditionalTaskWrapper getAdditionalTask(AdditionalTaskType type) throws Exception {
-        Optional<AdditionalTaskWrapper> task =
-                additionalTaskList.stream().filter(t -> t.getType().equals(type)).findAny();
+        Optional<AdditionalTaskWrapper> task = additionalTaskList.stream().filter(t -> t.getType().equals(type))
+                .findAny();
         if (task.isPresent()) {
             return task.get();
         } else {
             throw new Exception("No additional task which type is " + type.getValue());
         }
+    }
+
+    public VariableTypeWrapper getVariableType(
+            ServiceWrapper service, String variableName) {
+        for (KeyValue<ServiceWrapper, String> key : variableMap.keySet()) {
+            if (key.key.equals(service) && key.value.equals(variableName)) {
+                return variableMap.get(key);
+            }
+        }
+        return null;
     }
 }
