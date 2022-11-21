@@ -57,4 +57,5 @@ public class AlgorithmConstant {
     public static final String COMMON_VARIABLE_HEADER = "semo_variable.h";
     public static final String COMMON_VARIABLE_SOURCE = "semo_variable.c";
     public static final String MUTEX_HEADER = "UCThreadMutex.h";
+    public static final int MULTICAST_PACKET_SIZE = 12;
 }

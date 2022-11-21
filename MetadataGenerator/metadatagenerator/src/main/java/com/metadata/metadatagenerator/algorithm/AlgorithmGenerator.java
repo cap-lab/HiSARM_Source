@@ -481,9 +481,7 @@ public class AlgorithmGenerator {
             reportConnection.setMasterTask(robot.getReportTask().getName());
             algorithm.getAlgorithm().getLibraryConnections().getTaskLibraryConnection()
                     .add(reportConnection);
-            algorithm.addMulticastGroup(library.getGroup(),
-                    library.getVariableType().getVariableType().getSize()
-                            * library.getVariableType().getVariableType().getCount());
+            algorithm.addMulticastGroup(library.getGroup(), library.getVariableType().getSize());
         }
         UEMLeaderLibrary leaderLibrary = robot.getLeaderLibraryTask();
         if (leaderLibrary != null) {
