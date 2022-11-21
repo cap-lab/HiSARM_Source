@@ -6,7 +6,7 @@
 // GROUP DEFINE
 typedef enum _TEAM_ID {
 <#list teamList as team>
-    ID_TEAM_${team.name},
+    ID_TEAM_${team},
 </#list>
 } TEAM_ID;
 

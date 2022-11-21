@@ -1,6 +1,7 @@
 #include "${robotId}_port.h"
 #include "${robotId}_common.h"
 #include "${robotId}_variable.h"
+#include "${robotId}_team.h"
 #include "semo_logger.h"
 
 // ACTION TASK PORT DEFINE
@@ -34,7 +35,7 @@ static PORT port_of_${commPort.name} = {"${commPort.name}", -1, NULL};
 <#list commStatementList as commStatement>
 COMM_PORT comm_port_of_${commStatement.statementId}[${commStatement.comm.portList?size}] = {
     <#list commStatement.comm.portList as commPort>
-    {&port_of_${commPort.name}, &variable_${commPort.variable.id}, ID_TEAM_${commPort.port.counterTeamName}},
+    {&port_of_${commPort.port.name}, &variable_${commPort.variable.id}, ID_TEAM_${commPort.port.counterTeam}},
     </#list>
 };
 semo_int32 comm_port_of_${commStatement.statementId}_size = ${commStatement.comm.portList?size};

@@ -2,6 +2,7 @@ package com.codegenerator.generator.mapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import com.codegenerator.wrapper.CodeActionWrapper;
 import com.codegenerator.wrapper.CodeCommunicationWrapper;
 import com.codegenerator.wrapper.CodeConditionalWrapper;
@@ -29,6 +30,7 @@ import com.scriptparser.parserdatastructure.enumeration.StatementType;
 import com.scriptparser.parserdatastructure.util.ConditionVisitor;
 import com.scriptparser.parserdatastructure.util.KeyValue;
 import com.scriptparser.parserdatastructure.util.StatementVisitor;
+import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
 import com.scriptparser.parserdatastructure.wrapper.ServiceWrapper;
 import com.scriptparser.parserdatastructure.wrapper.StatementWrapper;
 import com.strategy.strategydatastructure.wrapper.ActionTypeWrapper;
@@ -36,6 +38,7 @@ import com.strategy.strategydatastructure.wrapper.VariableTypeWrapper;
 
 public class ServiceStatementMapper {
     private CodeRobotWrapper robot;
+    private List<String> teamList = new ArrayList<>();
 
     private class StatementListmaker implements StatementVisitor {
         List<CodeVariableWrapper> variableList = new ArrayList<CodeVariableWrapper>();
@@ -247,16 +250,19 @@ public class ServiceStatementMapper {
                 if (codeTeamVariable == null) {
                     codeTeamVariable = makeVariableForComm(team);
                     codeTeamVariable.setRealVariable(false);
-                    codeTeamVariable.setType(robot.getRobot().getRobotTask().getRobot()
-                            .getPrimitiveVariableMap().get(PrimitiveType.INT32));
+                    if (teamList.contains(team)) {
+                        codeTeamVariable.setDefaultValue(team);
+                    }
                 }
+                codeTeamVariable.setType(robot.getRobot().getRobotTask().getRobot()
+                        .getPrimitiveVariableMap().get(PrimitiveType.INT32));
 
                 List<UEMCommPort> portList = new ArrayList<>();
                 if (comm.getStatementType().equals(StatementType.RECEIVE)
                         || comm.getStatementType().equals(StatementType.SUBSCRIBE)) {
                     for (UEMChannelPort p : robot.getRobot().getRobotTask().getControlTask()
                             .getInputPortList(robot.getRobot().getRobotTask().getListenTask())) {
-                        if (((UEMCommPort) p).getMessage().equals(comm.getMessage())
+                        if (((UEMCommPort) p).getMessage().equals(comm.getMessage().getId())
                                 && ((UEMCommPort) p).getCounterTeamVariable()
                                         .equals(comm.getCounterTeam())) {
                             portList.add((UEMCommPort) p);
@@ -265,7 +271,7 @@ public class ServiceStatementMapper {
                 } else {
                     for (UEMChannelPort p : robot.getRobot().getRobotTask().getControlTask()
                             .getOutputPortList(robot.getRobot().getRobotTask().getReportTask())) {
-                        if (((UEMCommPort) p).getMessage().equals(comm.getMessage())
+                        if (((UEMCommPort) p).getMessage().equals(comm.getMessage().getId())
                                 && ((UEMCommPort) p).getCounterTeamVariable()
                                         .equals(comm.getCounterTeam())) {
                             portList.add((UEMCommPort) p);
@@ -415,8 +421,10 @@ public class ServiceStatementMapper {
 
     }
 
-    public ServiceStatementMapper(CodeRobotWrapper robot) {
+    public ServiceStatementMapper(CodeRobotWrapper robot, MissionWrapper mission) {
         this.robot = robot;
+        teamList = mission.getTeamList().stream().map(t -> t.getTeam().getName())
+                .collect(Collectors.toList());
     }
 
     public void mapServiceStatement(CodeServiceWrapper service) {

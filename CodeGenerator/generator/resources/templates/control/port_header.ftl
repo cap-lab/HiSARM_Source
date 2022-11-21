@@ -17,7 +17,7 @@ extern PORT group_port_of_${action.actionTask.name};
 </#list>
 
 <#list commStatementList as commStatement>
-extern COMM_PORT comm_port_of_${commStatement.statementId};
+extern COMM_PORT comm_port_of_${commStatement.statementId}[${commStatement.comm.portList?size}];
 extern semo_int32 comm_port_of_${commStatement.statementId}_size;
 </#list>
 

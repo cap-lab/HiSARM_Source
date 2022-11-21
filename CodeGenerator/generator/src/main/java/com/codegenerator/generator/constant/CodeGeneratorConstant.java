@@ -14,6 +14,7 @@ public class CodeGeneratorConstant {
         public static final String VARIABLE_SOURCE_SUFFIX = "_variable.c";
         public static final String GROUP_HEADER_SUFFIX = "_group.h";
         public static final String GROUP_SOURCE_SUFFIX = "_group.c";
+        public static final String TEAM_HEADER_SUFFIX = "_team.h";
         public static final String EVENT_HEADER_SUFFIX = "_event.h";
         public static final String EVENT_SOURCE_SUFFIX = "_event.c";
         public static final String PORT_HEADER_SUFFIX = "_port.h";
@@ -104,6 +105,8 @@ public class CodeGeneratorConstant {
                         Paths.get(GROUP_TEMPLATE_DIRECTORY.toString(), "group_header.ftl");
         public static final Path GROUP_SOURCE_TEMPLATE =
                         Paths.get(GROUP_TEMPLATE_DIRECTORY.toString(), "group_source.ftl");
+        public static final Path TEAM_HEADER_TEMPLATE =
+                        Paths.get(GROUP_TEMPLATE_DIRECTORY.toString(), "team_header.ftl");
 
         public static final Path CONTROL_TEMPLATE_DIRECTORY = Paths.get("control");
         public static final Path EVENT_HEADER_TEMPLATE =

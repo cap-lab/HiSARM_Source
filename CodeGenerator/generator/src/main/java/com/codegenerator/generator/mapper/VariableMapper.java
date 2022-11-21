@@ -163,18 +163,47 @@ public class VariableMapper {
     }
 
     private void mapTransitionModeVariable(CodeRobotWrapper robot) {
-        for (CodeTransitionWrapper transition : robot.getTransitionList()) {
-            for (CodeTransitionElementWrapper transitionElement : transition.getModeMap()
-                    .keySet()) {
-                CodeModeWrapper dstMode = transitionElement.getDstMode();
-                List<CodeVariableWrapper> variableList =
-                        transition.getModeMap().get(transitionElement);
-                for (int i = 0; i < variableList.size(); i++) {
-                    CodeVariableWrapper variable = variableList.get(i);
-                    CodeVariableWrapper param = dstMode.getParameterList().get(i);
-                    variable.setType(param.getType());
-                    variable.setRealVariable(param.isRealVariable());
-                    param.setDefaultValue(variable.getDefaultValue());
+        boolean flag = true;
+        while (flag == true) {
+            flag = false;
+            for (CodeTransitionWrapper transition : robot.getTransitionList()) {
+                for (CodeTransitionElementWrapper transitionElement : transition.getModeMap()
+                        .keySet()) {
+                    CodeModeWrapper dstMode = transitionElement.getDstMode();
+                    List<CodeVariableWrapper> variableList =
+                            transition.getModeMap().get(transitionElement);
+                    for (int i = 0; i < variableList.size(); i++) {
+                        CodeVariableWrapper variable = variableList.get(i);
+                        CodeVariableWrapper param = dstMode.getParameterList().get(i);
+                        if (variable.getType() == param.getType()
+                                && variable.isRealVariable() == param.isRealVariable()
+                                && param.getDefaultValue() == variable.getDefaultValue()) {
+                            continue;
+                        }
+                        flag = true;
+                        variable.setType(param.getType());
+                        variable.setRealVariable(param.isRealVariable());
+                        param.setDefaultValue(variable.getDefaultValue());
+                    }
+                }
+            }
+            for (CodeModeWrapper mode : robot.getModeList()) {
+                for (CodeTransitionWrapper transition : mode.getGroupTransitionMap().keySet()) {
+                    List<CodeVariableWrapper> variableList =
+                            mode.getGroupTransitionMap().get(transition);
+                    for (int i = 0; i < variableList.size(); i++) {
+                        CodeVariableWrapper variable = variableList.get(i);
+                        CodeVariableWrapper param = transition.getParameterList().get(i);
+                        if (variable.getType() == param.getType()
+                                && variable.isRealVariable() == param.isRealVariable()
+                                && param.getDefaultValue() == variable.getDefaultValue()) {
+                            continue;
+                        }
+                        flag = true;
+                        variable.setType(param.getType());
+                        variable.setRealVariable(param.isRealVariable());
+                        param.setDefaultValue(variable.getDefaultValue());
+                    }
                 }
             }
         }
@@ -182,16 +211,13 @@ public class VariableMapper {
 
     private void setDefaultValueForTeamVariable(CodeRobotWrapper robot) {
         robot.getTransitionList().forEach(t -> t.getVariableList().stream()
-                .filter(v -> ((v.isRealVariable() == false) && (v.getDefaultValue() == null)))
-                .forEach(v -> v
+                .filter(v -> (v.isRealVariable() == false)).forEach(v -> v
                         .setDefaultValue(CodeGeneratorConstant.ID_TEAM + v.getDefaultValue())));
         robot.getModeList().forEach(m -> m.getVariableList().stream()
-                .filter(v -> ((v.isRealVariable() == false) && (v.getDefaultValue() == null)))
-                .forEach(v -> v
+                .filter(v -> (v.isRealVariable() == false)).forEach(v -> v
                         .setDefaultValue(CodeGeneratorConstant.ID_TEAM + v.getDefaultValue())));
         robot.getServiceList().forEach(s -> s.getVariableList().stream()
-                .filter(v -> ((v.isRealVariable() == false) && (v.getDefaultValue() == null)))
-                .forEach(v -> v
+                .filter(v -> (v.isRealVariable() == false)).forEach(v -> v
                         .setDefaultValue(CodeGeneratorConstant.ID_TEAM + v.getDefaultValue())));
     }
 

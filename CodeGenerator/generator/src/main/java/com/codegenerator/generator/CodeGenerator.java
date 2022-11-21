@@ -32,7 +32,8 @@ public class CodeGenerator {
                 codeMode.setServiceList(msMapper.mapModeService(codeMode));
                 codeRobot.getServiceList().addAll(codeMode.getServiceList());
                 for (CodeServiceWrapper service : codeRobot.getServiceList()) {
-                    ServiceStatementMapper ssMapper = new ServiceStatementMapper(codeRobot);
+                    ServiceStatementMapper ssMapper =
+                            new ServiceStatementMapper(codeRobot, mission);
                     ssMapper.mapServiceStatement(service);
                 }
             }
@@ -68,7 +69,7 @@ public class CodeGenerator {
         setNewTaskId(algorithm, robotList);
         List<CodeRobotWrapper> codeRobotList = makeDataStructure(mission, robotList);
         CommonCodeGenerator commonCodeGenerator = new CommonCodeGenerator();
-        commonCodeGenerator.generate(targetDir, codeRobotList, additionalInfo);
+        commonCodeGenerator.generate(targetDir, codeRobotList, mission, additionalInfo);
         AdditionalCodeGenerator additionalTaskCodeGenerator = new AdditionalCodeGenerator();
         additionalTaskCodeGenerator.generateAdditionalCode(targetDir, additionalInfo,
                 codeRobotList);

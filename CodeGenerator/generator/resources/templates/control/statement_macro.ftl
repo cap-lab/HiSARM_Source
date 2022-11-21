@@ -56,7 +56,7 @@
 <#macro RECEIVE statement service>
             int dataLen;
             int dataNum = 0;
-            COMM_PORT *port = get_team_port(comm_port_of_${statement.statementId}, comm_port_of_${statement.statementId}_size, variable_${statement.comm.team});
+            COMM_PORT *port = get_team_port(comm_port_of_${statement.statementId}, comm_port_of_${statement.statementId}_size, *((int*)variable_${statement.comm.team.id}));
         	UFPort_GetNumOfAvailableData(port->port->port_id, 0, &dataNum);
         	if (dataNum >= ${statement.comm.message.type.variableType.size})
         	{
@@ -70,7 +70,7 @@
             int dataLen;
             int dataNum = 0;
             int channelSize = 0;
-            COMM_PORT *port = get_team_port(comm_port_of_${statement.statementId}, comm_port_of_${statement.statementId}_size, variable_${statement.comm.team});
+            COMM_PORT *port = get_team_port(comm_port_of_${statement.statementId}, comm_port_of_${statement.statementId}_size, *((int*)variable_${statement.comm.team.id}.buffer));
             UFPort_GetNumOfAvailableData(port->port->port_id, 0, &dataNum);
             channelSize = UFPort_GetChannelSize(port->port->port_id);
             if (channelSize - dataNum >= ${statement.comm.message.type.variableType.size})
@@ -113,7 +113,7 @@
             int dataLen;
             semo_int32 event = ID_EVENT_${statement.statement.statement.event.name};
             event_list[event] = TRUE;
-            event_occurred = TRUE;
+            event_occured = TRUE;
             <#if statement.statement.statement.isBroadcast() == true>
             UFPort_WriteToQueue(throw_out_port_of_${statement.statementId}.port->port_id, (unsigned char*) &event, sizeof(semo_int32), 0, &dataLen);
             </#if>

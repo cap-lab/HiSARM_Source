@@ -15,18 +15,19 @@ import com.codegenerator.generator.util.LocalFileCopier;
 import com.codegenerator.wrapper.CodeRobotWrapper;
 import com.codegenerator.wrapper.CodeVariableWrapper;
 import com.metadata.UEMRobot;
+import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
 import com.strategy.strategydatastructure.additionalinfo.AdditionalInfo;
 import com.strategy.strategydatastructure.wrapper.VariableTypeWrapper;
 
 public class CommonCodeGenerator {
         public void generate(Path targetDir, List<CodeRobotWrapper> robotList,
-                        AdditionalInfo additionalInfo) {
+                        MissionWrapper mission, AdditionalInfo additionalInfo) {
                 try {
                         copyCommonCode(targetDir, additionalInfo);
                         for (CodeRobotWrapper robot : robotList) {
                                 generateRobotSpecificCommon(targetDir, robot.getRobot());
                                 generateVariableCode(targetDir, robot);
-                                generateGroupCode(targetDir, robot);
+                                generateGroupCode(targetDir, robot, mission);
                                 copyVariableCode(targetDir);
                         }
                 } catch (Exception e) {
@@ -79,12 +80,14 @@ public class CommonCodeGenerator {
                 List<CodeVariableWrapper> variableList = new ArrayList<>();
                 robot.getTransitionList()
                                 .forEach(t -> variableList.addAll(t.getVariableList().stream()
-                                                .filter(v -> v.isRealVariable())
+                                                // .filter(v -> v.isRealVariable())
                                                 .collect(Collectors.toList())));
                 robot.getModeList().forEach(m -> variableList.addAll(m.getVariableList().stream()
-                                .filter(v -> v.isRealVariable()).collect(Collectors.toList())));
+                                // .filter(v -> v.isRealVariable())
+                                .collect(Collectors.toList())));
                 robot.getServiceList().forEach(s -> variableList.addAll(s.getVariableList().stream()
-                                .filter(v -> v.isRealVariable()).collect(Collectors.toList())));
+                                // .filter(v -> v.isRealVariable())
+                                .collect(Collectors.toList())));
                 return variableList;
         }
 
@@ -107,12 +110,15 @@ public class CommonCodeGenerator {
                                 rootHash);
         }
 
-        private void generateGroupCode(Path targetDir, CodeRobotWrapper robot) throws Exception {
+        private void generateGroupCode(Path targetDir, CodeRobotWrapper robot,
+                        MissionWrapper mission) throws Exception {
                 Map<String, Object> rootHash = new HashMap<>();
 
                 rootHash.put(GroupCodeConstant.ROBOT_ID, robot.getRobotName());
                 rootHash.put(GroupCodeConstant.TEAM,
                                 robot.getRobot().getRobotTask().getRobot().getTeam());
+                rootHash.put(GroupCodeConstant.TEAM_LIST, mission.getTeamList().stream()
+                                .map(t -> t.getTeam().getName()).collect(Collectors.toList()));
                 rootHash.put(GroupCodeConstant.GROUP_MAP,
                                 robot.getRobot().getRobotTask().getRobot().getGroupMap());
 
@@ -123,6 +129,11 @@ public class CommonCodeGenerator {
                 FTLHandler.getInstance().generateCode(CodeGeneratorConstant.GROUP_SOURCE_TEMPLATE,
                                 Paths.get(targetDir.toString(), robot.getRobotName()
                                                 + CodeGeneratorConstant.GROUP_SOURCE_SUFFIX),
+                                rootHash);
+
+                FTLHandler.getInstance().generateCode(CodeGeneratorConstant.TEAM_HEADER_TEMPLATE,
+                                Paths.get(targetDir.toString(), robot.getRobotName()
+                                                + CodeGeneratorConstant.TEAM_HEADER_SUFFIX),
                                 rootHash);
         }
 

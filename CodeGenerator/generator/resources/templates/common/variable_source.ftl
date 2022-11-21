@@ -1,4 +1,5 @@
 #include "${robotId}_variable.h"
+#include "${robotId}_team.h"
 #include "semo_common.h"
 
 // VARIABLE BUFFER DEFINE
