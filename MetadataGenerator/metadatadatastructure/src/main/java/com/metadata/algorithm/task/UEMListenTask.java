@@ -69,7 +69,8 @@ public class UEMListenTask extends UEMCommTask {
                     variable.getVariableType().getSize() * variable.getVariableType().getCount();
             UEMMulticastPort inPort = new UEMMulticastPort();
             inPort.setName(portName);
-            inPort.setGroup(robot.getRobot().getTeam());
+            inPort.setGroup(counterTeamName + "_" + robot.getRobot().getTeam() + "_"
+                    + statement.getMessage().getId());
             inPort.setDirection(PortDirectionType.INPUT);
             inPort.setMessage(statement.getMessage().getId());
             inPort.setVariableType(variable);
@@ -78,7 +79,7 @@ public class UEMListenTask extends UEMCommTask {
             UEMCommPort outPort = new UEMCommPort();;
             outPort.makePortInfo(outPortName, PortDirectionType.OUTPUT, portSize);
             outPort.setExport(false);
-            outPort.setCounterTeam(robot.getRobot().getTeam());
+            outPort.setCounterTeam(counterTeamName);
             outPort.setMessage(statement.getMessage().getId());
             outPort.setVariableType(variable);
             outPort.setCounterTeamVariable(statement.getCounterTeam());
@@ -94,7 +95,7 @@ public class UEMListenTask extends UEMCommTask {
         if (statement.broadcast && !existMulticastPort(portName)) {
             UEMMulticastPort inPort = new UEMMulticastPort();
             inPort.setName(portName);
-            inPort.setGroup(group);
+            inPort.setGroup(group + "_" + AlgorithmConstant.EVENT);
             inPort.setDirection(PortDirectionType.INPUT);
             inPort.setMessage(statement.getEvent().getName());
             inPort.setVariableType(
@@ -144,7 +145,8 @@ public class UEMListenTask extends UEMCommTask {
             if (!existMulticastPort(robotIdPortName)) {
                 UEMMulticastPort robotIdPort = new UEMMulticastPort();
                 robotIdPort.setName(robotIdPortName);
-                robotIdPort.setGroup(group);
+                robotIdPort.setGroup(
+                        group + "_" + AlgorithmConstant.LEADER + "_" + AlgorithmConstant.ROBOT_ID);
                 robotIdPort.setDirection(PortDirectionType.INPUT);
                 robotIdPort.setMessage(group);
                 getMulticastPort().add(robotIdPort);
@@ -152,7 +154,8 @@ public class UEMListenTask extends UEMCommTask {
                         makePortName(AlgorithmConstant.LEADER, AlgorithmConstant.HEARTBEAT));
                 UEMMulticastPort heartbeatPort = new UEMMulticastPort();
                 heartbeatPort.setName(heartbeatPortName);
-                heartbeatPort.setGroup(group);
+                heartbeatPort.setGroup(
+                        group + "_" + AlgorithmConstant.LEADER + "_" + AlgorithmConstant.HEARTBEAT);
                 heartbeatPort.setDirection(PortDirectionType.INPUT);
                 heartbeatPort.setMessage(group);
                 getMulticastPort().add(heartbeatPort);

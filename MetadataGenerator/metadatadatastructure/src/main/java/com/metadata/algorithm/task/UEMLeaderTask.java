@@ -56,9 +56,9 @@ public class UEMLeaderTask extends UEMTask {
     private void setMode() {
         UEMModeTask mode = new UEMModeTask();
         mode.setName(getName());
-        mode.setDeadline(50);
+        mode.setDeadline(2);
         mode.setDeadlineUnit(TimeMetricType.S.value());
-        mode.setPeriod(50);
+        mode.setPeriod(2);
         mode.setPeriodUnit(TimeMetricType.S.value());
         setMode(mode);
     }

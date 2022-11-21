@@ -19,6 +19,7 @@ public class AlgorithmConstant {
     public static final String GROUP = "group";
     public static final String ROBOT_ID = "robotId";
     public static final String HEARTBEAT = "heartbeat";
+    public static final String EVENT = "event";
 
     public static final String LIBRARY_FILE_EXTENSION = ".cicl";
     public static final String LIBRARY_HEADER_EXTENSION = ".cicl.h";

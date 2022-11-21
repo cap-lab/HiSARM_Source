@@ -207,9 +207,11 @@ public class AlgorithmGenerator {
                         if (algorithm.getMulticastGroup(counterTeamName) == null) {
                             VariableTypeWrapper variable = robot.getRobot().getVariableType(service,
                                     comm.getOutput().getId());
-                            algorithm.addMulticastGroup(counterTeamName,
-                                    variable.getVariableType().getSize()
-                                            * variable.getVariableType().getCount());
+                            algorithm
+                                    .addMulticastGroup(
+                                            counterTeamName + "_" + robot.getRobot().getTeam() + "_"
+                                                    + comm.getMessage().getId(),
+                                            variable.getSize());
                         }
                     } else if (statement.getStatement().getStatementType()
                             .equals(StatementType.SEND)) {
@@ -223,9 +225,11 @@ public class AlgorithmGenerator {
                         if (algorithm.getMulticastGroup(counterTeamName) == null) {
                             VariableTypeWrapper variable = robot.getRobot().getVariableType(service,
                                     comm.getMessage().getId());
-                            algorithm.addMulticastGroup(counterTeamName,
-                                    variable.getVariableType().getSize()
-                                            * variable.getVariableType().getCount());
+                            algorithm
+                                    .addMulticastGroup(
+                                            robot.getRobot().getTeam() + "_" + counterTeamName + "_"
+                                                    + comm.getMessage().getId(),
+                                            variable.getSize());
                         }
                     }
                 } catch (Exception e) {
@@ -245,7 +249,7 @@ public class AlgorithmGenerator {
                 }
                 robot.getListenTask().addThrow(statement, currentGroup, robot);
                 robot.getReportTask().addThrow(statement, currentGroup, robot);
-                algorithm.addMulticastGroup(currentGroup, 4);
+                algorithm.addMulticastGroup(currentGroup + "_" + AlgorithmConstant.EVENT, 4);
             }
 
             @Override

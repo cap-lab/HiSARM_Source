@@ -79,7 +79,8 @@ public class UEMReportTask extends UEMCommTask {
             getControlPortList().add(inPort);
             UEMMulticastPort outPort = new UEMMulticastPort();
             outPort.setName(portName);
-            outPort.setGroup(robot.getRobot().getTeam());
+            outPort.setGroup(robot.getRobot().getTeam() + "_" + counterTeamName + "_"
+                    + statement.getMessage().getId());
             outPort.setDirection(PortDirectionType.OUTPUT);
             outPort.setMessage(statement.getMessage().getId());
             outPort.setVariableType(variable);
@@ -104,7 +105,7 @@ public class UEMReportTask extends UEMCommTask {
             getControlPortList().add(inPort);
             UEMMulticastPort outPort = new UEMMulticastPort();
             outPort.setName(portName);
-            outPort.setGroup(group);
+            outPort.setGroup(group + "_" + AlgorithmConstant.EVENT);
             outPort.setDirection(PortDirectionType.OUTPUT);
             outPort.setMessage(statement.getEvent().getName());
             outPort.setVariableType(
@@ -144,15 +145,19 @@ public class UEMReportTask extends UEMCommTask {
             if (!existMulticastPort(robotIdPortName)) {
                 UEMMulticastPort robotIdPort = new UEMMulticastPort();
                 robotIdPort.setName(robotIdPortName);
-                robotIdPort.setGroup(group);
+                robotIdPort.setGroup(
+                        group + "_" + AlgorithmConstant.LEADER + "_" + AlgorithmConstant.ROBOT_ID);
                 robotIdPort.setDirection(PortDirectionType.OUTPUT);
+                robotIdPort.setMessage(group);
                 getMulticastPort().add(robotIdPort);
                 String heartbeatPortName = makePortName(group,
                         makePortName(AlgorithmConstant.LEADER, AlgorithmConstant.HEARTBEAT));
                 UEMMulticastPort heartbeatPort = new UEMMulticastPort();
                 heartbeatPort.setName(heartbeatPortName);
-                heartbeatPort.setGroup(group);
+                heartbeatPort.setGroup(
+                        group + "_" + AlgorithmConstant.LEADER + "_" + AlgorithmConstant.HEARTBEAT);
                 heartbeatPort.setDirection(PortDirectionType.OUTPUT);
+                heartbeatPort.setMessage(group);
                 getMulticastPort().add(heartbeatPort);
                 getLeaderPortMap().put(robotIdPort, heartbeatPort);
             }
