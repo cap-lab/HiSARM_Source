@@ -64,6 +64,7 @@ public class UEMControlTask extends UEMTask {
         getExtraHeader().add(robotId + AlgorithmConstant.ROBOT_TIMER_HEADER_SUFFIX);
         getExtraSource().add(robotId + AlgorithmConstant.ROBOT_TRANSITION_SOURCE_SUFFIX);
         getExtraHeader().add(robotId + AlgorithmConstant.ROBOT_TRANSITION_HEADER_SUFFIX);
+        getExtraHeader().add(robotId + AlgorithmConstant.ROBOT_TEAM_HEADER_SUFFIX);
     }
 
     private void setMode() {
@@ -120,6 +121,7 @@ public class UEMControlTask extends UEMTask {
             port.setPortInfo(commTask.getName(), counterPort);
             port.setMessage(counterPort.getMessage());
             port.setCounterTeam(counterPort.getCounterTeam());
+            port.setCounterTeamVariable(counterPort.getCounterTeamVariable());
             port.setVariableType(counterPort.getVariableType());
             getPort().add(port);
             portList.add(port);

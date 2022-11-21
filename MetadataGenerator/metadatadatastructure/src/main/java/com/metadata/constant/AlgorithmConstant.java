@@ -37,6 +37,7 @@ public class AlgorithmConstant {
     public static final String ROBOT_ACTION_SOURCE_SUFFIX = "_action.c";
     public static final String ROBOT_TRANSITION_HEADER_SUFFIX = "_transition.h";
     public static final String ROBOT_TRANSITION_SOURCE_SUFFIX = "_transition.c";
+    public static final String ROBOT_TEAM_HEADER_SUFFIX = "_team.h";
     public static final String ROBOT_SERVICE_HEADER_SUFFIX = "_service.h";
     public static final String ROBOT_SERVICE_SOURCE_SUFFIX = "_service.c";
     public static final String ROBOT_TIMER_HEADER_SUFFIX = "_timer.h";
