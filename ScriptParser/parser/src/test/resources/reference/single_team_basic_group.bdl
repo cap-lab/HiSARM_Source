@@ -37,32 +37,32 @@ Mode.SUBMODE(arg1, arg2) {
 
 Mode.MODE1 {
   group(group1, min = 1):
-    ModeTransition.SUBMODE("1", "1000")
+    ModeTransition.SUBTRANSITION("1", "10")
   group(group2, min = 1):
-    ModeTransition.SUBMODE("1", "1000")
+    ModeTransition.SUBTRANSITION("1", "10")
   services:
     ServiceTest1
-    TeamTest("3", "3000")
+    TeamTest("3", "30")
     #GroupTest("1", "500")
 }
 
 Mode.MODE3 {
   group(group3, min = 1):
-    ModeTransition.SUBMODE("4", "4000")
+    ModeTransition.SUBTRANSITION("4", "40")
   group(group4, min = 1):
-    ModeTransition.SUBMODE("5", "5000")
+    ModeTransition.SUBTRANSITION("5", "50")
   services:
     ServiceTest1
-    GroupTest("1", "500")
+    GroupTest("1", "5")
 }
 
 Mode.MODE2 {
   services:
-    GroupTest("1", "700")
+    GroupTest("1", "7")
     ServiceTest1
 }
 
-ModeTransition.SUBMODE(arg1, arg2) {
+ModeTransition.SUBTRANSITION(arg1, arg2) {
   default: mode = SUBMODE(arg1, arg2)
 }
 
