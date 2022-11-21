@@ -72,9 +72,9 @@ Mode.MODE2 {
 
 Mode.CHANGED_MODE1 {
   group(group5, min = 1, proper = 2):
-    ModeTransition.SUBTRANSITION("7", "70")
+    ModeTransition.SUBTRANSITION("7", "700")
   group(group6, min = 1):
-    ModeTransition.SUBTRANSITION("7", "70")
+    ModeTransition.SUBTRANSITION("7", "700")
   services:
     ServiceTest1
     TeamTestAndSubscribe("TestTeam1")
@@ -100,8 +100,8 @@ Main.TestTeam2 {
     catch(EVENT1): mode = MODE3
     catch(EVENT2): mode = MODE2
   case(MODE2):
-    catch(EVENT1): mode = PREVIOUS_MODE
+    catch(EVENT1): mode = CHANGED_MODE1
   case(MODE3): # unreachable mode
-    catch(EVENT1): mode = PREVIOUS_MODE
+    catch(EVENT1): mode = CHANGED_MODE1
   default: mode = CHANGED_MODE1
 }
