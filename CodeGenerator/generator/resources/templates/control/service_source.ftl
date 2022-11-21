@@ -162,6 +162,8 @@ static void execute_service_${service.serviceId}(int service_index) {
 		}
 	</#list>
 	}
+_EXIT:
+    return;
 }
 
 </#list>

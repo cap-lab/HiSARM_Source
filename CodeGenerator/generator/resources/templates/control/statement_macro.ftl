@@ -7,6 +7,7 @@
 <#macro ACTION statement service>
             ACTION_MAP *action_map = get_action_map(&service_list[service_index], ID_ACTION_TYPE_${statement.statement.statement.actionName});
             ACTION_TASK *action = get_action_task(action_map->action_task_list_size, action_map->action_task_list);
+            uem_result result;  
             int dataLen;
             int dataNum = 0;
             
@@ -39,7 +40,8 @@
                 run_action_task(action->action_task_id);
             }
             <#if statement.statement.statement.outputList?size gt 0>
-        	UFPort_GetNumOfAvailableData(action->output_port_list[0].port_id, 0, &dataNum);
+        	result = UFPort_GetNumOfAvailableData(action->output_port_list[0].port_id, 0, &dataNum);
+            ERRIFGOTO(result, _EXIT);
             </#if>
             if (action->return_immediate == TRUE || action->state == SEMO_WRAPUP || action->state == SEMO_STOP<#if statement.statement.statement.outputList?size gt 0> || dataNum > 0</#if>)
             {
@@ -55,9 +57,11 @@
 
 <#macro RECEIVE statement service>
             int dataLen;
+            uem_result result;
             int dataNum = 0;
             COMM_PORT *port = get_team_port(comm_port_of_${statement.statementId}, comm_port_of_${statement.statementId}_size, *((int*)variable_${statement.comm.team.id}));
-        	UFPort_GetNumOfAvailableData(port->port->port_id, 0, &dataNum);
+        	result = UFPort_GetNumOfAvailableData(port->port->port_id, 0, &dataNum);
+            ERRIFGOTO(result, _EXIT);
         	if (dataNum >= ${statement.comm.message.type.variableType.size})
         	{
                 UFPort_ReadFromQueue(port->port->port_id, (unsigned char*) port->variable->buffer, port->variable->size, 0, &dataLen);
@@ -68,10 +72,12 @@
 
 <#macro SEND statement service>
             int dataLen;
+            uem_result result;
             int dataNum = 0;
             int channelSize = 0;
             COMM_PORT *port = get_team_port(comm_port_of_${statement.statementId}, comm_port_of_${statement.statementId}_size, *((int*)variable_${statement.comm.team.id}.buffer));
-            UFPort_GetNumOfAvailableData(port->port->port_id, 0, &dataNum);
+            result = UFPort_GetNumOfAvailableData(port->port->port_id, 0, &dataNum);
+            ERRIFGOTO(result, _EXIT);
             channelSize = UFPort_GetChannelSize(port->port->port_id);
             if (channelSize - dataNum >= ${statement.comm.message.type.variableType.size})
             {

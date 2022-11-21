@@ -171,10 +171,11 @@ STATIC void multicast_port_receive() {
     int data_len;
     for (int i = 0 ; i<sizeof(multicast_port_list)/sizeof(MULTICAST_PORT) ; i++)
     {
-        UFMulticastPort_ReadFromBuffer(multicast_port_list[i].multicast_group_id, multicast_port_list[i].multicast_port_id, (unsigned char*) &multicast_port_list[i].buffer, multicast_port_list[i].size + sizeof(MULTICAST_PACKET_HEADER), &data_len);
+        UFMulticastPort_ReadFromBuffer(multicast_port_list[i].multicast_group_id, multicast_port_list[i].multicast_port_id, (unsigned char*) multicast_port_list[i].buffer, multicast_port_list[i].size + sizeof(MULTICAST_PACKET_HEADER), &data_len);
         if (data_len > 0) 
         {
-            if (multicast_port_list[i].before_time < multicast_port_list[i].packet->header->time) 
+            if (multicast_port_list[i].before_time < multicast_port_list[i].packet->header->time
+                 && multicast_port_list[i].packet->header->sender_robot_id != THIS_ROBOT_ID) 
             {
                 if (channel_port_write(multicast_port_list[i].channel_port_id, &multicast_port_list[i].packet->data, multicast_port_list[i].size, FALSE) > 0) 
                 {
@@ -191,10 +192,11 @@ STATIC void shared_data_port_receive() {
     int data_len;
     for (int i = 0 ; i<sizeof(shared_data_port_list)/sizeof(SHARED_DATA_PORT) ; i++)
     {
-        UFMulticastPort_ReadFromBuffer(shared_data_port_list[i].multicast_group_id, shared_data_port_list[i].multicast_port_id, (unsigned char*) &(shared_data_port_list[i].buffer), shared_data_port_list[i].size + sizeof(MULTICAST_PACKET_HEADER), &data_len);
+        UFMulticastPort_ReadFromBuffer(shared_data_port_list[i].multicast_group_id, shared_data_port_list[i].multicast_port_id, (unsigned char*) shared_data_port_list[i].buffer, shared_data_port_list[i].size + sizeof(MULTICAST_PACKET_HEADER), &data_len);
         if (data_len > 0) 
         {
-	         if (shared_data_port_list[i].before_time < shared_data_port_list[i].packet->header->time) 
+	         if (shared_data_port_list[i].before_time < shared_data_port_list[i].packet->header->time 
+                 && shared_data_port_list[i].packet->header->sender_robot_id != THIS_ROBOT_ID) 
 	         {
         		    shared_data_port_list[i].lib_set_func(shared_data_port_list[i].packet->data);
         		    shared_data_port_list[i].before_time = shared_data_port_list[i].packet->header->time;
@@ -211,7 +213,8 @@ STATIC void leader_port_receive() {
         UFMulticastPort_ReadFromBuffer(leader_port_list[i].robot_id_group_id, leader_port_list[i].robot_id_port_id, (unsigned char*) &(leader_port_list[i].robot_id_buffer), sizeof(LEADER_PACKET), &data_len);
         if (data_len > 0) 
         {
-	         if (leader_port_list[i].robot_id_before_time < leader_port_list[i].robot_id_buffer.header.time) 
+	         if (leader_port_list[i].robot_id_before_time < leader_port_list[i].robot_id_buffer.header.time
+                 && leader_port_list[i].robot_id_buffer.header.sender_robot_id != THIS_ROBOT_ID) 
              {
         		    leader_port_list[i].robot_id_set_func(leader_port_list[i].group_id, leader_port_list[i].robot_id_buffer.body);
         		    leader_port_list[i].robot_id_before_time = leader_port_list[i].robot_id_buffer.header.time;
@@ -220,7 +223,8 @@ STATIC void leader_port_receive() {
         UFMulticastPort_ReadFromBuffer(leader_port_list[i].heartbeat_group_id, leader_port_list[i].heartbeat_port_id, (unsigned char*) &(leader_port_list[i].heartbeat_buffer), sizeof(LEADER_PACKET), &data_len);
         if (data_len > 0) 
         {
-	         if (leader_port_list[i].heartbeat_before_time < leader_port_list[i].heartbeat_buffer.header.time) 
+	         if (leader_port_list[i].heartbeat_before_time < leader_port_list[i].heartbeat_buffer.header.time
+                 && leader_port_list[i].heartbeat_buffer.header.sender_robot_id != THIS_ROBOT_ID) 
              {
         		    leader_port_list[i].heartbeat_set_func(leader_port_list[i].group_id, leader_port_list[i].heartbeat_buffer.body);
         		    leader_port_list[i].heartbeat_before_time = leader_port_list[i].heartbeat_buffer.header.time;

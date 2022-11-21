@@ -65,7 +65,7 @@ STATIC CHANNEL_PORT channel_port_list[${channelPortMap?size}] = {
 <#if multicastPortMap?size gt 0>
 // MULTICAST PORT SECTION
 STATIC MULTICAST_PORT multicast_port_list[${multicastPortMap?size}] = {
-<#list multicastPortMap as multicastPort, channelPort>
+<#list multicastPortMap as channelPort, multicastPort>
     {"${multicastPort.name}", -1, -1, "${channelPort.name}", -1,  &${multicastPort.getVariableName()}, &packet_${multicastPort.getVariableName()}, ${multicastPort.variableType.getSize()}, -1},
 </#list>
 };
@@ -175,7 +175,7 @@ STATIC void multicast_port_send() {
         {
             int data_len;
         	UFTimer_GetCurrentTime(THIS_TASK_ID, &(multicast_port_list[i].packet->header->time));
-        	UFMulticastPort_WriteToBuffer(multicast_port_list[i].multicast_group_id, multicast_port_list[i].multicast_port_id, (unsigned char * ) &(multicast_port_list[i].buffer), multicast_port_list[i].size + sizeof(MULTICAST_PACKET_HEADER), &data_len);
+        	UFMulticastPort_WriteToBuffer(multicast_port_list[i].multicast_group_id, multicast_port_list[i].multicast_port_id, (unsigned char * ) multicast_port_list[i].buffer, multicast_port_list[i].size + sizeof(MULTICAST_PACKET_HEADER), &data_len);
         }
     }
 }
@@ -190,7 +190,7 @@ STATIC void shared_data_port_send() {
             int data_len;
             shared_data_port_list[i].lib_get_func(shared_data_port_list[i].packet->data);
             UFTimer_GetCurrentTime(THIS_TASK_ID, &(shared_data_port_list[i].packet->header->time));
-            UFMulticastPort_WriteToBuffer(shared_data_port_list[i].multicast_group_id, shared_data_port_list[i].multicast_port_id, (unsigned char * ) &(shared_data_port_list[i].buffer), shared_data_port_list[i].size + sizeof(MULTICAST_PACKET_HEADER), &data_len);
+            UFMulticastPort_WriteToBuffer(shared_data_port_list[i].multicast_group_id, shared_data_port_list[i].multicast_port_id, (unsigned char * ) shared_data_port_list[i].buffer, shared_data_port_list[i].size + sizeof(MULTICAST_PACKET_HEADER), &data_len);
         }
     }
 }
