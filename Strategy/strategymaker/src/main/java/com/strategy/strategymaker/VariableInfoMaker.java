@@ -255,6 +255,7 @@ public class VariableInfoMaker {
                 mainTransition.traverseTransition(new String(), robot.getTeam(), new ArrayList<>(),
                         null, maker, null);
                 robot.setVariableMap(maker.getFiguredVariables());
+                variableStore.putAll(maker.getFiguredVariables());
             }
             for (RobotImplWrapper robot : robotList) {
                 RobotVariableTypeListMaker maker =
@@ -263,6 +264,7 @@ public class VariableInfoMaker {
                 mainTransition.traverseTransition(new String(), robot.getTeam(), new ArrayList<>(),
                         null, maker, null);
                 robot.setVariableMap(maker.getFiguredVariables());
+                variableStore.putAll(maker.getFiguredVariables());
             }
             for (RobotImplWrapper robot : robotList) {
                 makePrimitiveVariableTypeList(robot);
