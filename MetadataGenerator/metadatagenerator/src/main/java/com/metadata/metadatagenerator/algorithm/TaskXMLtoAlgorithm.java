@@ -1,6 +1,6 @@
 package com.metadata.metadatagenerator.algorithm;
 
-import java.com.xmlparser.xml.handler.TaskXMLTaskGraphHandler;
+import com.xmlparser.xml.handler.TaskXMLTaskGraphHandler;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
