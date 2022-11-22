@@ -171,12 +171,13 @@ public class ArchitectureGenerator {
         return connection;
     }
 
-    private UEMSerialConnection makePortConnection(PortBasedAddress address, boolean isMaster) {
+    private UEMSerialConnection makePortConnection(UEMArchitectureDevice targetDevice,
+            PortBasedAddress address, boolean isMaster) {
         UEMSerialConnection connection = new UEMSerialConnection();
 
         connection.setName(isMaster);
         connection.setRole(isMaster);
-        if (address != null) {
+        if (address != null && !targetDevice.getDeviceName().equals("OpenCR")) {
             connection.setPortAddress((String) address.getAddress().get(PortBasedAddress.PORT));
         }
         return connection;
@@ -193,8 +194,8 @@ public class ArchitectureGenerator {
                         makeTCPConnection((IPBasedAddress) address, isServer_Master, index));
                 break;
             case USB:
-                targetDevice.addUSBConnection(
-                        makePortConnection((PortBasedAddress) address, isServer_Master));
+                targetDevice.addUSBConnection(makePortConnection(targetDevice,
+                        (PortBasedAddress) address, isServer_Master));
                 break;
         }
     }
