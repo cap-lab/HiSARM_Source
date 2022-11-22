@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.stream.Collectors;
+import com.dbmanager.datastructure.task.PortDirection;
+import com.dbmanager.datastructure.task.PortMap;
 import com.dbmanager.datastructure.variable.PrimitiveType;
 import com.metadata.algorithm.UEMAlgorithm;
 import com.metadata.algorithm.UEMChannel;
@@ -132,6 +134,23 @@ public class AlgorithmGenerator {
                 return taskGraphList;
             }
 
+            private void makeActionTaskPortMap(UEMActionTask actionTask) {
+                for (PortMap beforeMap : actionTask.getActionImpl().getTask().getPortMapSet()) {
+                    UEMPortMap afterMap = new UEMPortMap();
+                    afterMap.setTask(actionTask.getName());
+                    afterMap.setNotFlattenedTask(actionTask.getActionImpl().getTask().getTaskId());
+                    afterMap.setPort(beforeMap.getOutsidePort());
+                    afterMap.setChildTask(
+                            UEMTask.makeName(afterMap.getTask(), beforeMap.getInsideTask()));
+                    afterMap.setChildNotFlattenedTask(beforeMap.getInsideTask());
+                    afterMap.setChildTaskPort(beforeMap.getInsidePort());
+                    afterMap.setDirection(beforeMap.getDirection().equals(PortDirection.IN)
+                            ? PortDirectionType.INPUT
+                            : PortDirectionType.OUTPUT);
+                    actionTask.getPortMapList().add(afterMap);
+                }
+            }
+
             private List<UEMTaskGraph> exploreSubGraph(UEMActionTask actionTask,
                     Path taskServerPrefix) {
                 List<UEMTaskGraph> taskGraphList = recursiveExplore(actionTask, taskServerPrefix);
@@ -146,6 +165,8 @@ public class AlgorithmGenerator {
                     channelList.addAll(taskGraph.getChannelList());
                     libConnectionList.addAll(taskGraph.getLibraryConnectionList());
                 }
+                makeActionTaskPortMap(actionTask);
+                portMapList.addAll(actionTask.getPortMapList());
 
                 recursiveCommConvert(portMapList, channelList, libConnectionList);
 
