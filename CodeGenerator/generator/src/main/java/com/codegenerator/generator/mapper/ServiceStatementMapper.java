@@ -327,14 +327,18 @@ public class ServiceStatementMapper {
                         variableList.add(variable);
                     }
                 } else {
-                    variable = new CodeVariableWrapper();
-                    variable.setId(CodeVariableWrapper.makeVariableId(service.getServiceId(),
-                            statementId, conditionId));
-                    variable.setName(variable.getId());
-                    variable.setDefaultValue(identifier.getId());
-                    variable.setRealVariable(true);
-                    variable.getChildVariableList().add(variable);
-                    variableList.add(variable);
+                    variable = findVariable(CodeVariableWrapper
+                            .makeVariableId(service.getServiceId(), statementId, conditionId));
+                    if (variable == null) {
+                        variable = new CodeVariableWrapper();
+                        variable.setId(CodeVariableWrapper.makeVariableId(service.getServiceId(),
+                                statementId, conditionId));
+                        variable.setName(variable.getId());
+                        variable.setDefaultValue(identifier.getId());
+                        variable.setRealVariable(true);
+                        variable.getChildVariableList().add(variable);
+                        variableList.add(variable);
+                    }
                 }
                 return variable;
             }
@@ -345,7 +349,7 @@ public class ServiceStatementMapper {
                     CodeVariableWrapper left =
                             makeVariable(condition.getLeftOperand(), conditionId);
                     CodeVariableWrapper right =
-                            makeVariable(condition.getLeftOperand(), conditionId);
+                            makeVariable(condition.getRightOperand(), conditionId);
                     if (left.getType() == null) {
                         left.setType(right.getType());
                     } else if (right.getType() == null) {
@@ -369,9 +373,16 @@ public class ServiceStatementMapper {
                 CodeConditionalWrapper codeCondition = new CodeConditionalWrapper();
                 ConditionVariableListMaker maker =
                         new ConditionVariableListMaker(codeCondition, statementId);
-                cond.exploreCondition(maker);
+                if (cond.getCondition() != null) {
+                    cond.exploreCondition(maker);
+                }
+                if (cond.getPeriod() != null) {
+                    codeCondition.setPeriod(cond.getPeriod());
+                }
                 CodeStatementWrapper codeStatement = new CodeStatementWrapper();
                 codeStatement.setStatement(statement);
+                codeStatement.setStatementId(
+                        CodeStatementWrapper.makeStatementId(service.getServiceId(), statementId));
                 codeStatement.setVariableList(maker.conditionVariableList);
                 codeStatement.setCondition(codeCondition);
                 statementList.add(codeStatement);
