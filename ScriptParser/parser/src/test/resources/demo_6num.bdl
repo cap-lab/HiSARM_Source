@@ -74,8 +74,8 @@ Search(target) {
 } repeat(200 MSEC)
 
 MoveTo(area) {
-    arrive = moveTo(area)
-    if (arrive == "TRUE") {
+    arrived = moveTo(area)
+    if (arrived == "TRUE") {
         throw ARRIVED
     }
 } repeat(200 MSEC)
