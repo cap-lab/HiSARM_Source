@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import com.dbmanager.commonlibraries.DBService;
 import com.dbmanager.datastructure.variable.PrimitiveType;
 import com.dbmanager.datastructure.variable.Variable;
@@ -34,13 +33,15 @@ import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 import com.strategy.strategydatastructure.wrapper.VariableTypeWrapper;
 
 public class VariableInfoMaker {
-    private static Map<KeyValue<ServiceWrapper, String>, VariableTypeWrapper> variableStore = new HashMap<>();
+    private static Map<KeyValue<ServiceWrapper, String>, VariableTypeWrapper> variableStore =
+            new HashMap<>();
 
     private static class RobotVariableTypeListMaker implements ModeTransitionVisitor {
         private RobotImplWrapper robot;
         private AdditionalInfo additionalInfo;
         private KeyValueList<ServiceWrapper, String> notFiguredVariables = new KeyValueList<>();
-        private Map<KeyValue<ServiceWrapper, String>, VariableTypeWrapper> figuredVariables = new HashMap<>();
+        private Map<KeyValue<ServiceWrapper, String>, VariableTypeWrapper> figuredVariables =
+                new HashMap<>();
 
         private class StatementVariableTypeListMaker implements StatementVisitor {
             private ServiceWrapper service;
@@ -69,7 +70,8 @@ public class VariableInfoMaker {
                                 if (inputSet.getIdentifierSet().size() <= 1) {
                                     variableType = action.getVariableInputList().get(i);
                                 } else {
-                                    VariableTypeWrapper complexVariableType = action.getVariableInputList().get(i);
+                                    VariableTypeWrapper complexVariableType =
+                                            action.getVariableInputList().get(i);
                                     variableType = new VariableTypeWrapper();
                                     variableType.setVariableType(
                                             DBService.getVariable(complexVariableType
@@ -77,6 +79,8 @@ public class VariableInfoMaker {
                                 }
                                 notFiguredVariables.remove(service, variable.getName());
                                 figuredVariables.put(makeKey(service, variable.getName()),
+                                        variableType);
+                                variableStore.put(makeKey(service, variable.getName()),
                                         variableType);
                             }
                         }
@@ -94,10 +98,33 @@ public class VariableInfoMaker {
                         variableType = action.getVariableOutputList().get(i);
                         notFiguredVariables.remove(service, variable.getName());
                         figuredVariables.put(makeKey(service, variable), variableType);
+                        variableStore.put(makeKey(service, variable), variableType);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
+
+            private VariableTypeWrapper findVariableFromFigured(ServiceWrapper service,
+                    String variableName) {
+                for (KeyValue<ServiceWrapper, String> key : figuredVariables.keySet()) {
+                    if (service.getService().getName().equals(key.key.getService().getName())
+                            && variableName.equals(key.value)) {
+                        return figuredVariables.get(key);
+                    }
+                }
+                return null;
+            }
+
+            private VariableTypeWrapper findVariableFromStore(ServiceWrapper service,
+                    String variableName) {
+                for (KeyValue<ServiceWrapper, String> key : variableStore.keySet()) {
+                    if (service.getService().getName().equals(key.key.getService().getName())
+                            && variableName.equals(key.value)) {
+                        return variableStore.get(key);
+                    }
+                }
+                return null;
             }
 
             private void getVariablesOfOtherStatement(StatementWrapper statement) {
@@ -110,13 +137,26 @@ public class VariableInfoMaker {
                                 variableStore.get(makeKey(service, variable)));
                         continue;
                     }
-                    if (variableStore.keySet().contains(
-                            makeKey(variable.getCreator().key, variable.getCreator().value))) {
-                        figuredVariables.put(makeKey(service, variable), variableStore.get(
-                                makeKey(variable.getCreator().key, variable.getCreator().value)));
-                        variableStore.put(makeKey(service, variable),
-                                figuredVariables.get(makeKey(service, variable)));
-                        continue;
+                    if (variable.getCreator() != null) {
+                        if (findVariableFromFigured(variable.getCreator().key,
+                                variable.getCreator().value.getName()) != null) {
+                            figuredVariables.put(makeKey(service, variable),
+                                    findVariableFromFigured(variable.getCreator().key,
+                                            variable.getCreator().value.getName()));
+                            variableStore.put(makeKey(service, variable),
+                                    figuredVariables.get(makeKey(service, variable)));
+                            continue;
+                        }
+                        if (findVariableFromStore(variable.getCreator().key,
+                                variable.getCreator().value.getName()) != null) {
+                            figuredVariables.put(makeKey(service, variable),
+                                    findVariableFromStore(variable.getCreator().key,
+                                            variable.getCreator().value.getName()));
+                            variableStore.put(makeKey(service, variable),
+                                    figuredVariables.get(makeKey(service, variable)));
+                            continue;
+                        }
+
                     }
                     notFiguredVariables.add(makeKey(service, variable));
                 }
@@ -142,8 +182,7 @@ public class VariableInfoMaker {
 
             @Override
             public void visitOtherStatement(StatementWrapper wrapper, Statement statement,
-                    int index) {
-            }
+                    int index) {}
         }
 
         public RobotVariableTypeListMaker(RobotImplWrapper robot, AdditionalInfo additionalInfo) {
@@ -166,7 +205,8 @@ public class VariableInfoMaker {
         @Override
         public void visitMode(ModeWrapper mode, String modeId, String groupId) {
             for (ParallelServiceWrapper service : mode.getServiceList()) {
-                StatementVariableTypeListMaker visitor = new StatementVariableTypeListMaker(service.getService());
+                StatementVariableTypeListMaker visitor =
+                        new StatementVariableTypeListMaker(service.getService());
                 service.getService().traverseService(visitor);
                 referAdditionalInfo(service.getService());
             }
@@ -174,8 +214,7 @@ public class VariableInfoMaker {
 
         @Override
         public void visitTransition(TransitionWrapper transition, String transitionId,
-                String groupId) {
-        }
+                String groupId) {}
 
         public Map<KeyValue<ServiceWrapper, String>, VariableTypeWrapper> getFiguredVariables() {
             return figuredVariables;
@@ -210,14 +249,16 @@ public class VariableInfoMaker {
             List<RobotImplWrapper> robotList) {
         try {
             for (RobotImplWrapper robot : robotList) {
-                RobotVariableTypeListMaker maker = new RobotVariableTypeListMaker(robot, additionalInfo);
+                RobotVariableTypeListMaker maker =
+                        new RobotVariableTypeListMaker(robot, additionalInfo);
                 TransitionWrapper mainTransition = mission.getTransition(robot.getTeam());
                 mainTransition.traverseTransition(new String(), robot.getTeam(), new ArrayList<>(),
                         null, maker, null);
                 robot.setVariableMap(maker.getFiguredVariables());
             }
             for (RobotImplWrapper robot : robotList) {
-                RobotVariableTypeListMaker maker = new RobotVariableTypeListMaker(robot, additionalInfo);
+                RobotVariableTypeListMaker maker =
+                        new RobotVariableTypeListMaker(robot, additionalInfo);
                 TransitionWrapper mainTransition = mission.getTransition(robot.getTeam());
                 mainTransition.traverseTransition(new String(), robot.getTeam(), new ArrayList<>(),
                         null, maker, null);
