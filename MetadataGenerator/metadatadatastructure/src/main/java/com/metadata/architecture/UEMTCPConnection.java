@@ -20,8 +20,12 @@ public class UEMTCPConnection extends TCPConnectionType {
         return NetworkType.ETHERNET_WI_FI.toString() + "_" + convertRole(isServer).value();
     }
 
-    public void setName(boolean isServer) {
-        super.setName(makeName(isServer));
+    public void setName(boolean isServer, int index) {
+        if (isServer == true) {
+            super.setName(makeName(isServer));
+        } else {
+            super.setName(makeName(isServer) + String.valueOf(index));
+        }
     }
 
     private static ServerClientRoleType convertRole(boolean isServer) {

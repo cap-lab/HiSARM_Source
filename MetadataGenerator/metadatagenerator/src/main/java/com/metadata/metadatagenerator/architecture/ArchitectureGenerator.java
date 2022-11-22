@@ -159,12 +159,13 @@ public class ArchitectureGenerator {
         }
     }
 
-    private UEMTCPConnection makeTCPConnection(IPBasedAddress address, boolean isServer) {
+    private UEMTCPConnection makeTCPConnection(IPBasedAddress address, boolean isServer,
+            int index) {
         UEMTCPConnection connection = new UEMTCPConnection();
 
         connection.setIp((String) address.getAddress().get(IPBasedAddress.IP));
         connection.setPort((Integer) address.getAddress().get(IPBasedAddress.PORT));
-        connection.setName(isServer);
+        connection.setName(isServer, index);
         connection.setRole(isServer);
 
         return connection;
@@ -182,14 +183,14 @@ public class ArchitectureGenerator {
     }
 
     private void setDeviceConnection(ConnectionType type, UEMArchitectureDevice targetDevice,
-            CommunicationAddress address, boolean isServer_Master) {
+            CommunicationAddress address, boolean isServer_Master, int index) {
         if (targetDevice.hasConnection(type, isServer_Master)) {
             return;
         }
         switch (type) {
             case ETHERNET_WIFI:
                 targetDevice.addTCPConnection(
-                        makeTCPConnection((IPBasedAddress) address, isServer_Master));
+                        makeTCPConnection((IPBasedAddress) address, isServer_Master, index));
                 break;
             case USB:
                 targetDevice.addUSBConnection(
@@ -220,10 +221,11 @@ public class ArchitectureGenerator {
                     .getCommunicationInfoMap().get(ConnectionType.USB);
             for (String device : robotImpl.getRobotType().getRobotType().getArchitectureList()) {
                 if (device.equals(primaryDevice)) {
-                    setDeviceConnection(ConnectionType.USB, robot.getDevice(device), address, true);
+                    setDeviceConnection(ConnectionType.USB, robot.getDevice(device), address, true,
+                            0);
                 } else {
-                    setDeviceConnection(ConnectionType.USB, robot.getDevice(device), address,
-                            false);
+                    setDeviceConnection(ConnectionType.USB, robot.getDevice(device), address, false,
+                            0);
                     setConnection(robot.getDevice(primaryDevice).getName(),
                             UEMSerialConnection.makeName(true), robot.getDevice(device).getName(),
                             UEMSerialConnection.makeName(false));
@@ -246,6 +248,7 @@ public class ArchitectureGenerator {
     private void makeChannelConnection(UEMAlgorithm algorithm, List<UEMRobot> robotList)
             throws Exception {
         List<String> visitedList = new ArrayList<>();
+        int index = 0;
         for (UEMRobotTask src : algorithm.getRobotConnectionMap().keySet()) {
             UEMArchitectureDevice srcDevice =
                     findRobotPrimaryArchitecture(robotList, src.getName());
@@ -259,10 +262,12 @@ public class ArchitectureGenerator {
                 }
                 UEMArchitectureDevice dstDevice =
                         findRobotPrimaryArchitecture(robotList, dst.getName());
-                setDeviceConnection(ConnectionType.ETHERNET_WIFI, srcDevice, address, true);
-                setDeviceConnection(ConnectionType.ETHERNET_WIFI, dstDevice, address, false);
+                setDeviceConnection(ConnectionType.ETHERNET_WIFI, srcDevice, address, true, index);
+                setDeviceConnection(ConnectionType.ETHERNET_WIFI, dstDevice, address, false, index);
                 setConnection(srcDevice.getName(), UEMTCPConnection.makeName(true),
-                        dstDevice.getName(), UEMTCPConnection.makeName(false));
+                        dstDevice.getName(),
+                        UEMTCPConnection.makeName(false) + String.valueOf(index));
+                index++;
             }
         }
     }
