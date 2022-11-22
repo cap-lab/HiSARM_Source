@@ -79,7 +79,7 @@ STATIC MULTICAST_PACKET packet_${heartbeatPort.getVariableName()} = {&${heartbea
 <#if channelPortMap?size gt 0>
 // CHANNEL_PORT_SECTION
 STATIC CHANNEL_PORT channel_port_list[${channelPortMap?size}] = {
-<#list channelPortMap as outPort, inPort>
+<#list channelPortMap as inPort, outPort>
     {"${inPort.name}", -1, "${outPort.name}", -1, ${outPort.getVariableName()}, ${outPort.sampleSize}, FALSE}, 
 </#list>
 };
@@ -179,9 +179,9 @@ STATIC void channel_port_send() {
     	{
     	    channel_port_list[i].refreshed = TRUE;
     	}
-    	if (channel_port_list[i].refreshed = TRUE) 
+    	if (channel_port_list[i].refreshed == TRUE) 
     	{
-    	    if (channelPortWrite(channel_port_list[i].out_port_id, channel_port_list[i].buffer, channel_port_list[i].size, FALSE) > 0) 
+    	    if (channel_port_write(channel_port_list[i].out_port_id, channel_port_list[i].buffer, channel_port_list[i].size, FALSE) > 0) 
     	    {
     	        channel_port_list[i].refreshed = FALSE;
     	    }

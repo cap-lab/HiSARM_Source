@@ -174,7 +174,7 @@ STATIC void channel_port_receive() {
     int data_len;
     for (int i = 0 ; i<sizeof(channel_port_list)/sizeof(CHANNEL_PORT) ; i++)
     {
-    	if (channelPortRead(channel_port_list[i].in_port_id, channel_port_list[i].buffer, channel_port_list[i].size, FALSE) > 0) 
+    	if (channel_port_read(channel_port_list[i].in_port_id, channel_port_list[i].buffer, channel_port_list[i].size, FALSE) > 0) 
     	{
     	    channel_port_list[i].refreshed = TRUE;
     	}
@@ -239,7 +239,7 @@ STATIC void leader_port_receive() {
 	         if (leader_port_list[i].robot_id_before_time < leader_port_list[i].robot_id_packet->header->time
                  && leader_port_list[i].robot_id_packet->header->sender_robot_id != THIS_ROBOT_ID) 
              {
-        		    leader_port_list[i].robot_id_set_func(leader_port_list[i].group_id, leader_port_list[i].robot_id_packet->data);
+        		    leader_port_list[i].robot_id_set_func(leader_port_list[i].group_id, *((int*)leader_port_list[i].robot_id_packet->data));
         		    leader_port_list[i].robot_id_before_time = leader_port_list[i].robot_id_packet->header->time;
              }
         }
@@ -249,7 +249,7 @@ STATIC void leader_port_receive() {
 	         if (leader_port_list[i].heartbeat_before_time < leader_port_list[i].heartbeat_packet->header->time
                  && leader_port_list[i].heartbeat_packet->header->sender_robot_id != THIS_ROBOT_ID) 
              {
-        		    leader_port_list[i].heartbeat_set_func(leader_port_list[i].group_id, leader_port_list[i].heartbeat_packet->data);
+        		    leader_port_list[i].heartbeat_set_func(leader_port_list[i].group_id, *((int*)leader_port_list[i].heartbeat_packet->data));
         		    leader_port_list[i].heartbeat_before_time = leader_port_list[i].heartbeat_packet->header->time;
              }
         }
