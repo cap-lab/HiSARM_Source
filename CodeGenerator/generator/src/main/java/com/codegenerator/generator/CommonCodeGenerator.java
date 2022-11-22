@@ -53,6 +53,7 @@ public class CommonCodeGenerator {
         Map<String, Object> rootHash = new HashMap<>();
 
         rootHash.put(RobotSpecificCommonConstant.ROBOT_ID, robot.getRobotIndex());
+        rootHash.put(RobotSpecificCommonConstant.ROBOT_NAME, robot.getRobotName());
         rootHash.put(RobotSpecificCommonConstant.CONTROL_TASK_ID,
                 robot.getRobotTask().getControlTask().getId().intValue());
 

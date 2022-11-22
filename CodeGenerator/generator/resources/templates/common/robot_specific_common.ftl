@@ -4,6 +4,7 @@
 #include "semo_common.h"
 
 #define THIS_ROBOT_ID (${robotId})
+#define THIS_ROBOT_NAME "${robotName}"
 extern semo_int32 CONTROL_TASK_ID;
 
 #endif
