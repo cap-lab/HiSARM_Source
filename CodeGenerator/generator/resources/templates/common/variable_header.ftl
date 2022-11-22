@@ -5,8 +5,8 @@
 
 <#list variableTypeList as variableType>
     <#if variableType.variableType.type.getValue() == "enum">
-typedef enum _VARIABLE_${variableType.name} {
-        <#list variableType.candidiate.candidates as candidate>
+typedef enum _VARIABLE_${variableType.variableType.name} {
+        <#list variableType.variableType.candidate.candidates as candidate>
         ${candidate},
         </#list>
 };

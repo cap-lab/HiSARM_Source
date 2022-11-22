@@ -105,6 +105,9 @@ public class ServiceStatementMapper {
                 VariableTypeWrapper inputType = actionType.getVariableInputList().get(inputIndex);
                 VariableTypeWrapper elementType = robot.getRobot().getRobotTask().getRobot()
                         .getPrimitiveVariableMap().get(inputType.getVariableType().getType());
+                if (inputType.getVariableType().getType().equals(PrimitiveType.ENUM)) {
+                    elementType = inputType;
+                }
                 List<CodeVariableWrapper> childVariableList =
                         makeChildVariableList(input, statementId, inputIndex, elementType);
                 CodeVariableWrapper variable = null;
