@@ -15,7 +15,7 @@ TASK_CODE_BEGIN
 // CHANNEL VARIABLE DEFINE
 <#list channelPortMap as outPort, inPort>
     <#if outPort.variableType.variableType.type.getValue() == "enum">
-STATIC VARIABLE_${outPort.variableType.variableType.name} ${outPort.getVariableName()}[${outPort.variableType.variableType.count}];
+STATIC VARIABLE_TYPE_${outPort.variableType.variableType.name} ${outPort.getVariableName()}[${outPort.variableType.variableType.count}];
     <#else>
 STATIC ${outPort.variableType.variableType.type.getValue()} ${outPort.getVariableName()}[${outPort.variableType.variableType.count}];
     </#if>
@@ -29,7 +29,7 @@ STATIC ${outPort.variableType.variableType.type.getValue()} ${outPort.getVariabl
 STATIC struct _${multicastPort.getVariableName()} {
     MULTICAST_PACKET_HEADER header;
     <#if multicastPort.variableType.variableType.type.getValue() == "enum">
-    VARIABLE_${multicastPort.variableType.variableType.name} body[${multicastPort.variableType.variableType.count}];
+    VARIABLE_TYPE_${multicastPort.variableType.variableType.name} body[${multicastPort.variableType.variableType.count}];
     <#else>
     ${multicastPort.variableType.variableType.type.getValue()} body[${multicastPort.variableType.variableType.count}];
     </#if>
@@ -46,7 +46,7 @@ STATIC MULTICAST_PACKET packet_${multicastPort.getVariableName()} = {&${multicas
 STATIC struct _${libPort.library.name} {
     MULTICAST_PACKET_HEADER header;
     <#if libPort.library.variableType.variableType.type.getValue() == "enum">
-    VARIABLE_${libPort.variableType.variableType.name} body[${libPort.variableType.variableType.count}];
+    VARIABLE_TYPE_${libPort.variableType.variableType.name} body[${libPort.variableType.variableType.count}];
     <#else>
     ${libPort.variableType.variableType.type.getValue()} body[${libPort.variableType.variableType.count}];
     </#if>

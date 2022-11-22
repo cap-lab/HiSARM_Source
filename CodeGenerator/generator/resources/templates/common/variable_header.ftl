@@ -5,11 +5,11 @@
 
 <#list variableTypeList as variableType>
     <#if variableType.variableType.type.getValue() == "enum">
-typedef enum _VARIABLE_${variableType.variableType.name} {
+typedef enum _VARIABLE_TYPE_${variableType.variableType.name} {
         <#list variableType.variableType.candidate.candidates as candidate>
-        ${candidate},
+        SEMO_ENUM_${candidate},
         </#list>
-};
+} VARIABLE_TYPE_${variableType.variableType.name};
     </#if>
 </#list>
 
