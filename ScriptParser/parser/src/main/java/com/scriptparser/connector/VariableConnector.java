@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import com.scriptparser.parserdatastructure.entity.common.Condition;
 import com.scriptparser.parserdatastructure.entity.common.Identifier;
 import com.scriptparser.parserdatastructure.entity.common.IdentifierSet;
@@ -14,7 +13,6 @@ import com.scriptparser.parserdatastructure.entity.statement.ActionStatement;
 import com.scriptparser.parserdatastructure.entity.statement.CommunicationalStatement;
 import com.scriptparser.parserdatastructure.entity.statement.ConditionalStatement;
 import com.scriptparser.parserdatastructure.enumeration.IdentifierType;
-import com.scriptparser.parserdatastructure.enumeration.StatementType;
 import com.scriptparser.parserdatastructure.util.KeyValue;
 import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
 import com.scriptparser.parserdatastructure.wrapper.ServiceWrapper;
@@ -22,8 +20,10 @@ import com.scriptparser.parserdatastructure.wrapper.StatementWrapper;
 import com.scriptparser.parserdatastructure.wrapper.VariableWrapper;
 
 public class VariableConnector {
-    private static Map<String, VariableWrapper> publishedVariable = new HashMap<>();
-    private static Map<String, VariableWrapper> sendedVariable = new HashMap<>();
+    private static Map<ServiceWrapper, List<VariableWrapper>> sendedVariable = new HashMap<>();
+    private static Map<ServiceWrapper, List<VariableWrapper>> receivedVariable = new HashMap<>();
+    private static Map<VariableWrapper, VariableWrapper> receivedVariableOutputMap =
+            new HashMap<>();
 
     public static void connectVariables(MissionWrapper mission) {
         for (ServiceWrapper service : mission.getServiceList()) {
@@ -32,6 +32,7 @@ public class VariableConnector {
             Set<VariableWrapper> figuredVariables = new HashSet<>();
             traverseStatement(service, firstStatement, figuredVariables, visitedStatements);
         }
+        findSendReceiveMap(mission);
     }
 
     private static List<StatementWrapper> traverseStatement(ServiceWrapper service,
@@ -113,11 +114,10 @@ public class VariableConnector {
             }
         }
         statement.getVariableList().add(variable);
-        if (cStatement.getStatementType().equals(StatementType.SEND)) {
-            sendedVariable.put(cStatement.getCounterTeam(), variable);
-        } else {
-            publishedVariable.put(cStatement.getCounterTeam(), variable);
+        if (!sendedVariable.containsKey(service)) {
+            sendedVariable.put(service, new ArrayList<>());
         }
+        sendedVariable.get(service).add(variable);
     }
 
     private static void extractVariableFromConditionalStatement(ServiceWrapper service,
@@ -167,7 +167,30 @@ public class VariableConnector {
         message.setName(cStatement.getMessage().getId());
         figuredVariables.add(message);
         statement.getVariableList().add(message);
-        variable.setCreator(new KeyValue<ServiceWrapper, VariableWrapper>(service, message));
-        message.setCreator(new KeyValue<ServiceWrapper, VariableWrapper>(service, variable));
+        if (!receivedVariable.containsKey(service)) {
+            receivedVariable.put(service, new ArrayList<>());
+        }
+        receivedVariable.get(service).add(message);
+        receivedVariableOutputMap.put(message, variable);
+    }
+
+    private static void findSendReceiveMap(MissionWrapper mission) {
+        for (ServiceWrapper service : mission.getServiceList()) {
+            if (sendedVariable.containsKey(service)) {
+                for (VariableWrapper sended : sendedVariable.get(service)) {
+                    for (ServiceWrapper otherService : mission.getServiceList()) {
+                        if (receivedVariable.containsKey(otherService)) {
+                            for (VariableWrapper received : receivedVariable.get(otherService)) {
+                                if (sended.getName().equals(received.getName())) {
+                                    received.setCreator(sended.getCreator());
+                                    receivedVariableOutputMap.get(received)
+                                            .setCreator(sended.getCreator());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
