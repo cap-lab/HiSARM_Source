@@ -249,18 +249,18 @@ public class TaskXMLtoAlgorithm {
         return after;
     }
 
-    private UEMChannel convertChannel(TaskXMLChannelType before) {
+    private UEMChannel convertChannel(String prefix, TaskXMLChannelType before) {
         UEMChannel after = new UEMChannel();
         after.setInitialDataSize(before.getInitSize());
         after.setSampleSize(before.getSampleSize());
         after.setSampleType(before.getSampleType());
         after.setSize(before.getSize());
         ChannelPortType srcPort = new ChannelPortType();
-        srcPort.setTask(before.getSrcTask());
+        srcPort.setTask(prefix +"_" + before.getSrcTask());
         srcPort.setPort(before.getSrcPort());
         after.getSrc().add(srcPort);
         ChannelPortType dstPort = new ChannelPortType();
-        dstPort.setTask(before.getDstTask());
+        dstPort.setTask(prefix +"_" + before.getDstTask());
         dstPort.setPort(before.getDstPort());
         after.getDst().add(dstPort);
         return after;
@@ -417,7 +417,7 @@ public class TaskXMLtoAlgorithm {
             List<UEMChannel> channelList = new ArrayList<>();
             uemTaskGraph.setChannelList(channelList);
             for (TaskXMLChannelType channel : taskgraph.getChannelList().getChannel()) {
-                channelList.add(convertChannel(channel));
+                channelList.add(convertChannel(parentTasks, channel));
             }
             convertIndirectPortToDirect(taskList, channelList);
             List<UEMLibrary> libraryList = new ArrayList<>();
