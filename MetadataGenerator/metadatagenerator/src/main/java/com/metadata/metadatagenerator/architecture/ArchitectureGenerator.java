@@ -24,8 +24,8 @@ import com.metadata.architecture.UEMTCPConnection;
 import com.metadata.architecture.UEMUDPConnection;
 import com.metadata.metadatagenerator.constant.MetadataConstant;
 import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
-import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 import com.strategy.strategydatastructure.additionalinfo.AdditionalInfo;
+import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 import hopes.cic.exception.CICXMLException;
 import hopes.cic.xml.ArchitectureElementCategoryType;
 import hopes.cic.xml.ModuleListType;
@@ -190,9 +190,11 @@ public class ArchitectureGenerator {
             case ETHERNET_WIFI:
                 targetDevice.addTCPConnection(
                         makeTCPConnection((IPBasedAddress) address, isServer_Master));
+                break;
             case USB:
                 targetDevice.addUSBConnection(
                         makePortConnection((PortBasedAddress) address, isServer_Master));
+                break;
         }
     }
 
@@ -243,6 +245,7 @@ public class ArchitectureGenerator {
 
     private void makeChannelConnection(UEMAlgorithm algorithm, List<UEMRobot> robotList)
             throws Exception {
+        List<String> visitedList = new ArrayList<>();
         for (UEMRobotTask src : algorithm.getRobotConnectionMap().keySet()) {
             UEMArchitectureDevice srcDevice =
                     findRobotPrimaryArchitecture(robotList, src.getName());
@@ -250,10 +253,15 @@ public class ArchitectureGenerator {
                     .getCommunicationInfoMap().get(ConnectionType.ETHERNET_WIFI);
             setDeviceConnection(ConnectionType.ETHERNET_WIFI, srcDevice, address, true);
             for (UEMRobotTask dst : algorithm.getRobotConnectionMap().get(src)) {
+                if (visitedList.contains(dst.getName() + src.getName())) {
+                    continue;
+                } else {
+                    visitedList.add(src.getName() + dst.getName());
+                }
                 UEMArchitectureDevice dstDevice =
                         findRobotPrimaryArchitecture(robotList, dst.getName());
                 setDeviceConnection(ConnectionType.ETHERNET_WIFI, dstDevice, address, false);
-                setConnection(srcDevice.getDeviceName(), UEMTCPConnection.makeName(true),
+                setConnection(srcDevice.getName(), UEMTCPConnection.makeName(true),
                         dstDevice.getName(), UEMTCPConnection.makeName(false));
             }
         }

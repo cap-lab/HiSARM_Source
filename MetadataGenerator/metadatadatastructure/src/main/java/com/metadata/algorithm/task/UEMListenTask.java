@@ -36,7 +36,8 @@ public class UEMListenTask extends UEMCommTask {
             UEMCommPort inPort = new UEMCommPort();
             inPort.makePortInfo(portName, PortDirectionType.INPUT, portSize);
             inPort.setExport(true);
-            inPort.setCounterTeam(statement.getCounterTeam());
+            inPort.setCounterTeam(counterTeamName);
+            inPort.setCounterTeamVariable(statement.getCounterTeam());
             inPort.setMessage(statement.getMessage().getId());
             inPort.setVariableType(variable);
             getPort().add(inPort);
@@ -45,7 +46,7 @@ public class UEMListenTask extends UEMCommTask {
             UEMCommPort outPort = new UEMCommPort();
             outPort.makePortInfo(outPortName, PortDirectionType.OUTPUT, portSize);
             outPort.setExport(false);
-            outPort.setCounterTeam(statement.getCounterTeam());
+            outPort.setCounterTeam(counterTeamName);
             outPort.setMessage(statement.getMessage().getId());
             outPort.setVariableType(variable);
             outPort.setCounterTeamVariable(statement.getCounterTeam());

@@ -82,8 +82,9 @@ public class AlgorithmGenerator {
                 algorithm.addTask(robotTask);
                 algorithm.getRobotTaskList().add(robotTask);
             }
-
             makeRobotInterGraph();
+            recursiveCommConvert(algorithm.getUEMPortMapList(), algorithm.getUEMChannelList(),
+                    algorithm.getUEMLibraryConnection());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -167,8 +168,6 @@ public class AlgorithmGenerator {
                 }
                 makeActionTaskPortMap(actionTask);
                 portMapList.addAll(actionTask.getPortMapList());
-
-                recursiveCommConvert(portMapList, channelList, libConnectionList);
 
                 return taskGraphList;
             }
@@ -335,7 +334,8 @@ public class AlgorithmGenerator {
                         if (counterRobotTask.getRobot().getTeam().equals(port.getCounterTeam())) {
                             for (TaskPortType cp : counterRobotTask.getPort()) {
                                 UEMCommPort counterPort = (UEMCommPort) cp;
-                                if (counterPort.getCounterTeam().equals(senderTeam)
+                                if (counterPort.getDirection().equals(PortDirectionType.INPUT)
+                                        && counterPort.getCounterTeam().equals(senderTeam)
                                         && counterPort.getMessage().equals(port.getMessage())) {
                                     UEMChannel channel = UEMChannel.makeChannel(robotTask, port,
                                             counterRobotTask, counterPort);

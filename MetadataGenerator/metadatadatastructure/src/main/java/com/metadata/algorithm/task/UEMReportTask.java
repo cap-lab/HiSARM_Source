@@ -37,7 +37,8 @@ public class UEMReportTask extends UEMCommTask {
             UEMCommPort inPort = new UEMCommPort();
             inPort.makePortInfo(inPortName, PortDirectionType.INPUT, portSize);
             inPort.setExport(false);
-            inPort.setCounterTeam(statement.getCounterTeam());
+            inPort.setCounterTeam(counterTeamName);
+            inPort.setCounterTeamVariable(statement.getCounterTeam());
             inPort.setMessage(statement.getMessage().getId());
             inPort.setVariableType(variable);
             inPort.setCounterTeamVariable(statement.getCounterTeam());
@@ -46,7 +47,8 @@ public class UEMReportTask extends UEMCommTask {
             UEMCommPort outPort = new UEMCommPort();
             outPort.makePortInfo(portName, PortDirectionType.OUTPUT, portSize);
             outPort.setExport(true);
-            outPort.setCounterTeam(statement.getCounterTeam());
+            outPort.setCounterTeam(counterTeamName);
+            outPort.setCounterTeamVariable(statement.getCounterTeam());
             outPort.setMessage(statement.getMessage().getId());
             outPort.setVariableType(variable);
             getPort().add(outPort);

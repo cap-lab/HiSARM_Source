@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import com.metadata.algorithm.library.UEMLibrary;
+import com.metadata.algorithm.library.UEMLibraryConnection;
 import com.metadata.algorithm.task.UEMRobotTask;
 import com.metadata.algorithm.task.UEMTask;
 import com.metadata.constant.AlgorithmConstant;
@@ -109,5 +111,20 @@ public class UEMAlgorithm {
 
     public void addAllPortMaps(List<UEMPortMap> portMapList) {
         portMapList.forEach(p -> addPortMap(p));
+    }
+
+    public List<UEMPortMap> getUEMPortMapList() {
+        return algorithm.getPortMaps().getPortMap().stream().map(m -> (UEMPortMap) m)
+                .collect(Collectors.toList());
+    }
+
+    public List<UEMChannel> getUEMChannelList() {
+        return algorithm.getChannels().getChannel().stream().map(c -> (UEMChannel) c)
+                .collect(Collectors.toList());
+    }
+
+    public List<UEMLibraryConnection> getUEMLibraryConnection() {
+        return algorithm.getLibraryConnections().getTaskLibraryConnection().stream()
+                .map(c -> (UEMLibraryConnection) c).collect(Collectors.toList());
     }
 }

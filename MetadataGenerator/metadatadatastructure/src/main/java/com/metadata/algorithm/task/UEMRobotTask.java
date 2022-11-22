@@ -10,7 +10,6 @@ import com.metadata.algorithm.library.UEMSharedData;
 import com.metadata.constant.AlgorithmConstant;
 import com.scriptparser.parserdatastructure.entity.statement.ActionStatement;
 import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
-import hopes.cic.xml.PortDirectionType;
 import hopes.cic.xml.RunConditionType;
 import hopes.cic.xml.TimeMetricType;
 import hopes.cic.xml.YesNoType;
@@ -119,13 +118,34 @@ public class UEMRobotTask extends UEMTask {
             UEMCommPort port = new UEMCommPort();
             port.setExport(false);
             port.setPortInfo(childPort);
+            port.setName(listenTask.getName() + "_" + childPort.getName());
+            port.setCounterTeam(childPort.getCounterTeam());
+            port.setCounterTeamVariable(childPort.getCounterTeamVariable());
+            port.setDirection(childPort.getDirection());
+            port.setMessage(childPort.getMessage());
+            port.setSampleSize(childPort.getSampleSize());
+            port.setSampleType(childPort.getSampleType());
+            port.setType(childPort.getType());
+            port.setVariableType(childPort.getVariableType());
             setPortMap(port, listenTask, childPort);
+            getPort().add(port);
         }
         for (UEMCommPort childPort : reportTask.getExportPortList()) {
             UEMCommPort port = new UEMCommPort();
             port.setExport(false);
             port.setPortInfo(childPort);
+            port.setName(reportTask.getName() + "_" + childPort.getName());
+            port.setCounterTeam(childPort.getCounterTeam());
+            port.setCounterTeamVariable(childPort.getCounterTeamVariable());
+            port.setDirection(childPort.getDirection());
+            port.setMessage(childPort.getMessage());
+            port.setSampleSize(childPort.getSampleSize());
+            port.setSampleType(childPort.getSampleType());
+            port.setType(childPort.getType());
+            port.setVariableType(childPort.getVariableType());
+
             setPortMap(port, reportTask, childPort);
+            getPort().add(port);
         }
     }
 
@@ -135,8 +155,7 @@ public class UEMRobotTask extends UEMTask {
         portMap.setChildTaskPort(childPort.getName());
         portMap.setTask(getName());
         portMap.setPort(port.getName());
-        portMap.setDirection(PortDirectionType.INPUT);
-        portMap.setPort(cflags);
+        portMap.setDirection(childPort.getDirection());
         getPortMapList().add(portMap);
     }
 
