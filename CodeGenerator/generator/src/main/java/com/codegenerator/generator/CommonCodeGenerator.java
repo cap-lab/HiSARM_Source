@@ -12,7 +12,10 @@ import com.codegenerator.constant.RobotSpecificCommonConstant;
 import com.codegenerator.constant.VariableConstant;
 import com.codegenerator.generator.constant.CodeGeneratorConstant;
 import com.codegenerator.generator.util.LocalFileCopier;
+import com.codegenerator.wrapper.CodeModeWrapper;
 import com.codegenerator.wrapper.CodeRobotWrapper;
+import com.codegenerator.wrapper.CodeServiceWrapper;
+import com.codegenerator.wrapper.CodeTransitionWrapper;
 import com.codegenerator.wrapper.CodeVariableWrapper;
 import com.metadata.UEMRobot;
 import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
@@ -61,13 +64,49 @@ public class CommonCodeGenerator {
 
     private List<CodeVariableWrapper> makeVariableList(CodeRobotWrapper robot) {
         List<CodeVariableWrapper> variableList = new ArrayList<>();
-        robot.getTransitionList().forEach(t -> variableList
-                .addAll(t.getVariableList().stream().collect(Collectors.toList())));
-        robot.getModeList().forEach(m -> variableList
-                .addAll(m.getVariableList().stream().collect(Collectors.toList())));
-        robot.getServiceList().forEach(s -> variableList
-                .addAll(s.getVariableList().stream().collect(Collectors.toList())));
-        return variableList;
+        for (CodeTransitionWrapper transition : robot.getTransitionList()) {
+            for (CodeVariableWrapper variable : transition.getVariableList()) {
+                boolean flag = true;
+                for (CodeVariableWrapper variable2 : variableList) {
+                    if (variable2.getId().equals(variable.getId())) {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag) {
+                    variableList.add(variable);
+                }
+            }
+        }
+        for (CodeModeWrapper mode : robot.getModeList()) {
+            for (CodeVariableWrapper variable : mode.getVariableList()) {
+                boolean flag = true;
+                for (CodeVariableWrapper variable2 : variableList) {
+                    if (variable2.getId().equals(variable.getId())) {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag) {
+                    variableList.add(variable);
+                }
+            }
+        }
+        for (CodeServiceWrapper service : robot.getServiceList()) {
+            for (CodeVariableWrapper variable : service.getVariableList()) {
+                boolean flag = true;
+                for (CodeVariableWrapper variable2 : variableList) {
+                    if (variable2.getId().equals(variable.getId())) {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag) {
+                    variableList.add(variable);
+                }
+            }
+        }
+        return new ArrayList<>(variableList);
     }
 
     private List<VariableTypeWrapper> makeVariableTypeList(List<CodeVariableWrapper> variableList) {
@@ -84,11 +123,11 @@ public class CommonCodeGenerator {
 
     private void generateVariableCode(Path targetDir, CodeRobotWrapper robot) {
         Map<String, Object> rootHash = new HashMap<>();
+        List<CodeVariableWrapper> variableList = makeVariableList(robot);
 
         rootHash.put(VariableConstant.ROBOT_ID, robot.getRobotName());
-        rootHash.put(VariableConstant.VARIABLE_LIST, makeVariableList(robot));
-        rootHash.put(VariableConstant.VARIABLE_TYPE_LIST,
-                makeVariableTypeList(makeVariableList(robot)));
+        rootHash.put(VariableConstant.VARIABLE_LIST, variableList);
+        rootHash.put(VariableConstant.VARIABLE_TYPE_LIST, makeVariableTypeList(variableList));
 
         FTLHandler.getInstance().generateCode(CodeGeneratorConstant.VARIABLE_HEADER_TEMPLATE,
                 Paths.get(targetDir.toString(),
