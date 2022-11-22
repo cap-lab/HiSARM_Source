@@ -1,6 +1,6 @@
 package com.xmlparser.xml.handler;
 
-import java.com.xmlparser.xml.TaskXMLTaskGraphTypeLoader;
+import com.xmlparser.xml.TaskXMLTaskGraphTypeLoader;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import com.xmlparser.TaskXMLTaskGraphType;

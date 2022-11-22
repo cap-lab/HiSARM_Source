@@ -1,8 +1,8 @@
 package com.xmlparser.xml;
 
 import static javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI;
-import java.com.xmlparser.exception.UEMXMLErrorCode;
-import java.com.xmlparser.exception.UEMXMLException;
+import com.xmlparser.exception.UEMXMLErrorCode;
+import com.xmlparser.exception.UEMXMLException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
