@@ -24,7 +24,6 @@ public class RobotImplMapper {
                     IPBasedAddress ipAddress = new IPBasedAddress();
                     ipAddress.setIp(addressDoc.getString("ip"));
                     ipAddress.setPort(addressDoc.getInteger("port"));
-                    ipAddress = addressDoc.get("address", IPBasedAddress.class);
                     communicationMap.put(type, ipAddress);
                     break;
                 case USB:
