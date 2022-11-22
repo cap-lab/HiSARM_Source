@@ -1,4 +1,4 @@
-package java.com.xmlparser.exception;
+package com.xmlparser.exception;
 
 public enum UEMXMLErrorCode {
 	XML_UNMARSHAL_ERROR, XML_MARSHAL_ERROR, FILE_OPEN_ERROR,

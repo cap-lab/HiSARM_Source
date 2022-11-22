@@ -1,4 +1,4 @@
-package java.com.xmlparser.exception;
+package com.xmlparser.exception;
 
 public class UEMXMLException extends Exception {
 	private static final long serialVersionUID = 1012231456101725103L;

@@ -1,4 +1,4 @@
-package java.com.xmlparser.xml;
+package com.xmlparser.xml;
 
 import javax.xml.bind.JAXBElement;
 import com.xmlparser.UEMControlFSMType;

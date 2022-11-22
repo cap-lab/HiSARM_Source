@@ -1,4 +1,4 @@
-package java.com.xmlparser.xml.handler;
+package com.xmlparser.xml.handler;
 
 import java.com.xmlparser.xml.TaskXMLTaskGraphTypeLoader;
 import java.io.ByteArrayInputStream;

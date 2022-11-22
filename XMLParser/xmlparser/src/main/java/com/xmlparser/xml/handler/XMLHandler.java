@@ -1,4 +1,4 @@
-package java.com.xmlparser.xml.handler;
+package com.xmlparser.xml.handler;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
