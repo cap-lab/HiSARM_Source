@@ -39,11 +39,11 @@ public class Variable {
         return count;
     }
 
-    public Candidate getCandidateValue() {
+    public Candidate getCandidate() {
         return candidate;
     }
 
-    public void setCandidateValue(Candidate candidateValue) {
-        this.candidate = candidateValue;
+    public void setCandidate(Candidate candidate) {
+        this.candidate = candidate;
     }
 }

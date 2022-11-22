@@ -36,7 +36,7 @@ public class VariableMapper {
         return candidate;
     }
 
-    private static Candidate makeCandidateValue(PrimitiveType type, Document document) {
+    private static Candidate makeCandidate(PrimitiveType type, Document document) {
         Candidate candidate = null;
         switch (type) {
             case INT16:
@@ -63,8 +63,8 @@ public class VariableMapper {
             variable.setType(PrimitiveType.fromString(document.getString("Type")));
             variable.setSize(document.getInteger("Size"));
             variable.setCount(document.getInteger("Count"));
-            variable.setCandidateValue(makeCandidateValue(variable.getType(),
-                    (Document) document.get("CandidateValue")));
+            variable.setCandidate(
+                    makeCandidate(variable.getType(), (Document) document.get("CandidateValue")));
         } catch (Exception e) {
             e.printStackTrace();
         }

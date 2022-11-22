@@ -10,11 +10,11 @@ public class EnumCandidate implements Candidate {
         candidates = new ArrayList<String>();
     }
 
-    public List<String> getCandidate() {
+    public List<String> getCandidates() {
         return candidates;
     }
 
-    public void setCandidate(List<String> candidiates) {
+    public void setCandidates(List<String> candidiates) {
         this.candidates = candidiates;
     }
 
