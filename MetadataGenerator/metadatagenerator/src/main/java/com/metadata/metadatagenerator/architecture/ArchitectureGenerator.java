@@ -251,7 +251,6 @@ public class ArchitectureGenerator {
                     findRobotPrimaryArchitecture(robotList, src.getName());
             IPBasedAddress address = (IPBasedAddress) src.getRobot().getRobot()
                     .getCommunicationInfoMap().get(ConnectionType.ETHERNET_WIFI);
-            setDeviceConnection(ConnectionType.ETHERNET_WIFI, srcDevice, address, true);
             for (UEMRobotTask dst : algorithm.getRobotConnectionMap().get(src)) {
                 if (visitedList.contains(dst.getName() + src.getName())) {
                     continue;
@@ -260,6 +259,7 @@ public class ArchitectureGenerator {
                 }
                 UEMArchitectureDevice dstDevice =
                         findRobotPrimaryArchitecture(robotList, dst.getName());
+                setDeviceConnection(ConnectionType.ETHERNET_WIFI, srcDevice, address, true);
                 setDeviceConnection(ConnectionType.ETHERNET_WIFI, dstDevice, address, false);
                 setConnection(srcDevice.getName(), UEMTCPConnection.makeName(true),
                         dstDevice.getName(), UEMTCPConnection.makeName(false));

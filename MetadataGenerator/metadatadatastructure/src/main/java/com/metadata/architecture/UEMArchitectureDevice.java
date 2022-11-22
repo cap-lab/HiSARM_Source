@@ -51,6 +51,7 @@ public class UEMArchitectureDevice extends ArchitectureDeviceType {
                         return true;
                     }
                 }
+                break;
             case USB:
                 for (SerialConnectionType connection : getConnections().getSerialConnection()) {
                     if (connection.getName()
@@ -58,6 +59,7 @@ public class UEMArchitectureDevice extends ArchitectureDeviceType {
                         return true;
                     }
                 }
+                break;
         }
         return false;
     }
