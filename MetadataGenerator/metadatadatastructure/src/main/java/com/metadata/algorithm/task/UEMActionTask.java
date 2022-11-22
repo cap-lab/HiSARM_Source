@@ -48,6 +48,7 @@ public class UEMActionTask extends UEMTask {
             setCflags(task.getCompileFlags());
             setLdflags(task.getLinkFlags());
             setHasSubGraph(convertYesNoString(task.isHasSubGraph()));
+            setSubGraphProperty(AlgorithmConstant.DATAFLOW);
             setIsHardwareDependent(YesNoType.NO);
             setTaskType(AlgorithmConstant.COMPUTATION_TASK);
             setLanguage(task.getLanguage());
