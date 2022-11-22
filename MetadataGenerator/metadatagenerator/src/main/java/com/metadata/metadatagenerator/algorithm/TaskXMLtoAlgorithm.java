@@ -234,8 +234,7 @@ public class TaskXMLtoAlgorithm {
     private UEMTask convertTask(String parentTasks, TaskXMLTaskType before) throws Exception {
         UEMTask after = new UEMTask(robot.getName());
         after.setName(parentTasks, before.getName());
-        after.setHasInternalStates(YesNoType.YES);
-        after.setHasSubGraph(before.getType().value());
+        after.setTaskType(before.getType().value());
         after.setParentTask(parentTasks);
         convertConfig(after, before);
         after.getPort()

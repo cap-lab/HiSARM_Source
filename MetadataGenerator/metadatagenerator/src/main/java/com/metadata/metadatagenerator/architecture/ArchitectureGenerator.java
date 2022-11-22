@@ -178,7 +178,6 @@ public class ArchitectureGenerator {
         if (address != null) {
             connection.setPortAddress((String) address.getAddress().get(PortBasedAddress.PORT));
         }
-
         return connection;
     }
 
@@ -223,7 +222,8 @@ public class ArchitectureGenerator {
                 } else {
                     setDeviceConnection(ConnectionType.USB, robot.getDevice(device), address,
                             false);
-                    setConnection(primaryDevice, UEMSerialConnection.makeName(true), device,
+                    setConnection(robot.getDevice(primaryDevice).getName(),
+                            UEMSerialConnection.makeName(true), robot.getDevice(device).getName(),
                             UEMSerialConnection.makeName(false));
                 }
             }

@@ -1,5 +1,6 @@
 package com.metadata.architecture;
 
+import java.math.BigInteger;
 import hopes.cic.xml.MasterSlaveRoleType;
 import hopes.cic.xml.NetworkType;
 import hopes.cic.xml.SerialConnectionType;
@@ -8,6 +9,7 @@ public class UEMSerialConnection extends SerialConnectionType {
     public UEMSerialConnection() {
         super();
         setNetwork(NetworkType.USB);
+        makeDefaultRXTXAddress();
     }
 
     public static String makeName(boolean isMaster) {
@@ -29,4 +31,10 @@ public class UEMSerialConnection extends SerialConnectionType {
     public void setRole(boolean isMaster) {
         setRole(convertRole(isMaster));
     }
+
+    private void makeDefaultRXTXAddress(){
+        setBoardRXPinNumber(BigInteger.ZERO);
+        setBoardTXPinNumber(BigInteger.ZERO);
+    }
+
 }

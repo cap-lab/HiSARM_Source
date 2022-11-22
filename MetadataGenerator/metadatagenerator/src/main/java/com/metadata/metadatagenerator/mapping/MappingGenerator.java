@@ -71,7 +71,7 @@ public class MappingGenerator {
         } else {
             for (UEMArchitectureDevice d : robot.getDeviceList()) {
                 HardwarePlatformType hwInfo = task.getHardwareDependency().getHardware().get(0);
-                if (hwInfo.getArchitecture().equals(d.getArchitecture())) {
+                if (hwInfo.getPlatform().equals(d.getPlatform())) {
                     device = d;
                     break;
                 }
