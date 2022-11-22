@@ -44,7 +44,7 @@ import com.xmlparser.ObjectFactory;
  */
 public abstract class ResourceLoader<S> {
 	public final static String SCHEMA_DIR = "/xsd/";
-	public final static String CIC_MODEL_PACKAGE = "uem.xml";
+	public final static String CIC_MODEL_PACKAGE = "com.xmlparser";
 	private final static String SCHEMA_PREFIX = "./";
 	private final static Logger logger = Logger.getLogger(ResourceLoader.class.getName());
 
