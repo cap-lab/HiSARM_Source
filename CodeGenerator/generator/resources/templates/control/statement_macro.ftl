@@ -123,4 +123,5 @@
             <#if statement.statement.statement.isBroadcast() == true>
             UFPort_WriteToQueue(throw_out_port_of_${statement.statementId}.port->port_id, (unsigned char*) &event, sizeof(semo_int32), 0, &dataLen);
             </#if>
+            <@TRANSITION statement "TRUE" service 0/>
 </#macro>
