@@ -54,6 +54,8 @@ public class CommonCodeGenerator {
 
         rootHash.put(RobotSpecificCommonConstant.ROBOT_ID, robot.getRobotIndex());
         rootHash.put(RobotSpecificCommonConstant.ROBOT_NAME, robot.getRobotName());
+        rootHash.put(RobotSpecificCommonConstant.ROBOT_TYPE,
+                robot.getRobotTask().getRobot().getRobotType().getRobotType().getRobotClass());
         rootHash.put(RobotSpecificCommonConstant.CONTROL_TASK_ID,
                 robot.getRobotTask().getControlTask().getId().intValue());
 
