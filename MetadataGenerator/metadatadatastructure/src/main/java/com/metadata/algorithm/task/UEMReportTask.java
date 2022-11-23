@@ -19,6 +19,7 @@ public class UEMReportTask extends UEMCommTask {
 
     public UEMReportTask(String robotId, String name) {
         super(robotId, name);
+        setMode(50);
     }
 
     public void addSend(StatementWrapper send, UEMRobotTask robot, ServiceWrapper service,

@@ -70,10 +70,10 @@ public class UEMControlTask extends UEMTask {
     private void setMode() {
         UEMModeTask mode = new UEMModeTask();
         mode.setName(getName());
-        mode.setDeadline(50);
-        mode.setDeadlineUnit(TimeMetricType.US.value());
-        mode.setPeriod(50);
-        mode.setPeriodUnit(TimeMetricType.US.value());
+        mode.setDeadline(20);
+        mode.setDeadlineUnit(TimeMetricType.MS.value());
+        mode.setPeriod(20);
+        mode.setPeriodUnit(TimeMetricType.MS.value());
         setMode(mode);
     }
 

@@ -19,6 +19,7 @@ public class UEMListenTask extends UEMCommTask {
 
     public UEMListenTask(String robotId, String name) {
         super(robotId, name);
+        setMode(20);
     }
 
     public void addReceive(StatementWrapper receive, UEMRobotTask robot, ServiceWrapper service,

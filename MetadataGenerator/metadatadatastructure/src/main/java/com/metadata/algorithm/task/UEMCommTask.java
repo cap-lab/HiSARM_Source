@@ -26,16 +26,15 @@ public class UEMCommTask extends UEMTask {
         super(robotId);
         setName(robotId, name);
         init(robotId);
-        setMode();
     }
 
-    private void setMode() {
+    protected void setMode(int time) {
         UEMModeTask mode = new UEMModeTask();
         mode.setName(getName());
-        mode.setDeadline(50);
-        mode.setDeadlineUnit(TimeMetricType.US.value());
-        mode.setPeriod(50);
-        mode.setPeriodUnit(TimeMetricType.US.value());
+        mode.setDeadline(time);
+        mode.setDeadlineUnit(TimeMetricType.MS.value());
+        mode.setPeriod(time);
+        mode.setPeriodUnit(TimeMetricType.MS.value());
         setMode(mode);
     }
 
