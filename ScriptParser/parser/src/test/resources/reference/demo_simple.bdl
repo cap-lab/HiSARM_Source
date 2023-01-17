@@ -1,0 +1,18 @@
+# 테스트 스크립트
+
+{
+    Guard: Burger burger
+}
+
+Main.Guard {
+    default: mode = GUARD
+}
+
+Mode.GUARD {
+    services:
+        Attack
+}
+
+Attack {
+    isFound = search("YELLOW")
+}

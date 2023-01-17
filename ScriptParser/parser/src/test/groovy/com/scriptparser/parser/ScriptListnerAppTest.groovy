@@ -16,9 +16,9 @@ class ScriptListnerAppTest extends spock.lang.Specification {
         then:
         mission != null 
         mission.getTeam("Master") != null
-        mission.getTeam("Master").getRobot("robot") != null
-        mission.getService("service") != null
-        mission.getMode("DEF") != null
+        mission.getTeam("Master").getRobot("fakebot") != null
+        mission.getService("service1") != null
+        mission.getMode("A") != null
         mission.getTransition("Master") != null
     }
 
@@ -37,10 +37,10 @@ class ScriptListnerAppTest extends spock.lang.Specification {
             script            || teamNum | serviceNum | modeNum | transitionNum
             "demo_3type.bdl"  || 3       | 10         | 7       | 3
             "demo_6num.bdl"   || 1       | 5          | 4       | 2
-            //"cooperation.bdl" || 3       | 16         | 9       | 3
-            //"indoor.bdl"      || 1       | 9          | 18      | 4
-            //"on_the_move.bdl" || 1       | 9          | 11      | 4
-            //"swarm.bdl"       || 1       | 11         | 9       | 5
-            //"single.bdl"      || 1       | 7          | 5       | 1
+            "reference/cooperation.bdl" || 3       | 15         | 9       | 3
+            "reference/indoor.bdl"      || 1       | 8          | 18      | 4
+            "reference/on_the_move.bdl" || 1       | 8          | 11      | 4
+            "reference/swarm.bdl"       || 1       | 10         | 9       | 5
+            "reference/single.bdl"      || 1       | 6          | 5       | 1
     }
 }

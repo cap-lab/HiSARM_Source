@@ -1,16 +1,40 @@
 {
-    Master: robot robot[1]
+    Master: FakeBot fakebot
+    Slave: FakeBot fakebot
 }
 
-service {
-    action()
-}
+service1 {
+  ret_val = group_action_argument2WithSharedSumWithReturn("3", "33")
+  send(Slave, ret_val)
+  throw EVENT1
+} repeat(10 SEC)
 
-Mode.DEF {
+service2(team) {
+    args = receive(team, ret_val)
+    action_simplest()
+    if(args == "36") {
+        throw EVENT2
+    }
+} repeat(10 SEC)
+
+Mode.A {
     services:
-        service
+        service1
+}
+Mode.B (team) {
+    services:
+        service2(team)
 }
 
 Main.Master{
-    default: mode = DEF
+    case(A):
+        catch(EVENT1): mode = B("Slave")
+        catch(EVENT2): mode = FINISH
+    default: mode = A
+}
+
+Main.Slave{
+    case(B):
+        catch(EVENT2): mode = FINISH
+    default: mode = B("Master")
 }

@@ -8,9 +8,10 @@ Initialize {
     throw INITIALIZED broadcast
 }
 
-# 이건 GUI가 생성한다고 생각하는 서비스이다. (이유: 이벤트가 시나리오마다 달라지기 때문에)
-DoCommand(cmd) {
-   if (cmd == "DIVIDE") {
+# 이건 GUI가 생성한다고 생각하는 서비스이다.
+ReceiveCommand {
+    cmd = group_get_cmd()
+    if (cmd == "DIVIDE") {
         throw DIVIDE broadcast
     } else if (cmd == "JOIN"){
         throw JOIN broadcast
@@ -21,12 +22,6 @@ DoCommand(cmd) {
     } else if (cmd == "RESUME") {
         throw RESUME broadcast
     }
-}
-
-# 이건 GUI가 생성한다고 생각하는 서비스이다. (이유: 항상 형태가 같고 항상 쓰임)
-ReceiveCommand {
-    cmd = group_get_cmd()
-    DoCommand(cmd)
 } repeat(500 MSEC)
 
 ReceiveStandByCommand {

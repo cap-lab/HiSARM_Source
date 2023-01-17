@@ -27,10 +27,12 @@ GroupTest(arg1, arg2) {
 
 TeamTestAndPublish(arg1, arg2, arg3) {
   ret_val = group_action_argument2WithSharedSumWithReturn(arg1, arg2)
-  action_argument1(ret_val)
-  publish(arg3, ret_val)
-  throw EVENT2 broadcast
-}
+  if (ret_val == "1") {
+    action_argument1(ret_val)
+    publish(arg3, ret_val)
+    throw EVENT2 broadcast
+  }
+} repeat(1 MINUTE)
 
 TeamTestAndSubscribe(arg1) {
   receivedVal = subscribe(arg1, ret_val)
@@ -45,7 +47,7 @@ Mode.SUBMODE(arg1, arg2) {
 
 Mode.MODE1 {
   group(group1, min = 1):
-    ModeTransition.SUBTRANSITION("1", "20")
+    ModeTransition.SUBTRANSITION("1", "2000")
   group(group2, min = 1, proper = 2):
     ModeTransition.SUBTRANSITION("1", "20")
   services:
