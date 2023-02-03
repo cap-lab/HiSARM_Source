@@ -2,7 +2,7 @@
 ScriptParser
 
 ## Description
-This repository is the Script Parser for BDL files. This makes the Java data structure, of which the top class is "MissionWrapper." If you want to use parser, you should handover the path of the targeted bdl file. When you use it as a library, you contact point would be "parseScript" of "Parser" class. This repository use the "antlr"(https://www.antlr.org/) for parser generator and "maven" (https://maven.apache.org/) for managing a Java project. There are some example bdl files in "{project dir}/test/resources/referece"
+This repository is the Script Parser for BDL files. This makes the Java data structure, of which the top class is "MissionWrapper." If you want to use parser, you should handover the path of the targeted bdl file. When you use it as a library, you contact point would be "parseScript" of "Parser" class. This repository use the "antlr"(https://www.antlr.org/) for parser generator and "maven" (https://maven.apache.org/) for managing a Java project. There are some example bdl files in "{project dir}/test/resources/reference"
 
 ## Authors and acknowledgment
 Author
