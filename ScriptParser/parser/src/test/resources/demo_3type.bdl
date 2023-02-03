@@ -7,54 +7,57 @@
 Main.Searcher {
     case(REMOTE_CONTROL):
         catch(START): mode = SEARCH
+        catch(HIDE): mode = HIDE
         catch(FINISH): mode = FINISH
     case(SEARCH):
-        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
+        catch(RC): mode = REMOTE_CONTROL
         catch(HIDE): mode = HIDE
         catch(FINISH): mode = FINISH
     case(HIDE):
-        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
-        catch(RESTART): mode = SEARCH
+        catch(RC): mode = REMOTE_CONTROL
+        catch(START): mode = SEARCH
     default: mode = REMOTE_CONTROL
 }
 
 Main.Assistant {
     case(REMOTE_CONTROL):
         catch(START): mode = FOLLOW
+        catch(HIDE): mode = COVER
         catch(FINISH): mode = FINISH
     case(FOLLOW):
-        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
+        catch(RC): mode = REMOTE_CONTROL
         catch(HIDE): mode = COVER
         catch(FINISH): mode = FINISH
     case(COVER):
-        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
-        catch(RESTART): mode = FOLLOW
+        catch(RC): mode = REMOTE_CONTROL
+        catch(START): mode = FOLLOW
     default: mode = REMOTE_CONTROL
 }
 
 Main.Guard {
     case(REMOTE_CONTROL):
         catch(START): mode = OBSERVE
+        catch(HIDE): mode = GUARD
         catch(FINISH): mode = FINISH
     case(OBSERVE):
+        catch(RC): mode = REMOTE_CONTROL
         catch(HIDE): mode = GUARD
         catch(FINISH): mode = FINISH
     case(GUARD):
-        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
-        catch(RESTART): mode = OBSERVE
+        catch(RC): mode = REMOTE_CONTROL
+        catch(START): mode = OBSERVE
     default: mode = REMOTE_CONTROL
 }
 
 Mode.REMOTE_CONTROL {
     services:
         RemoteControl
-        SendImageToOperator
         ReceiveCommandFromOperator
 }
 
 Mode.SEARCH {
     services:
-        Search("YELLOW")
+        Search("RED")
         ListenAlarmFrom("Guard")
         ReceiveCommandFromOperator
 }
@@ -62,7 +65,6 @@ Mode.SEARCH {
 Mode.HIDE {
     services:
         Hide
-        ListenAlarmFrom("Guard")
         ReceiveCommandFromOperator
 }
 
@@ -82,12 +84,14 @@ Mode.COVER {
 
 Mode.OBSERVE {
     services:
+        RemoteControl
         ObserveAndShareWith("Searcher", "Assistant")
         ReceiveCommandFromOperator
 }
 
 Mode.GUARD {
     services:
+        RemoteControl
         TurnOffAlarmOn("Searcher", "Assistant")
         Attack
         ReceiveCommandFromOperator
@@ -100,17 +104,15 @@ RemoteControl {
 ReceiveCommandFromOperator {
     cmd = getModeTrasferCommand()
     if (cmd == "RC"){
-        throw REMOTE_CONTROL 
+        throw RC 
     } else if (cmd == "START") {
         throw START 
     } else if (cmd == "FINISH") {
         throw FINISH 
+    } else if (cmd == "TURN") {
+        throw HIDE
     }
-} 
-
-SendImageToOperator {
-    sendImageToOperator()
-}
+} repeat(200 MSEC)
 
 Search(target) {
     isFound = search(target)
@@ -132,29 +134,29 @@ Attack {
 } 
 
 ObserveAndShareWith(receiver1, receiver2) {
-    isEnemy = checkEnemy()
-    if (isEnemy == "TRUE") {
-        send(receiver1, isEnemy)
-        send(receiver2, isEnemy)
+    isFound = checkEnemy()
+    if (isFound == "TRUE") {
+        send(receiver1, isFound)
+        send(receiver2, isFound)
         throw HIDE 
     }
 } repeat(200 MSEC)
 
 TurnOffAlarmOn(receiver1, receiver2) {
-    isEnemy = checkEnemy()
-    if (isEnemy == "FALSE") {
-        send(receiver1, isEnemy)
-        send(receiver2, isEnemy)
-        throw RESTART 
+    isFound = checkEnemy()
+    if (isFound == "FALSE") {
+        send(receiver1, isFound)
+        send(receiver2, isFound)
+        throw START 
     }
 } repeat(200 MSEC)
 
 ListenAlarmFrom(sender) {
-    isEnemy = receive(sender, isEnemy)
-    if (isEnemy == "TRUE") {
+    isFound = receive(sender, isFound)
+    if (isFound == "TRUE") {
         throw HIDE 
     }
-    if (isEnemy == "FALSE") {
+    if (isFound == "FALSE") {
         throw RESTART 
     }
 } 

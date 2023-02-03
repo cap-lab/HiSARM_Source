@@ -7,8 +7,8 @@ Main.Robot {
         catch(START): mode = SEARCH_GROUPING
         catch(FINISH): mode = FINISH
     case(SEARCH_GROUPING):
-        catch(REMOTE_CONTROL): mode = REMOTE_CONTROL
-        catch(FINISH): mode = FINISH
+        catch(RC): mode = REMOTE_CONTROL
+        catch(FINISH): mode = REMOTE_CONTROL
     default: mode = REMOTE_CONTROL
 }
 
@@ -16,23 +16,22 @@ Main.Robot {
 Mode.REMOTE_CONTROL {
     services:
         RemoteControl
-        SendImageToOperator
         ReceiveCommandFromOperator
 }
 
 
 Mode.SEARCH_GROUPING {
-    group(groupA, min=2):
-        ModeTransition.SEARCH("R1", "YELLOW")
-    group(groupB, min=2, proper=4):
-        ModeTransition.SEARCH("R2", "YELLOW")
+    group(groupA, min=1, proper=3):
+        ModeTransition.SEARCH("R1")
+    group(groupB, min=1):
+        ModeTransition.SEARCH("R2")
     services:
         ReceiveCommandFromOperator
 }
 
-ModeTransition.SEARCH(area, target) {
+ModeTransition.SEARCH(area) {
     case(MOVE_TO_MISSION_AREA):
-        catch(ARRIVED): mode = SEARCH
+        catch(ARRIVED): mode = MODE_SEARCH
     default: mode = MOVE_TO_MISSION_AREA(area)
 }
 
@@ -42,7 +41,7 @@ Mode.MOVE_TO_MISSION_AREA(area) {
         MoveTo(area)
 }
 
-Mode.SEARCH {
+Mode.MODE_SEARCH {
     services:
         Search("YELLOW")
 }
@@ -54,17 +53,13 @@ RemoteControl {
 ReceiveCommandFromOperator {
     cmd = getModeTrasferCommand()
     if (cmd == "RC"){
-        throw REMOTE_CONTROL
+        throw RC
     } else if (cmd == "START") {
         throw START
     } else if (cmd == "FINISH") {
         throw FINISH
     }
-} 
-
-SendImageToOperator {
-    sendImageToOperator()
-}
+} repeat(200 MSEC)
 
 Search(target) {
     isFound = search(target)
@@ -75,7 +70,7 @@ Search(target) {
 
 MoveTo(area) {
     arrived = moveTo(area)
-    if (arrived == "TRUE") {
+    if (arrived == "ARRIVED") {
         throw ARRIVED
     }
 } repeat(200 MSEC)
