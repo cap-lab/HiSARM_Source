@@ -102,7 +102,7 @@ RemoteControl {
 }
 
 ReceiveCommandFromOperator {
-    cmd = getModeTrasferCommand()
+    cmd = getModeTransferCommand()
     if (cmd == "RC"){
         throw RC 
     } else if (cmd == "START") {
@@ -134,25 +134,25 @@ Attack {
 } 
 
 ObserveAndShareWith(receiver1, receiver2) {
-    isFound = checkEnemy()
-    if (isFound == "TRUE") {
-        send(receiver1, isFound)
-        send(receiver2, isFound)
+    checkResult = checkEnemy()
+    if (checkResult == "TRUE") {
+        send(receiver1, checkResult)
+        send(receiver2, checkResult)
         throw HIDE 
     }
 } repeat(200 MSEC)
 
 TurnOffAlarmOn(receiver1, receiver2) {
-    isFound = checkEnemy()
-    if (isFound == "FALSE") {
-        send(receiver1, isFound)
-        send(receiver2, isFound)
+    checkResult = checkEnemy()
+    if (checkResult == "FALSE") {
+        send(receiver1, checkResult)
+        send(receiver2, checkResult)
         throw START 
     }
 } repeat(200 MSEC)
 
 ListenAlarmFrom(sender) {
-    isFound = receive(sender, isFound)
+    isFound = receive(sender, checkResult)
     if (isFound == "TRUE") {
         throw HIDE 
     }
