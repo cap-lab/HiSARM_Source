@@ -32,8 +32,9 @@ public class DBService {
         dbDao = DAO.getInstance();
     }
 
-    public static void initializeDB(String ip, int port, String user, String pwd, String dbName) {
-        dbDao.initializeDB(ip, port, user, pwd, dbName);
+    public static void initializeDB(String ip, int port, String user, String epwd, String pwd,
+            String dbName) {
+        dbDao.initializeDB(ip, port, user, epwd, pwd, dbName);
     }
 
     public static boolean isExistentRobot(String robotClass) {

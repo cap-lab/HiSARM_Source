@@ -1,8 +1,19 @@
 package com.dbmanager.commonlibraries;
 
 import static com.mongodb.client.model.Filters.eq;
-
+import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.PrivateKey;
+import java.security.Security;
 import java.util.Arrays;
+import java.util.Base64;
+import javax.crypto.Cipher;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openssl.PEMKeyPair;
+import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import com.mongodb.MongoClientSettings;
@@ -18,6 +29,7 @@ import com.mongodb.client.model.Projections;
 public class DAO {
 	private MongoDatabase mDB;
 	private MongoClient mongoClient;
+	private Path PRIVATE_KEY = Paths.get(System.getProperty("user.home"), ".ssh", "id_rsa");
 
 	private MongoCollection<Document> strategyCollection;
 	private MongoCollection<Document> groupActionCollection;
@@ -32,8 +44,9 @@ public class DAO {
 
 	private DAO() {}
 
-	public void initializeDB(String ip, int port, String user, String pwd, String dbName) {
-		connectDB(ip, port, user, pwd, dbName);
+	public void initializeDB(String ip, int port, String user, String epwd, String pwd,
+			String dbName) {
+		connectDB(ip, port, user, epwd, pwd, dbName);
 
 		strategyCollection = mDB.getCollection(DBCollections.Collection_Control_Strategy);
 		groupActionCollection = mDB.getCollection(DBCollections.Collection_GroupAction);
@@ -55,10 +68,50 @@ public class DAO {
 		return DBHolder.instance;
 	}
 
-	private void connectDB(String ip, int port, String user, String pwd, String dbName) {
+
+	private String decryptPassword(String pwd) {
+		Security.addProvider(new BouncyCastleProvider());
+		String decryptedData = null;
 		try {
-			MongoCredential credential =
-					MongoCredential.createCredential(user, dbName, pwd.toCharArray());
+			PEMParser privatePemParser =
+					new PEMParser(new StringReader(Files.readString(PRIVATE_KEY)));
+			PrivateKey privateKey = null;
+
+			Object privateObject = privatePemParser.readObject();
+			if (privateObject instanceof PEMKeyPair) {
+				PEMKeyPair pemKeyPair = (PEMKeyPair) privateObject;
+				JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("BC");
+				privateKey = converter.getPrivateKey(pemKeyPair.getPrivateKeyInfo());
+			}
+
+			// Decrypt the message using the private key
+			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+			cipher.init(Cipher.DECRYPT_MODE, privateKey);
+			byte[] decrypted = cipher.doFinal(Base64.getDecoder().decode(pwd.getBytes()));
+
+			// Print the decrypted message
+			decryptedData = new String(decrypted, "UTF-8");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return decryptedData;
+	}
+
+	private String getPassword(String epwd, String pwd) throws Exception {
+		if (pwd != null) {
+			return pwd;
+		} else if (epwd != null) {
+			return decryptPassword(epwd);
+		} else {
+			throw new Exception("no Password for DB");
+		}
+	}
+
+	private void connectDB(String ip, int port, String user, String epwd, String pwd,
+			String dbName) {
+		try {
+			MongoCredential credential = MongoCredential.createCredential(user, dbName,
+					getPassword(epwd, pwd).replaceAll("\n", "").toCharArray());
 			mongoClient = (MongoClient) MongoClients.create(MongoClientSettings.builder()
 					.applyToClusterSettings(
 							builder -> builder.hosts(Arrays.asList(new ServerAddress(ip, port))))
