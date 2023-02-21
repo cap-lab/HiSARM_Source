@@ -5,7 +5,6 @@ import java.math.BigInteger;
 import hopes.cic.xml.ArchitectureElementCategoryType;
 import hopes.cic.xml.ArchitectureElementSlavePortType;
 import hopes.cic.xml.ArchitectureElementTypeType;
-import hopes.cic.xml.ArchitectureSchedulerType;
 import hopes.cic.xml.SizeMetricType;
 
 public class UEMArchitectureElementTypeType extends ArchitectureElementTypeType {
@@ -14,7 +13,7 @@ public class UEMArchitectureElementTypeType extends ArchitectureElementTypeType 
             setActivePower(BigInteger.valueOf(80000));
             setSleepPower(BigInteger.valueOf(80000));
             setRelativeCost(BigDecimal.valueOf(1.0));
-            setScheduler(ArchitectureSchedulerType.RR);
+            setScheduler("RR");
             setOS("LINUX");
             setCategory(ArchitectureElementCategoryType.PROCESSOR);
         } else {
