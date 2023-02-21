@@ -28,7 +28,7 @@ public class StrategyMaker {
         strategy.setAdditionalInfo(additionalInfo);
         DatabaseInfo dbInfo = additionalInfo.getDbInfo().get(0);
         DBService.initializeDB(dbInfo.getIp(), dbInfo.getPort(), dbInfo.getUserName(),
-                dbInfo.getPassword(), dbInfo.getDbName());
+                dbInfo.getEncryptedPassword(), dbInfo.getPassword(), dbInfo.getDbName());
         strategy.setRobotList(RobotInfoMaker.makeRobotImplList(mission, additionalInfo));
         GroupAllocator.allocateGroup(mission, strategy.getRobotList());
         ActionTypeInfoMaker.makeActionTypeList(mission, strategy.getRobotList());

@@ -6,6 +6,7 @@ public class DatabaseInfo {
     private String dbName;
     private String userName;
     private String password;
+    private String encryptedPassword;
 
     public String getIp() {
         return ip;
@@ -37,6 +38,10 @@ public class DatabaseInfo {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getEncryptedPassword() {
+        return encryptedPassword;
     }
 
     public String getPassword() {
