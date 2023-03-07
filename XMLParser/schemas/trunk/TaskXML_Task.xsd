@@ -208,6 +208,7 @@
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="Out" />
 			<xs:enumeration value="In" />
+			<xs:enumeration value="LibraryPort" />
 		</xs:restriction>
 	</xs:simpleType>
 
