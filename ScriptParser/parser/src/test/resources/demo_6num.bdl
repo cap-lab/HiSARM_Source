@@ -51,7 +51,7 @@ RemoteControl {
 }
 
 ReceiveCommandFromOperator {
-    cmd = getModeTrasferCommand()
+    cmd = getModeTransferCommand()
     if (cmd == "RC"){
         throw RC
     } else if (cmd == "START") {
