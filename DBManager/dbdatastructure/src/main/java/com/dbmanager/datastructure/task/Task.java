@@ -149,7 +149,10 @@ public class Task {
     }
 
     public void setGroupPort(ChannelPort groupPort) {
-        this.groupPort = groupPort;
+        if (groupPort != null) {
+            getChannelPortSet().add(groupPort);
+            this.groupPort = groupPort;
+        }
     }
 
     public LibraryPort getLeaderPort() {
@@ -157,6 +160,9 @@ public class Task {
     }
 
     public void setLeaderPort(LibraryPort leaderPort) {
-        this.leaderPort = leaderPort;
+        if (leaderPort != null) {
+            getLibraryPortSet().add(leaderPort);
+            this.leaderPort = leaderPort;
+        }
     }
 }
