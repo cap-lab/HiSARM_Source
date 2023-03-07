@@ -1,6 +1,5 @@
 package com.metadata.metadatagenerator.algorithm;
 
-import com.xmlparser.xml.handler.TaskXMLTaskGraphHandler;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +10,7 @@ import com.metadata.algorithm.UEMPortMap;
 import com.metadata.algorithm.UEMTaskGraph;
 import com.metadata.algorithm.library.UEMLibrary;
 import com.metadata.algorithm.library.UEMLibraryConnection;
+import com.metadata.algorithm.task.UEMLibraryPortMap;
 import com.metadata.algorithm.task.UEMRobotTask;
 import com.metadata.algorithm.task.UEMTask;
 import com.metadata.constant.AlgorithmConstant;
@@ -25,12 +25,14 @@ import com.xmlparser.TaskXMLLibraryPortType;
 import com.xmlparser.TaskXMLLibraryType;
 import com.xmlparser.TaskXMLParameterType;
 import com.xmlparser.TaskXMLPortCategoryType;
+import com.xmlparser.TaskXMLPortDirectionType;
 import com.xmlparser.TaskXMLPortMapType;
 import com.xmlparser.TaskXMLPortRateType;
 import com.xmlparser.TaskXMLPortType;
 import com.xmlparser.TaskXMLTaskGraphType;
 import com.xmlparser.TaskXMLTaskType;
 import com.xmlparser.TaskXMLextraSettingType;
+import com.xmlparser.xml.handler.TaskXMLTaskGraphHandler;
 import hopes.cic.xml.ChannelPortType;
 import hopes.cic.xml.HardwareDependencyType;
 import hopes.cic.xml.HardwarePlatformType;
@@ -184,6 +186,7 @@ public class TaskXMLtoAlgorithm {
             LibraryMasterPortType afterPort = new LibraryMasterPortType();
             afterPort.setName(beforePort.getName());
             afterPort.setType(beforePort.getType());
+            after.getLibraryMasterPort().add(afterPort);
         }
     }
 
@@ -216,17 +219,35 @@ public class TaskXMLtoAlgorithm {
         }
     }
 
+    private void convertPortMap(UEMTask after, UEMPortMap afterMap, TaskXMLPortMapType beforeMap) {
+        afterMap.setTask(after.getName());
+        afterMap.setNotFlattenedTask(beforeMap.getMacroNode());
+        afterMap.setPort(beforeMap.getMacroNodePort());
+        afterMap.setChildTask(UEMTask.makeName(after.getName(), beforeMap.getInsideTask()));
+        afterMap.setChildNotFlattenedTask(beforeMap.getInsideTask());
+        afterMap.setChildTaskPort(beforeMap.getInsideTaskPort());
+    }
+
+    private UEMPortMap convertChannelPortMap(UEMTask after, TaskXMLPortMapType beforeMap) {
+        UEMPortMap afterMap = new UEMPortMap();
+        convertPortMap(after, afterMap, beforeMap);
+        return afterMap;
+    }
+
+    private UEMLibraryPortMap convertLibraryPortMap(UEMTask after, TaskXMLPortMapType beforeMap) {
+        UEMLibraryPortMap afterMap = new UEMLibraryPortMap();
+        convertPortMap(after, afterMap, beforeMap);
+        return afterMap;
+    }
+
     private void convertPortMap(UEMTask after, TaskXMLTaskType before) {
         if (before.getPortMapList() != null) {
             for (TaskXMLPortMapType beforeMap : before.getPortMapList().getPortMap()) {
-                UEMPortMap afterMap = new UEMPortMap();
-                afterMap.setTask(after.getName());
-                afterMap.setNotFlattenedTask(beforeMap.getMacroNode());
-                afterMap.setPort(beforeMap.getMacroNodePort());
-                afterMap.setChildTask(UEMTask.makeName(after.getName(), beforeMap.getInsideTask()));
-                afterMap.setChildNotFlattenedTask(beforeMap.getInsideTask());
-                afterMap.setChildTaskPort(beforeMap.getInsideTaskPort());
-                after.getPortMapList().add(afterMap);
+                if (beforeMap.getDirection().equals(TaskXMLPortDirectionType.LIBRARY_PORT)) {
+                    after.getLibPortMapList().add(convertLibraryPortMap(after, beforeMap));
+                } else {
+                    after.getPortMapList().add(convertChannelPortMap(after, beforeMap));
+                }
             }
         }
     }
@@ -256,11 +277,11 @@ public class TaskXMLtoAlgorithm {
         after.setSampleType(before.getSampleType());
         after.setSize(before.getSize());
         ChannelPortType srcPort = new ChannelPortType();
-        srcPort.setTask(prefix +"_" + before.getSrcTask());
+        srcPort.setTask(prefix + "_" + before.getSrcTask());
         srcPort.setPort(before.getSrcPort());
         after.getSrc().add(srcPort);
         ChannelPortType dstPort = new ChannelPortType();
-        dstPort.setTask(prefix +"_" + before.getDstTask());
+        dstPort.setTask(prefix + "_" + before.getDstTask());
         dstPort.setPort(before.getDstPort());
         after.getDst().add(dstPort);
         return after;
@@ -381,10 +402,10 @@ public class TaskXMLtoAlgorithm {
     }
 
     private void replaceToFlattenedTaskOfLibraryConnnection(UEMLibraryConnection connection,
-            List<UEMPortMap> portMapList) {
+            List<UEMLibraryPortMap> portMapList) {
         String taskName = connection.getMasterTask();
         String portName = connection.getMasterPort();
-        for (UEMPortMap portMap : portMapList) {
+        for (UEMLibraryPortMap portMap : portMapList) {
             if (portMap.getNotFlattenedTask().equals(taskName)
                     && portMap.getPort().equals(portName)) {
                 connection.setMasterTask(portMap.getTask());
@@ -394,9 +415,9 @@ public class TaskXMLtoAlgorithm {
 
     private void convertIndirectConnectionToDirect(List<UEMTask> taskList,
             List<UEMLibraryConnection> libraryConnectionList) {
-        List<UEMPortMap> portMapList = new ArrayList<>();
+        List<UEMLibraryPortMap> portMapList = new ArrayList<>();
         for (UEMTask task : taskList) {
-            portMapList.addAll(task.getPortMapList());
+            portMapList.addAll(task.getLibPortMapList());
         }
         for (UEMLibraryConnection connection : libraryConnectionList) {
             replaceToFlattenedTaskOfLibraryConnnection(connection, portMapList);

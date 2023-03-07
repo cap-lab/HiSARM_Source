@@ -11,4 +11,10 @@ public class UEMLibraryConnection extends TaskLibraryConnectionType {
         setSlaveLibrary(library.getName());
     }
 
+    public void setConnection(String srcTask, UEMLibraryPort taskPort, UEMLibrary library) {
+        setMasterTask(srcTask);
+        setMasterPort(taskPort.getName());
+        setSlaveLibrary(library.getName());
+    }
+
 }

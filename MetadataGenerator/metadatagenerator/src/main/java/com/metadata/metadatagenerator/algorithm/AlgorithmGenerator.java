@@ -24,6 +24,7 @@ import com.metadata.algorithm.library.UEMSharedData;
 import com.metadata.algorithm.task.UEMActionTask;
 import com.metadata.algorithm.task.UEMControlTask;
 import com.metadata.algorithm.task.UEMLeaderTask;
+import com.metadata.algorithm.task.UEMLibraryPortMap;
 import com.metadata.algorithm.task.UEMListenTask;
 import com.metadata.algorithm.task.UEMReportTask;
 import com.metadata.algorithm.task.UEMRobotTask;
@@ -135,20 +136,42 @@ public class AlgorithmGenerator {
                 return taskGraphList;
             }
 
+            private void convertPortMap(UEMActionTask actionTask, UEMPortMap afterMap,
+                    PortMap beforeMap) {
+                afterMap.setTask(actionTask.getName());
+                afterMap.setNotFlattenedTask(actionTask.getActionImpl().getTask().getTaskId());
+                afterMap.setPort(beforeMap.getOutsidePort());
+                afterMap.setChildTask(
+                        UEMTask.makeName(afterMap.getTask(), beforeMap.getInsideTask()));
+                afterMap.setChildNotFlattenedTask(beforeMap.getInsideTask());
+                afterMap.setChildTaskPort(beforeMap.getInsidePort());
+            }
+
+            private UEMPortMap convertChanelPortMap(UEMActionTask actionTask, PortMap beforeMap) {
+                UEMPortMap afterMap = new UEMPortMap();
+                convertPortMap(actionTask, afterMap, beforeMap);
+                afterMap.setDirection(
+                        beforeMap.getDirection().equals(PortDirection.IN) ? PortDirectionType.INPUT
+                                : PortDirectionType.OUTPUT);
+                return afterMap;
+            }
+
+            private UEMLibraryPortMap convertLibraryPortMap(UEMActionTask actionTask,
+                    PortMap beforeMap) {
+                UEMLibraryPortMap afterMap = new UEMLibraryPortMap();
+                convertPortMap(actionTask, afterMap, beforeMap);
+                return afterMap;
+            }
+
             private void makeActionTaskPortMap(UEMActionTask actionTask) {
                 for (PortMap beforeMap : actionTask.getActionImpl().getTask().getPortMapSet()) {
-                    UEMPortMap afterMap = new UEMPortMap();
-                    afterMap.setTask(actionTask.getName());
-                    afterMap.setNotFlattenedTask(actionTask.getActionImpl().getTask().getTaskId());
-                    afterMap.setPort(beforeMap.getOutsidePort());
-                    afterMap.setChildTask(
-                            UEMTask.makeName(afterMap.getTask(), beforeMap.getInsideTask()));
-                    afterMap.setChildNotFlattenedTask(beforeMap.getInsideTask());
-                    afterMap.setChildTaskPort(beforeMap.getInsidePort());
-                    afterMap.setDirection(beforeMap.getDirection().equals(PortDirection.IN)
-                            ? PortDirectionType.INPUT
-                            : PortDirectionType.OUTPUT);
-                    actionTask.getPortMapList().add(afterMap);
+                    if (beforeMap.getDirection().equals(PortDirection.LIBRARY)) {
+                        actionTask.getLibPortMapList()
+                                .add(convertLibraryPortMap(actionTask, beforeMap));
+                    } else {
+                        actionTask.getPortMapList()
+                                .add(convertChanelPortMap(actionTask, beforeMap));
+                    }
                 }
             }
 
@@ -473,8 +496,19 @@ public class AlgorithmGenerator {
         for (UEMActionTask actionTask : robot.getActionTaskList()) {
             if (actionTask.getLeaderPort() != null) {
                 UEMLibraryConnection leaderConnection = new UEMLibraryConnection();
-                leaderConnection.setConnection(actionTask, actionTask.getLeaderPort(),
-                        leaderLibrary);
+                boolean flag = true;
+                String taskName = actionTask.getName();
+                while (flag) {
+                    flag = false;
+                    for (UEMLibraryPortMap portMap : actionTask.getLibPortMapList()) {
+                        if (portMap.getTask().equals(taskName)) {
+                            taskName = portMap.getChildTask();
+                            flag = true;
+                            break;
+                        }
+                    }
+                }
+                leaderConnection.setConnection(taskName, actionTask.getLeaderPort(), leaderLibrary);
                 actionTask.getLeaderPort().setLibrary(leaderLibrary);
                 algorithm.getAlgorithm().getLibraryConnections().getTaskLibraryConnection()
                         .add(leaderConnection);

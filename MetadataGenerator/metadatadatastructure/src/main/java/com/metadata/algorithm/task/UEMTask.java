@@ -15,6 +15,7 @@ import hopes.cic.xml.YesNoType;
 public class UEMTask extends TaskType {
     private UEMModeTask uemMode;
     private List<UEMPortMap> portMapList = new ArrayList<>();
+    private List<UEMLibraryPortMap> libPortMapList = new ArrayList<>();
     private String taskName;
 
     public UEMTask(String robotName) {
@@ -95,4 +96,9 @@ public class UEMTask extends TaskType {
     public String getTaskName() {
         return taskName;
     }
+
+    public List<UEMLibraryPortMap> getLibPortMapList() {
+        return libPortMapList;
+    }
+
 }
