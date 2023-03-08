@@ -58,7 +58,7 @@ public class UEMActionTask extends UEMTask {
             if (actionImpl.getTask().getLeaderPort() != null) {
                 setLeaderPort();
             }
-            if (actionImpl.getTask().getGroupPort() != null) {
+            if (actionImpl.getActionType().isGroupAction()) {
                 setGroupPort();
             }
         } catch (Exception e) {
