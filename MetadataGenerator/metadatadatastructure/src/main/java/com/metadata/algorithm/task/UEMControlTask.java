@@ -100,7 +100,7 @@ public class UEMControlTask extends UEMTask {
             channelList.add(
                     UEMChannel.makeChannel(this, port, actionTask, (UEMChannelPort) counterPort));
         }
-        if (actionTask.getActionImpl().getActionType().isGroupAction()) {
+        if (actionTask.getGroupPort() != null) {
             UEMChannelPort port = new UEMChannelPort();
             port.setPortInfo(actionTask.getName(), actionTask.getGroupPort());
             getPort().add(port);
