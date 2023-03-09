@@ -160,7 +160,6 @@ public class Task {
 
     public void setLeaderPort(LibraryPort leaderPort) {
         if (leaderPort != null) {
-            getLibraryPortSet().add(leaderPort);
             this.leaderPort = leaderPort;
         }
     }
