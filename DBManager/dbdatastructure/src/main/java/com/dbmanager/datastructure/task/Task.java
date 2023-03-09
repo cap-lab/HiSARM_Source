@@ -150,7 +150,6 @@ public class Task {
 
     public void setGroupPort(ChannelPort groupPort) {
         if (groupPort != null) {
-            getChannelPortSet().add(groupPort);
             this.groupPort = groupPort;
         }
     }
