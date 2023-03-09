@@ -188,7 +188,7 @@ public class ServiceStatementMapper {
                     codePort.setVariable(outputVariable);
                     actionImpl.getOutputList().add(codePort);
                 }
-                if (actionTask.getActionImpl().getActionType().isGroupAction()) {
+                if (actionTask.getGroupPort() != null) {
                     CodePortWrapper codePort = new CodePortWrapper();
                     UEMChannelPort group = controlTask.getGroupPort(actionTask);
                     codePort.setPort(group);
