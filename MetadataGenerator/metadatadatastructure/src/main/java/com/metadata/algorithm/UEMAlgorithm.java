@@ -33,7 +33,6 @@ public class UEMAlgorithm {
         algorithm.setLibraryConnections(new LibraryConnectionListType());
         algorithm.setChannels(new ChannelListType());
         algorithm.setMulticastGroups(new MulticastGroupListType());
-        algorithm.setPortMaps(new PortMapListType());
         algorithm.setTasks(new TaskListType());
         algorithm.setModes(new ModeListType());
         algorithm.getModes().getMode().add(new ModeType());
@@ -115,8 +114,12 @@ public class UEMAlgorithm {
     }
 
     public List<UEMPortMap> getUEMPortMapList() {
-        return algorithm.getPortMaps().getPortMap().stream().map(m -> (UEMPortMap) m)
-                .collect(Collectors.toList());
+        if (algorithm.getPortMaps() != null) {
+            return algorithm.getPortMaps().getPortMap().stream().map(m -> (UEMPortMap) m)
+                    .collect(Collectors.toList());
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public List<UEMChannel> getUEMChannelList() {
