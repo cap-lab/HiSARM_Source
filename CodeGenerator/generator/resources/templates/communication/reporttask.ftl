@@ -251,7 +251,7 @@ STATIC void shared_data_port_send() {
 }
 
 </#if>
-<#if sharedDataPortMap?size gt 0>
+<#if groupActionPortList?size gt 0>
 STATIC void group_action_port_send() {
     for (int i = 0 ; i<sizeof(group_action_port_list)/sizeof(GROUP_ACTION_PORT) ; i++)
     {
