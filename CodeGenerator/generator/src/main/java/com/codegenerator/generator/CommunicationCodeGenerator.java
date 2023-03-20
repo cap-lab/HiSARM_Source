@@ -30,6 +30,8 @@ public class CommunicationCodeGenerator {
         rootHash.put(CommunicationTaskConstant.CHANNEL_PORT_MAP, task.getChannelPortMap());
         rootHash.put(CommunicationTaskConstant.MULTICAST_PORT_MAP, task.getMulticastPortMap());
         rootHash.put(CommunicationTaskConstant.SHARED_DATA_PORT_MAP, task.getSharedDataPortMap());
+        rootHash.put(CommunicationTaskConstant.GROUP_ACTION_PORT_LIST,
+                task.getGroupActionPortList());
         rootHash.put(CommunicationTaskConstant.LEADER_PORT_MAP, task.getLeaderPortMap());
 
         FTLHandler.getInstance().generateCode(CodeGeneratorConstant.LISTEN_TASK_TEMPLATE,
@@ -44,6 +46,8 @@ public class CommunicationCodeGenerator {
         rootHash.put(CommunicationTaskConstant.CHANNEL_PORT_MAP, task.getChannelPortMap());
         rootHash.put(CommunicationTaskConstant.MULTICAST_PORT_MAP, task.getMulticastPortMap());
         rootHash.put(CommunicationTaskConstant.SHARED_DATA_PORT_MAP, task.getSharedDataPortMap());
+        rootHash.put(CommunicationTaskConstant.GROUP_ACTION_PORT_LIST,
+                task.getGroupActionPortList());
         rootHash.put(CommunicationTaskConstant.LEADER_PORT_MAP, task.getLeaderPortMap());
 
         FTLHandler.getInstance().generateCode(CodeGeneratorConstant.REPORT_TASK_TEMPLATE,

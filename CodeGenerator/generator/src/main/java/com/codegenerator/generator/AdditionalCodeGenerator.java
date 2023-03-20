@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.codegenerator.constant.GroupActionTaskConstant;
 import com.codegenerator.constant.LeaderTaskConstant;
 import com.codegenerator.generator.constant.CodeGeneratorConstant;
 import com.codegenerator.generator.util.LocalFileCopier;
@@ -17,11 +18,34 @@ public class AdditionalCodeGenerator {
     public void generateAdditionalCode(Path targetDir, AdditionalInfo additionalInfo,
             List<CodeRobotWrapper> robotList) {
         for (CodeRobotWrapper robot : robotList) {
+            generateGroupActionLibraryTaskCode(targetDir, robot, robotList.size());
+        }
+        for (CodeRobotWrapper robot : robotList) {
             generateLeaderLibraryTaskCode(targetDir, robot);
             copyLeaderHeaderFile(targetDir);
             copyLeaderSourceFile(targetDir, Paths.get(additionalInfo.getTaskServerPrefix()),
                     robot.getRobot().getRobotTask().getLeaderTask());
         }
+    }
+
+    public void generateGroupActionLibraryTaskCode(Path targetDir, CodeRobotWrapper robot,
+            int size) {
+        Map<String, Object> rootHash = new HashMap<>();
+
+        rootHash.put(GroupActionTaskConstant.ROBOT_ID, robot.getRobotName());
+        rootHash.put(GroupActionTaskConstant.GROUP_ACTION_LIST,
+                robot.getRobot().getRobotTask().getGroupActionTask().getGroupActionList());
+        rootHash.put(GroupActionTaskConstant.NUM_OF_ROBOT, size);
+
+        FTLHandler.getInstance().generateCode(CodeGeneratorConstant.GROUP_ACTION_HEADER_TEMPLATE,
+                Paths.get(targetDir.toString(),
+                        robot.getRobot().getRobotTask().getGroupActionTask().getHeader()),
+                rootHash);
+        FTLHandler.getInstance()
+                .generateCode(CodeGeneratorConstant.GROUP_ACTION_SOURCE_TEMPLATE,
+                        Paths.get(targetDir.toString(),
+                                robot.getRobot().getRobotTask().getGroupActionTask().getFile()),
+                        rootHash);
     }
 
     public void generateLeaderLibraryTaskCode(Path targetDir, CodeRobotWrapper robot) {

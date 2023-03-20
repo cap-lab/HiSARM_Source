@@ -101,6 +101,10 @@ public class CodeGeneratorConstant {
                         LEADER_TEMPLATE_DIRECTORY.toString(), "leader_selection.cic");
 
         public static final Path GROUP_TEMPLATE_DIRECTORY = Paths.get("group");
+        public static final Path GROUP_ACTION_HEADER_TEMPLATE =
+                        Paths.get(GROUP_TEMPLATE_DIRECTORY.toString(), "group_action_header.ftl");
+        public static final Path GROUP_ACTION_SOURCE_TEMPLATE =
+                        Paths.get(GROUP_TEMPLATE_DIRECTORY.toString(), "group_action_source.ftl");
         public static final Path GROUP_HEADER_TEMPLATE =
                         Paths.get(GROUP_TEMPLATE_DIRECTORY.toString(), "group_header.ftl");
         public static final Path GROUP_SOURCE_TEMPLATE =
