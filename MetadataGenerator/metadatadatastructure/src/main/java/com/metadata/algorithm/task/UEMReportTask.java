@@ -166,4 +166,23 @@ public class UEMReportTask extends UEMCommTask {
             }
         });
     }
+
+    public void addGroupActionPort(UEMActionTask action) {
+        if (groupActionPort == null) {
+            groupActionPort = new UEMLibraryPort();
+            groupActionPort.setName(AlgorithmConstant.GROUP_ACTION);
+            groupActionPort.setIndex(getLibraryMasterPort().size());
+            groupActionPort.setType(AlgorithmConstant.GROUP_ACTION);
+            getLibraryMasterPort().add(groupActionPort);
+        }
+        if (!existMulticastPort(action.getActionName())) {
+            UEMMulticastPort groupActionPort = new UEMMulticastPort();
+            groupActionPort.setGroup(action.getActionName());
+            groupActionPort.setName(action.getActionName());
+            groupActionPort.setMessage(String.valueOf(action.getGroupActionIndex()));
+            groupActionPort.setDirection(PortDirectionType.OUTPUT);
+            getGroupActionPortList().add(groupActionPort);
+            getMulticastPort().add(groupActionPort);
+        }
+    }
 }

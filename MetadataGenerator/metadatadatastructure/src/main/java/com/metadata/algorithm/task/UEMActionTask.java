@@ -29,6 +29,7 @@ public class UEMActionTask extends UEMTask {
     private List<UEMLibraryPort> sharedDataPortList = new ArrayList<>();
     private UEMLibraryPort leaderPort = null;
     private UEMChannelPort groupPort = null;
+    private int groupActionIndex = -1;
 
     public UEMActionTask(String robotTask, String groupId, String serviceId,
             ActionImplWrapper actionImpl, ActionStatement actionStatement) {
@@ -39,6 +40,10 @@ public class UEMActionTask extends UEMTask {
         this.actionStatement = actionStatement;
         setParentTask(robotTask);
         setTaskInfo(actionImpl.getTask());
+    }
+
+    public String getActionName() {
+        return scope + "_" + actionImpl.getActionImpl().getActionImplId();
     }
 
     private void setTaskInfo(Task task) {
@@ -179,6 +184,14 @@ public class UEMActionTask extends UEMTask {
 
     public UEMChannelPort getGroupPort() {
         return groupPort;
+    }
+
+    public int getGroupActionIndex() {
+        return groupActionIndex;
+    }
+
+    public void setGroupActionIndex(int groupActionIndex) {
+        this.groupActionIndex = groupActionIndex;
     }
 
 }

@@ -16,7 +16,7 @@ public class UEMLibrary extends LibraryType {
 
     public static String makeName(String parentName, String scope, String libraryName) {
         if (scope == null) {
-            return parentName + libraryName;
+            return parentName + "_" + libraryName;
         } else {
             return parentName + "_" + scope + "_" + libraryName;
         }

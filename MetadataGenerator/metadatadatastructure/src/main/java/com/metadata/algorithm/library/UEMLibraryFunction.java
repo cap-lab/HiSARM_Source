@@ -2,266 +2,268 @@ package com.metadata.algorithm.library;
 
 import java.math.BigInteger;
 import com.dbmanager.datastructure.variable.PrimitiveType;
+import com.metadata.constant.AlgorithmConstant;
 import com.strategy.strategydatastructure.wrapper.VariableTypeWrapper;
 import hopes.cic.xml.LibraryFunctionArgumentType;
 import hopes.cic.xml.LibraryFunctionType;
 import hopes.cic.xml.YesNoType;
 
 public class UEMLibraryFunction extends LibraryFunctionType {
-    private static UEMLibraryFunction makeAvailFunction(VariableTypeWrapper variableType,
-            String caller) {
+    private static String makeFuncName(String funcId, String id, String caller) {
+        String result = funcId;
+        if (id != null) {
+            result = result + "_" + id;
+        }
+        if (caller != null) {
+            result = result + "_" + caller;
+        }
+        return result;
+    }
+
+    private static LibraryFunctionArgumentType makeArgument(String type, String name,
+            YesNoType isPointer) {
+        LibraryFunctionArgumentType argument = new LibraryFunctionArgumentType();
+        argument.setName(name);
+        argument.setType(type);
+        argument.setPointer(isPointer);
+        argument.setOutput(isPointer);
+        return argument;
+    }
+
+    private static UEMLibraryFunction makeAvailFunction(String id, String caller) {
         UEMLibraryFunction libraryFunction = new UEMLibraryFunction();
-        libraryFunction.setName("avail_" + variableType.getVariableType().getName() + "_" + caller);
+        libraryFunction.setName(makeFuncName("avail", id, caller));
         libraryFunction.setReturnType(PrimitiveType.INT8.getValue());
         libraryFunction.setReturnSize(BigInteger.valueOf(PrimitiveType.INT8.getSize()));
+        return libraryFunction;
+    }
+
+    private static UEMLibraryFunction makeGetFunction(String id, String caller, String returType) {
+        UEMLibraryFunction libraryFunction = new UEMLibraryFunction();
+        libraryFunction.setName(makeFuncName("get", id, caller));
+        libraryFunction.setReturnType(returType);
+        return libraryFunction;
+    }
+
+    private static UEMLibraryFunction makeSetFunction(String id, String caller, String returnType) {
+        UEMLibraryFunction libraryFunction = new UEMLibraryFunction();
+        libraryFunction.setName(makeFuncName("set", id, caller));
+        libraryFunction.setReturnType(returnType);
         return libraryFunction;
     }
 
     public static UEMLibraryFunction makeAvailFuncFromReport(VariableTypeWrapper variableType) {
-        return makeAvailFunction(variableType, "report");
+        return makeAvailFunction(variableType.getVariableType().getName(),
+                AlgorithmConstant.REPORT);
     }
 
     public static UEMLibraryFunction makeAvailFuncFromAction(VariableTypeWrapper variableType) {
-        return makeAvailFunction(variableType, "action");
-    }
-
-    private static UEMLibraryFunction makeGetFunction(VariableTypeWrapper variableType,
-            String caller) {
-        UEMLibraryFunction libraryFunction = new UEMLibraryFunction();
-        libraryFunction.setName("get_" + variableType.getVariableType().getName() + "_" + caller);
-        libraryFunction.setReturnType("void");
-        LibraryFunctionArgumentType argument = new LibraryFunctionArgumentType();
-        argument.setName("buffer");
-        argument.setType("void*");
-        argument.setPointer(YesNoType.YES);
-        argument.setOutput(YesNoType.YES);
-        libraryFunction.getArgument().add(argument);
-        return libraryFunction;
+        return makeAvailFunction(variableType.getVariableType().getName(),
+                AlgorithmConstant.ACTION);
     }
 
     public static UEMLibraryFunction makeGetFuncFromAction(VariableTypeWrapper variableType) {
-        return makeGetFunction(variableType, "action");
+        UEMLibraryFunction libraryFunction = makeGetFunction(
+                variableType.getVariableType().getName(), AlgorithmConstant.ACTION, "void");
+        libraryFunction.getArgument().add(makeArgument("void*", "buffer", YesNoType.YES));
+        return libraryFunction;
     }
 
     public static UEMLibraryFunction makeGetFuncFromReport(VariableTypeWrapper variableType) {
-        return makeGetFunction(variableType, "report");
-    }
-
-    private static UEMLibraryFunction makeSetFunction(VariableTypeWrapper variableType,
-            String caller) {
-        UEMLibraryFunction libraryFunction = new UEMLibraryFunction();
-        libraryFunction.setName("set_" + variableType.getVariableType().getName() + "_" + caller);
-        libraryFunction.setReturnType("void");
-        LibraryFunctionArgumentType argument = new LibraryFunctionArgumentType();
-        argument.setName("buffer");
-        argument.setType("void*");
-        argument.setPointer(YesNoType.YES);
-        argument.setOutput(YesNoType.NO);
-        libraryFunction.getArgument().add(argument);
+        UEMLibraryFunction libraryFunction = makeGetFunction(
+                variableType.getVariableType().getName(), AlgorithmConstant.REPORT, "void");
+        libraryFunction.getArgument().add(makeArgument("void*", "buffer", YesNoType.YES));
         return libraryFunction;
     }
 
     public static UEMLibraryFunction makeSetFuncFromAction(VariableTypeWrapper variableType) {
-        return makeSetFunction(variableType, "action");
+        UEMLibraryFunction libraryFunction = makeSetFunction(
+                variableType.getVariableType().getName(), AlgorithmConstant.ACTION, "void");
+        libraryFunction.getArgument().add(makeArgument("void*", "buffer", YesNoType.YES));
+        return libraryFunction;
     }
 
     public static UEMLibraryFunction makeSetFuncFromListen(VariableTypeWrapper variableType) {
-        return makeSetFunction(variableType, "listen");
+        UEMLibraryFunction libraryFunction = makeSetFunction(
+                variableType.getVariableType().getName(), AlgorithmConstant.LISTEN, "void");
+        libraryFunction.getArgument().add(makeArgument("void*", "buffer", YesNoType.YES));
+        return libraryFunction;
     }
 
-    private static UEMLibraryFunction makeAvailFuncForLeader(String caller, String variable) {
-        UEMLibraryFunction libraryFunction = new UEMLibraryFunction();
-        libraryFunction.setName("avail_" + variable + "_" + caller);
-        libraryFunction.setReturnType(PrimitiveType.INT8.getValue());
-        libraryFunction.setReturnSize(BigInteger.valueOf(PrimitiveType.INT8.getSize()));
-        LibraryFunctionArgumentType argument = new LibraryFunctionArgumentType();
-        argument.setName("group_id");
-        argument.setType(PrimitiveType.INT32.getValue());
-        argument.setPointer(YesNoType.NO);
-        argument.setOutput(YesNoType.NO);
-        libraryFunction.getArgument().add(argument);
+    private static UEMLibraryFunction makeAvailFuncForLeader(String caller, String id) {
+        UEMLibraryFunction libraryFunction = makeAvailFunction(id, caller);
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "group_id", YesNoType.NO));
         return libraryFunction;
     }
 
     public static UEMLibraryFunction makeAvailFuncForLeaderFromLeaderOfRobotId() {
-        return makeAvailFuncForLeader("leader", "robot_id");
+        return makeAvailFuncForLeader(AlgorithmConstant.LEADER, "robot_id");
     }
 
     public static UEMLibraryFunction makeAvailFuncForLeaderFromLeaderOfHeartBeat() {
-        return makeAvailFuncForLeader("leader", "heartbeat");
+        return makeAvailFuncForLeader(AlgorithmConstant.LEADER, "heartbeat");
     }
 
     public static UEMLibraryFunction makeAvailFuncForLeaderFromReportOfRobotId() {
-        return makeAvailFuncForLeader("report", "robot_id");
+        return makeAvailFuncForLeader(AlgorithmConstant.REPORT, "robot_id");
     }
 
     public static UEMLibraryFunction makeAvailFuncForLeaderFromReportOfHeartBeat() {
-        return makeAvailFuncForLeader("report", "heartbeat");
+        return makeAvailFuncForLeader(AlgorithmConstant.REPORT, "heartbeat");
     }
 
     private static UEMLibraryFunction makeGetFuncForLeader(String caller, String variable) {
-        UEMLibraryFunction libraryFunction = new UEMLibraryFunction();
-        libraryFunction.setName("get_" + variable + "_" + caller);
-        libraryFunction.setReturnType(PrimitiveType.INT32.getValue());
+        UEMLibraryFunction libraryFunction =
+                makeGetFunction(variable, caller, PrimitiveType.INT32.getValue());
         libraryFunction.setReturnSize(BigInteger.valueOf(PrimitiveType.INT32.getSize()));
-        LibraryFunctionArgumentType argument = new LibraryFunctionArgumentType();
-        argument.setName("group_id");
-        argument.setType(PrimitiveType.INT32.getValue());
-        argument.setPointer(YesNoType.NO);
-        argument.setOutput(YesNoType.NO);
-        libraryFunction.getArgument().add(argument);
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "group_id", YesNoType.NO));
         return libraryFunction;
     }
 
     public static UEMLibraryFunction makeGetFuncForLeaderFromLeaderOfRobotId() {
-        return makeGetFuncForLeader("leader", "robot_id");
+        return makeGetFuncForLeader(AlgorithmConstant.LEADER, "robot_id");
     }
 
     public static UEMLibraryFunction makeGetFuncForLeaderFromLeaderOfHeartBeat() {
-        return makeGetFuncForLeader("leader", "heartbeat");
+        return makeGetFuncForLeader(AlgorithmConstant.LEADER, "heartbeat");
     }
 
     public static UEMLibraryFunction makeGetFuncForLeaderFromReportOfRobotId() {
-        return makeGetFuncForLeader("report", "robot_id");
+        return makeGetFuncForLeader(AlgorithmConstant.REPORT, "robot_id");
     }
 
     public static UEMLibraryFunction makeGetFuncForLeaderFromReportOfHeartBeat() {
-        return makeGetFuncForLeader("report", "heartbeat");
+        return makeGetFuncForLeader(AlgorithmConstant.REPORT, "heartbeat");
     }
 
     private static UEMLibraryFunction makeSetFuncForLeader(String caller, String variable) {
-        UEMLibraryFunction libraryFunction = new UEMLibraryFunction();
-        libraryFunction.setName("set_" + variable + "_" + caller);
-        libraryFunction.setReturnType("void");
-        LibraryFunctionArgumentType argument1 = new LibraryFunctionArgumentType();
-        argument1.setName("group_id");
-        argument1.setType(PrimitiveType.INT32.getValue());
-        argument1.setPointer(YesNoType.NO);
-        argument1.setOutput(YesNoType.NO);
-        libraryFunction.getArgument().add(argument1);
-        LibraryFunctionArgumentType argument2 = new LibraryFunctionArgumentType();
-        argument2.setName("robot_id");
-        argument2.setSize(BigInteger.valueOf(PrimitiveType.INT32.getSize()));
-        argument2.setType(PrimitiveType.INT32.getValue());
-        argument2.setPointer(YesNoType.NO);
-        argument2.setOutput(YesNoType.NO);
-        libraryFunction.getArgument().add(argument2);
+        UEMLibraryFunction libraryFunction = makeSetFunction(variable, caller, "void");
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "group_id", YesNoType.NO));
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "robot_id", YesNoType.NO));
         return libraryFunction;
     }
 
     public static UEMLibraryFunction makeSetFuncForLeaderFromLeaderOfRobotId() {
-        return makeSetFuncForLeader("leader", "robot_id");
+        return makeSetFuncForLeader(AlgorithmConstant.LEADER, "robot_id");
     }
 
     public static UEMLibraryFunction makeSetFuncForLeaderFromLeaderOfHeartBeat() {
-        return makeSetFuncForLeader("leader", "heartbeat");
+        return makeSetFuncForLeader(AlgorithmConstant.LEADER, "heartbeat");
     }
 
     public static UEMLibraryFunction makeSetFuncForLeaderFromListenOfRobotId() {
-        return makeSetFuncForLeader("listen", "robot_id");
+        return makeSetFuncForLeader(AlgorithmConstant.LISTEN, "robot_id");
     }
 
     public static UEMLibraryFunction makeSetFuncForLeaderFromListenOfHeartBeat() {
-        return makeSetFuncForLeader("listen", "heartbeat");
+        return makeSetFuncForLeader(AlgorithmConstant.LISTEN, "heartbeat");
     }
 
     public static UEMLibraryFunction makeSetLeaderSelectionState() {
-        UEMLibraryFunction libraryFunction = new UEMLibraryFunction();
-        libraryFunction.setName("set_leader_selection_state");
-        libraryFunction.setReturnType("void");
-        LibraryFunctionArgumentType argument1 = new LibraryFunctionArgumentType();
-        argument1.setName("group_id");
-        argument1.setType(PrimitiveType.INT32.getValue());
-        argument1.setPointer(YesNoType.NO);
-        argument1.setOutput(YesNoType.NO);
-        libraryFunction.getArgument().add(argument1);
-        LibraryFunctionArgumentType argument2 = new LibraryFunctionArgumentType();
-        argument2.setName("state");
-        argument2.setType("LEADER_SELECTION_STATE");
-        argument2.setPointer(YesNoType.NO);
-        argument2.setOutput(YesNoType.NO);
-        libraryFunction.getArgument().add(argument2);
+        UEMLibraryFunction libraryFunction =
+                makeSetFunction("leader_selection_state", null, "void");
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "group_id", YesNoType.NO));
+        libraryFunction.getArgument()
+                .add(makeArgument("LEADER_SELECTION_STATE", "state", YesNoType.NO));
         return libraryFunction;
     }
 
     public static UEMLibraryFunction makeGetLeaderSelectionState() {
-        UEMLibraryFunction libraryFunction = new UEMLibraryFunction();
-        libraryFunction.setName("get_leader_selection_state");
-        libraryFunction.setReturnType("LEADER_SELECTION_STATE");
-        LibraryFunctionArgumentType argument1 = new LibraryFunctionArgumentType();
-        argument1.setName("group_id");
-        argument1.setType(PrimitiveType.INT32.getValue());
-        argument1.setPointer(YesNoType.NO);
-        argument1.setOutput(YesNoType.NO);
-        libraryFunction.getArgument().add(argument1);
+        UEMLibraryFunction libraryFunction =
+                makeGetFunction("leader_selection_state", null, "LEADER_SELECTION_STATE");
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "group_id", YesNoType.NO));
         return libraryFunction;
     }
 
     public static UEMLibraryFunction makeGetLastTime() {
-        UEMLibraryFunction libraryFunction = new UEMLibraryFunction();
-        libraryFunction.setName("get_last_time");
-        libraryFunction.setReturnType(PrimitiveType.INT64.getValue());
+        UEMLibraryFunction libraryFunction =
+                makeGetFunction("last_time", null, PrimitiveType.INT64.getValue());
         libraryFunction.setReturnSize(BigInteger.valueOf(PrimitiveType.INT64.getSize()));
-        LibraryFunctionArgumentType argument = new LibraryFunctionArgumentType();
-        argument.setName("group_id");
-        argument.setType(PrimitiveType.INT32.getValue());
-        argument.setPointer(YesNoType.NO);
-        argument.setOutput(YesNoType.NO);
-        libraryFunction.getArgument().add(argument);
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "group_id", YesNoType.NO));
         return libraryFunction;
     }
 
     public static UEMLibraryFunction makeSetLastTime() {
-        UEMLibraryFunction libraryFunction = new UEMLibraryFunction();
-        libraryFunction.setName("set_last_time");
-        libraryFunction.setReturnType("void");
-        LibraryFunctionArgumentType argument1 = new LibraryFunctionArgumentType();
-        argument1.setName("group_id");
-        argument1.setType(PrimitiveType.INT32.getValue());
-        argument1.setPointer(YesNoType.NO);
-        argument1.setOutput(YesNoType.NO);
-        libraryFunction.getArgument().add(argument1);
-        LibraryFunctionArgumentType argument2 = new LibraryFunctionArgumentType();
-        argument2.setName("time");
-        argument2.setSize(BigInteger.valueOf(PrimitiveType.INT64.getSize()));
-        argument2.setType(PrimitiveType.INT64.getValue());
-        argument2.setPointer(YesNoType.NO);
-        argument2.setOutput(YesNoType.NO);
-        libraryFunction.getArgument().add(argument2);
+        UEMLibraryFunction libraryFunction = makeSetFunction("last_time", null, "void");
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "group_id", YesNoType.NO));
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT64.getValue(), "time", YesNoType.NO));
         return libraryFunction;
     }
 
     public static UEMLibraryFunction makeGetLeader() {
-        UEMLibraryFunction libraryFunction = new UEMLibraryFunction();
-        libraryFunction.setName("get_leader");
-        libraryFunction.setReturnType(PrimitiveType.INT32.getValue());
+        UEMLibraryFunction libraryFunction =
+                makeGetFunction("leader", null, PrimitiveType.INT32.getValue());
         libraryFunction.setReturnSize(BigInteger.valueOf(PrimitiveType.INT32.getSize()));
-        LibraryFunctionArgumentType argument = new LibraryFunctionArgumentType();
-        argument.setName("group_id");
-        argument.setType(PrimitiveType.INT32.getValue());
-        argument.setPointer(YesNoType.NO);
-        argument.setOutput(YesNoType.NO);
-        libraryFunction.getArgument().add(argument);
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "group_id", YesNoType.NO));
         return libraryFunction;
     }
 
     public static UEMLibraryFunction makeSetLeader() {
-        UEMLibraryFunction libraryFunction = new UEMLibraryFunction();
-        libraryFunction.setName("set_leader");
-        libraryFunction.setReturnType("void");
-        LibraryFunctionArgumentType argument1 = new LibraryFunctionArgumentType();
-        argument1.setName("group_id");
-        argument1.setType(PrimitiveType.INT32.getValue());
-        argument1.setPointer(YesNoType.NO);
-        argument1.setOutput(YesNoType.NO);
-        libraryFunction.getArgument().add(argument1);
-        LibraryFunctionArgumentType argument2 = new LibraryFunctionArgumentType();
-        argument2.setName("robot_id");
-        argument2.setSize(BigInteger.valueOf(PrimitiveType.INT32.getSize()));
-        argument2.setType(PrimitiveType.INT32.getValue());
-        argument2.setPointer(YesNoType.NO);
-        argument2.setOutput(YesNoType.NO);
-        libraryFunction.getArgument().add(argument2);
+        UEMLibraryFunction libraryFunction = makeSetFunction("leader", null, "void");
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "group_id", YesNoType.NO));
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "robot_id", YesNoType.NO));
+        return libraryFunction;
+    }
+
+    public static UEMLibraryFunction makeSetFuncFromListenForGroupAction() {
+        UEMLibraryFunction libraryFunction =
+                makeSetFunction(AlgorithmConstant.GROUP_ACTION, AlgorithmConstant.LISTEN, "void");
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "action_id", YesNoType.NO));
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "robot_id", YesNoType.NO));
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT64.getValue(), "time", YesNoType.NO));
+        return libraryFunction;
+    }
+
+    public static UEMLibraryFunction makeSetFuncFromControlForGroupAction() {
+        UEMLibraryFunction libraryFunction =
+                makeSetFunction(AlgorithmConstant.GROUP_ACTION, AlgorithmConstant.CONTROL, "void");
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "action_id", YesNoType.NO));
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT8.getValue(), "sync_state", YesNoType.NO));
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT64.getValue(), "time", YesNoType.NO));
+        return libraryFunction;
+    }
+
+    public static UEMLibraryFunction makeSetRobotIdFuncFromControlForGroupAction() {
+        UEMLibraryFunction libraryFunction =
+                makeSetFunction("robot_id", AlgorithmConstant.CONTROL, "void");
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "action_id", YesNoType.NO));
+        return libraryFunction;
+    }
+
+    public static UEMLibraryFunction makeGetFuncFromControlForGroupAction() {
+        UEMLibraryFunction libraryFunction = makeGetFunction(AlgorithmConstant.GROUP_ACTION,
+                AlgorithmConstant.CONTROL, PrimitiveType.INT8.getValue());
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "action_id", YesNoType.NO));
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT64.getValue(), "time", YesNoType.NO));
+        return libraryFunction;
+    }
+
+    public static UEMLibraryFunction makeAvailFuncFromReportForGroupAction() {
+        UEMLibraryFunction libraryFunction =
+                makeAvailFunction(AlgorithmConstant.GROUP_ACTION, AlgorithmConstant.REPORT);
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "action_id", YesNoType.NO));
         return libraryFunction;
     }
 }

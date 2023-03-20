@@ -23,6 +23,7 @@ public class UEMRobotTask extends UEMTask {
     private UEMReportTask reportTask;
     private UEMLeaderLibrary leaderLibraryTask;
     private UEMLeaderTask leaderTask;
+    private UEMGroupActionTask groupActionTask;
 
     public UEMRobotTask(String name, RobotImplWrapper robot) {
         super(name);
@@ -173,5 +174,13 @@ public class UEMRobotTask extends UEMTask {
 
     public void setLeaderTask(UEMLeaderTask leaderTask) {
         this.leaderTask = leaderTask;
+    }
+
+    public UEMGroupActionTask getGroupActionTask() {
+        return groupActionTask;
+    }
+
+    public void setGroupActionTask(UEMGroupActionTask groupActionTask) {
+        this.groupActionTask = groupActionTask;
     }
 }

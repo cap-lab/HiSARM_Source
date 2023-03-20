@@ -9,6 +9,7 @@ import com.metadata.algorithm.UEMChannel;
 import com.metadata.algorithm.UEMChannelPort;
 import com.metadata.algorithm.UEMCommPort;
 import com.metadata.algorithm.UEMModeTask;
+import com.metadata.algorithm.library.UEMLibraryPort;
 import com.metadata.constant.AlgorithmConstant;
 import hopes.cic.xml.PortTypeType;
 import hopes.cic.xml.RunConditionType;
@@ -143,6 +144,14 @@ public class UEMControlTask extends UEMTask {
                 UEMChannel.makeChannel(this, port, leaderTask, leaderTask.getControlTaskPort());
         channel.setSize(port.getSampleSize().multiply(BigInteger.valueOf(groupNum)));
         return channel;
+    }
+
+    public void setGroupActionPortInfo(UEMGroupActionTask groupActionTask) {
+        UEMLibraryPort groupActionPort = new UEMLibraryPort();
+        groupActionPort.setName(AlgorithmConstant.GROUP_ACTION);
+        groupActionPort.setType(AlgorithmConstant.GROUP_ACTION);
+        groupActionPort.setLibrary(groupActionTask);
+        getLibraryMasterPort().add(groupActionPort);
     }
 
     public List<UEMChannelPort> getInputPortList(UEMTask task) {

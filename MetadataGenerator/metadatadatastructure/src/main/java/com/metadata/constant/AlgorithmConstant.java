@@ -14,8 +14,10 @@ public class AlgorithmConstant {
     public static final String LANGUAGE_C = "C";
     public static final String LISTEN = "listen";
     public static final String REPORT = "report";
+    public static final String ACTION = "action";
     public static final String CONTROL = "control";
     public static final String LEADER = "leader";
+    public static final String GROUP_ACTION = "group_action";
     public static final String GROUP = "group";
     public static final String ROBOT_ID = "robotId";
     public static final String HEARTBEAT = "heartbeat";
