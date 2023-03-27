@@ -1,7 +1,7 @@
 package com.dbmanager.datastructure.task;
 
 public enum CommunicationType {
-    CHANNEL("channel"), LIBRARY("library"), GROUP("group"), LEADER("leader");
+    CHANNEL("channel"), LIBRARY("library"), GROUP("group"), LEADER("leader"), RESOURCE("resource");
 
     private final String value;
 

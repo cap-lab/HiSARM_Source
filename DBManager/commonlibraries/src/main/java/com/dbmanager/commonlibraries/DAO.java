@@ -37,6 +37,7 @@ public class DAO {
 	private MongoCollection<Document> actionImplCollection;
 	private MongoCollection<Document> robotCollection;
 	private MongoCollection<Document> robotImplCollection;
+	private MongoCollection<Document> resourceCollection;
 	private MongoCollection<Document> taskCollection;
 	private MongoCollection<Document> architectureCollection;
 	private MongoCollection<Document> variableCollection;
@@ -54,6 +55,7 @@ public class DAO {
 		actionImplCollection = mDB.getCollection(DBCollections.Collection_ActionImpl);
 		robotCollection = mDB.getCollection(DBCollections.Collection_Robot);
 		robotImplCollection = mDB.getCollection(DBCollections.Collection_RobotImpl);
+		resourceCollection = mDB.getCollection(DBCollections.Collection_Resource);
 		taskCollection = mDB.getCollection(DBCollections.Collection_Task);
 		architectureCollection = mDB.getCollection(DBCollections.Collection_Architecture);
 		variableCollection = mDB.getCollection(DBCollections.Collection_Variable);
@@ -242,6 +244,17 @@ public class DAO {
 		try {
 			Bson queryFilter = Filters.and(eq("RobotId", robotId));
 			return robotImplCollection.find(queryFilter).first();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public Document getResource(String robotClass, String resourceId) {
+		try {
+			Bson queryFilter =
+					Filters.and(eq("RobotClass", robotClass), eq("ResourceId", resourceId));
+			return resourceCollection.find(queryFilter).first();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

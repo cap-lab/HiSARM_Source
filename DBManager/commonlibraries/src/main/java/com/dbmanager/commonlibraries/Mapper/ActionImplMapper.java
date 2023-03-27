@@ -15,7 +15,7 @@ public class ActionImplMapper {
             actionImpl.setRobotClass(document.getString("RobotClass"));
             actionImpl.setTaskId(document.getString("TaskId"));
             actionImpl.setReturnImmediate(document.getBoolean("ReturnImmediate"));
-            actionImpl.setNeededResource(document.getList("NeededResource", String.class));
+            actionImpl.setResource(document.getList("Resource", String.class));
         } catch (Exception e) {
             e.printStackTrace();
         }

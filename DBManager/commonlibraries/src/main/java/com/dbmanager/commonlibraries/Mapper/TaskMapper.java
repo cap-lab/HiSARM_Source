@@ -12,11 +12,22 @@ import com.dbmanager.datastructure.task.ExtraSetting;
 import com.dbmanager.datastructure.task.LibraryPort;
 import com.dbmanager.datastructure.task.PortDirection;
 import com.dbmanager.datastructure.task.PortMap;
+import com.dbmanager.datastructure.task.ResourcePort;
 import com.dbmanager.datastructure.task.Task;
 import com.dbmanager.datastructure.task.TaskFile;
 import com.dbmanager.datastructure.task.Time;
 
 public class TaskMapper {
+    private static ResourcePort mapToResourcePort(Document document) {
+        ResourcePort resourcePort = new ResourcePort();
+
+        resourcePort.setName(document.getString("name"));
+        resourcePort
+                .setDirection(PortDirection.valueOf(document.getString("direction").toUpperCase()));
+
+        return resourcePort;
+    }
+
     private static ChannelPort mapToChannelPort(Document document) {
         ChannelPort channelPort = new ChannelPort();
 
@@ -44,6 +55,14 @@ public class TaskMapper {
                 .filter(doc -> doc.getString("type").equals(CommunicationType.CHANNEL.getValue()))
                 .forEach(doc -> channelPortSet.add(mapToChannelPort(doc)));
         return channelPortSet;
+    }
+
+    private static Set<ResourcePort> makeResourcePortSet(List<Document> documentList) {
+        Set<ResourcePort> resourcePortSet = new HashSet<ResourcePort>();
+        documentList.stream()
+                .filter(doc -> doc.getString("type").equals(CommunicationType.RESOURCE.getValue()))
+                .forEach(doc -> resourcePortSet.add(mapToResourcePort(doc)));
+        return resourcePortSet;
     }
 
     private static Set<LibraryPort> makeLibraryPortSet(List<Document> documentList) {
@@ -140,6 +159,8 @@ public class TaskMapper {
             task.setExtraSettings(makeExtraSetting((List<Document>) document.get("ExtraSetting")));
             task.setChannelPortSet(
                     makeChannelPortSet((List<Document>) document.get("Communication")));
+            task.setResourcePortSet(
+                    makeResourcePortSet((List<Document>) document.get("Communication")));
             task.setLibraryPortSet(
                     makeLibraryPortSet((List<Document>) document.get("Communication")));
             task.setGroupPort(makeGroupPort((List<Document>) document.get("Communication")));

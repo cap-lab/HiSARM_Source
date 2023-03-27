@@ -20,6 +20,7 @@ public class Task {
     private LibraryPort leaderPort;
     private List<ExtraSetting> extraSettings = new ArrayList<>();
     private Set<ChannelPort> channelPortSet = new HashSet<>();
+    private Set<ResourcePort> resourcePortSet = new HashSet<>();
     private Set<LibraryPort> libraryPortSet = new HashSet<>();
     private Set<PortMap> portMapSet = new HashSet<>();
     private Set<TaskFile> taskFiles = new HashSet<>();
@@ -118,6 +119,14 @@ public class Task {
 
     public void setChannelPortSet(Set<ChannelPort> channelPortSet) {
         this.channelPortSet = channelPortSet;
+    }
+
+    public Set<ResourcePort> getResourcePortSet() {
+        return resourcePortSet;
+    }
+
+    public void setResourcePortSet(Set<ResourcePort> resourcePortSet) {
+        this.resourcePortSet = resourcePortSet;
     }
 
     public Set<LibraryPort> getLibraryPortSet() {

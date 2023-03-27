@@ -8,7 +8,7 @@ public class ActionImpl {
     private String robotClass;
     private String actionName;
     private String taskId;
-    private List<String> neededResource = new ArrayList<>();
+    private List<String> resource = new ArrayList<>();
     private boolean returnImmediate;
 
     public void setActionImplId(String actionId) {
@@ -43,12 +43,14 @@ public class ActionImpl {
         return taskId;
     }
 
-    public List<String> getNeededResource() {
-        return neededResource;
+    public List<String> getResource() {
+        return resource;
     }
 
-    public void setNeededResource(List<String> neededResource) {
-        this.neededResource = neededResource;
+    public void setResource(List<String> resource) {
+        if (resource != null) {
+            this.resource = resource;
+        }
     }
 
     public boolean getReturnImmediate() {
