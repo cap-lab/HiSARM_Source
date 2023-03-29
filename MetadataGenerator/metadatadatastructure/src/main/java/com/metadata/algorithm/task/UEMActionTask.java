@@ -6,9 +6,11 @@ import java.util.List;
 import com.dbmanager.datastructure.task.ChannelPort;
 import com.dbmanager.datastructure.task.LibraryPort;
 import com.dbmanager.datastructure.task.PortDirection;
+import com.dbmanager.datastructure.task.ResourcePort;
 import com.dbmanager.datastructure.task.Task;
 import com.metadata.algorithm.UEMChannelPort;
 import com.metadata.algorithm.UEMModeTask;
+import com.metadata.algorithm.UEMMulticastPort;
 import com.metadata.algorithm.UEMTaskGraph;
 import com.metadata.algorithm.library.UEMLibraryPort;
 import com.metadata.constant.AlgorithmConstant;
@@ -39,14 +41,14 @@ public class UEMActionTask extends UEMTask {
         this.actionImpl = actionImpl;
         this.actionStatement = actionStatement;
         setParentTask(robotTask);
-        setTaskInfo(actionImpl.getTask());
+        setTaskInfo(actionImpl.getTask(), robotTask);
     }
 
     public String getActionName() {
         return scope + "_" + actionImpl.getActionImpl().getActionImplId();
     }
 
-    private void setTaskInfo(Task task) {
+    private void setTaskInfo(Task task, String robotName) {
         try {
             setRunCondition(runCondition(task.getRunCondition()));
             setFile(task.getCICFile());
@@ -58,6 +60,7 @@ public class UEMActionTask extends UEMTask {
             setTaskType(AlgorithmConstant.COMPUTATION_TASK);
             setLanguage(task.getLanguage());
             setChannelPorts(task);
+            setResourcePorts(task, robotName);
             setLibraryPorts(task);
             setMode(task);
             if (actionImpl.getTask().getLeaderPort() != null) {
@@ -85,6 +88,20 @@ public class UEMActionTask extends UEMTask {
                 outputPortList.add(actionPort);
             }
             getPort().add(actionPort);
+        }
+    }
+
+    private void setResourcePorts(Task task, String robotName) {
+        if (task.isHasSubGraph() == false) {
+            for (ResourcePort port : task.getResourcePortSet()) {
+                UEMMulticastPort resourcePort = new UEMMulticastPort();
+                resourcePort.setDirection(
+                        port.getDirection() == PortDirection.IN ? PortDirectionType.INPUT
+                                : PortDirectionType.OUTPUT);
+                resourcePort.setName(port.getName());
+                resourcePort.setGroup(robotName + "_" + port.getName());
+                getMulticastPort().add(resourcePort);
+            }
         }
     }
 

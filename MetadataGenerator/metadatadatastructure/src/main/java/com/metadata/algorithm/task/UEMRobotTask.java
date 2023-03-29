@@ -17,6 +17,7 @@ import hopes.cic.xml.YesNoType;
 public class UEMRobotTask extends UEMTask {
     private RobotImplWrapper robot;
     private List<UEMActionTask> actionTaskList = new ArrayList<>();
+    private List<UEMResourceTask> resourceTaskList = new ArrayList<>();
     private List<UEMSharedData> sharedDataTaskList = new ArrayList<>();
     private UEMControlTask controlTask;
     private UEMListenTask listenTask;
@@ -182,5 +183,9 @@ public class UEMRobotTask extends UEMTask {
 
     public void setGroupActionTask(UEMGroupActionTask groupActionTask) {
         this.groupActionTask = groupActionTask;
+    }
+
+    public List<UEMResourceTask> getResourceTaskList() {
+        return resourceTaskList;
     }
 }

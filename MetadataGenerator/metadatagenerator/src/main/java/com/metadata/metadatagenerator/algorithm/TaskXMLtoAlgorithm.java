@@ -6,6 +6,7 @@ import java.util.List;
 import com.metadata.algorithm.UEMChannel;
 import com.metadata.algorithm.UEMChannelPort;
 import com.metadata.algorithm.UEMModeTask;
+import com.metadata.algorithm.UEMMulticastPort;
 import com.metadata.algorithm.UEMPortMap;
 import com.metadata.algorithm.UEMTaskGraph;
 import com.metadata.algorithm.library.UEMLibrary;
@@ -23,6 +24,7 @@ import com.xmlparser.TaskXMLLibPortType;
 import com.xmlparser.TaskXMLLibraryConnectionType;
 import com.xmlparser.TaskXMLLibraryPortType;
 import com.xmlparser.TaskXMLLibraryType;
+import com.xmlparser.TaskXMLMulticastPortType;
 import com.xmlparser.TaskXMLParameterType;
 import com.xmlparser.TaskXMLPortCategoryType;
 import com.xmlparser.TaskXMLPortDirectionType;
@@ -32,6 +34,7 @@ import com.xmlparser.TaskXMLPortType;
 import com.xmlparser.TaskXMLTaskGraphType;
 import com.xmlparser.TaskXMLTaskType;
 import com.xmlparser.TaskXMLextraSettingType;
+import com.xmlparser.UEMDirection;
 import com.xmlparser.xml.handler.TaskXMLTaskGraphHandler;
 import hopes.cic.xml.ChannelPortType;
 import hopes.cic.xml.HardwareDependencyType;
@@ -99,6 +102,22 @@ public class TaskXMLtoAlgorithm {
                 afterRate.setRate(beforeRate.getRate());
                 afterPort.getRate().add(afterRate);
             }
+            afterPortList.add(afterPort);
+        }
+        return afterPortList;
+    }
+
+    private List<UEMMulticastPort> convertMulticastPortList(
+            List<TaskXMLMulticastPortType> beforePortList) {
+        List<UEMMulticastPort> afterPortList = new ArrayList<>();
+        for (TaskXMLMulticastPortType beforePort : beforePortList) {
+            UEMMulticastPort afterPort = new UEMMulticastPort();
+            afterPort.setDirection(
+                    beforePort.getDirection() == UEMDirection.IN ? PortDirectionType.INPUT
+                            : PortDirectionType.OUTPUT);
+            afterPort.setName(beforePort.getName());
+            afterPort.setGroup(
+                    robot.getRobot().getRobot().getRobotId() + "_" + beforePort.getGroupName());
             afterPortList.add(afterPort);
         }
         return afterPortList;
@@ -262,6 +281,8 @@ public class TaskXMLtoAlgorithm {
                 .addAll(addPortList(before.getInportList().getPort(), PortDirectionType.INPUT));
         after.getPort()
                 .addAll(addPortList(before.getOutportList().getPort(), PortDirectionType.OUTPUT));
+        after.getMulticastPort()
+                .addAll(convertMulticastPortList(before.getMulticastPortList().getMulticastPort()));
         convertExtraSetting(after, before);
         convertLibraryPort(after, before);
         convertControlParameter(after, before);

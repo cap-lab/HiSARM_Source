@@ -2,11 +2,13 @@ package com.metadata.metadatagenerator.mapping;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import com.metadata.UEMRobot;
 import com.metadata.algorithm.UEMAlgorithm;
 import com.metadata.algorithm.UEMTaskGraph;
 import com.metadata.algorithm.task.UEMActionTask;
+import com.metadata.algorithm.task.UEMResourceTask;
 import com.metadata.algorithm.task.UEMTask;
 import com.metadata.architecture.UEMArchitectureDevice;
 import com.metadata.architecture.UEMArchitectureElementType;
@@ -26,6 +28,19 @@ import hopes.cic.xml.handler.CICMappingXMLHandler;
 public class MappingGenerator {
     private UEMMapping mapping = new UEMMapping();
 
+    private List<UEMMappingTask> makeSubGraphTask(List<UEMTaskGraph> taskGraphList, UEMRobot robot)
+            throws Exception {
+        List<UEMMappingTask> taskList = new ArrayList<>();
+        for (UEMTaskGraph taskGraph : taskGraphList) {
+            for (UEMTask task : taskGraph.getTaskList()) {
+                if (task.getHasSubGraph().equals(AlgorithmConstant.NO)) {
+                    mapping.getTask().add(mappingTaskToDevice(task, robot));
+                }
+            }
+        }
+        return taskList;
+    }
+
     public void generate(List<UEMRobot> robotList, UEMAlgorithm algorithm) {
         try {
             for (UEMRobot robot : robotList) {
@@ -33,13 +48,16 @@ public class MappingGenerator {
                     if (actionTask.getHasSubGraph().equals(AlgorithmConstant.NO)) {
                         mapping.getTask().add(mappingTaskToDevice(actionTask, robot));
                     } else {
-                        for (UEMTaskGraph taskGraph : actionTask.getSubTaskGraphs()) {
-                            for (UEMTask task : taskGraph.getTaskList()) {
-                                if (task.getHasSubGraph().equals(AlgorithmConstant.NO)) {
-                                    mapping.getTask().add(mappingTaskToDevice(task, robot));
-                                }
-                            }
-                        }
+                        mapping.getTask()
+                                .addAll(makeSubGraphTask(actionTask.getSubTaskGraphs(), robot));
+                    }
+                }
+                for (UEMResourceTask resourceTask : robot.getRobotTask().getResourceTaskList()) {
+                    if (resourceTask.getHasSubGraph().equals(AlgorithmConstant.NO)) {
+                        mapping.getTask().add(mappingTaskToDevice(resourceTask, robot));
+                    } else {
+                        mapping.getTask()
+                                .addAll(makeSubGraphTask(resourceTask.getSubTaskGraphs(), robot));
                     }
                 }
                 mapping.getTask()

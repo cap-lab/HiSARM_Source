@@ -28,6 +28,7 @@ import com.metadata.algorithm.task.UEMLeaderTask;
 import com.metadata.algorithm.task.UEMLibraryPortMap;
 import com.metadata.algorithm.task.UEMListenTask;
 import com.metadata.algorithm.task.UEMReportTask;
+import com.metadata.algorithm.task.UEMResourceTask;
 import com.metadata.algorithm.task.UEMRobotTask;
 import com.metadata.algorithm.task.UEMTask;
 import com.metadata.constant.AlgorithmConstant;
@@ -53,6 +54,7 @@ import com.strategy.strategydatastructure.additionalinfo.AdditionalInfo;
 import com.strategy.strategydatastructure.wrapper.ActionImplWrapper;
 import com.strategy.strategydatastructure.wrapper.ActionTypeWrapper;
 import com.strategy.strategydatastructure.wrapper.ControlStrategyWrapper;
+import com.strategy.strategydatastructure.wrapper.ResourceWrapper;
 import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 import com.strategy.strategydatastructure.wrapper.StrategyWrapper;
 import com.strategy.strategydatastructure.wrapper.VariableTypeWrapper;
@@ -117,27 +119,6 @@ public class AlgorithmGenerator {
                 this.service = service;
             }
 
-            private List<UEMTaskGraph> recursiveExplore(UEMActionTask actionTask,
-                    Path taskServerPrefix) {
-                TaskXMLtoAlgorithm convertor = new TaskXMLtoAlgorithm(robot);
-                List<UEMTaskGraph> taskGraphList = new ArrayList<>();
-                int exploreIndex = 0;
-                taskGraphList.add(convertor.convertTaskXMLtoAlgorithm(2, actionTask.getName(),
-                        Paths.get(taskServerPrefix.toString(), actionTask.getFile())));
-                while (exploreIndex < taskGraphList.size()) {
-                    UEMTaskGraph taskGraph = taskGraphList.get(exploreIndex);
-                    for (UEMTask subTask : taskGraph.getTaskList()) {
-                        if (subTask.getHasSubGraph().equals(AlgorithmConstant.YES)) {
-                            taskGraphList.add(convertor.convertTaskXMLtoAlgorithm(
-                                    taskGraph.getLevel() + 1, subTask.getName(),
-                                    Paths.get(taskServerPrefix.toString(), subTask.getFile())));
-                        }
-                    }
-                    exploreIndex = exploreIndex + 1;
-                }
-                return taskGraphList;
-            }
-
             private void convertPortMap(UEMActionTask actionTask, UEMPortMap afterMap,
                     PortMap beforeMap) {
                 afterMap.setTask(actionTask.getName());
@@ -179,21 +160,9 @@ public class AlgorithmGenerator {
 
             private List<UEMTaskGraph> exploreSubGraph(UEMActionTask actionTask,
                     Path taskServerPrefix) {
-                List<UEMTaskGraph> taskGraphList = recursiveExplore(actionTask, taskServerPrefix);
-                List<UEMPortMap> portMapList = new ArrayList<>();
-                List<UEMChannel> channelList = new ArrayList<>();
-                List<UEMLibraryConnection> libConnectionList = new ArrayList<>();
-
-                for (UEMTaskGraph taskGraph : taskGraphList) {
-                    for (UEMTask task : taskGraph.getTaskList()) {
-                        portMapList.addAll(task.getPortMapList());
-                    }
-                    channelList.addAll(taskGraph.getChannelList());
-                    libConnectionList.addAll(taskGraph.getLibraryConnectionList());
-                }
+                List<UEMTaskGraph> taskGraphList =
+                        recursiveExplore(actionTask, robot, taskServerPrefix);
                 makeActionTaskPortMap(actionTask);
-                portMapList.addAll(actionTask.getPortMapList());
-
                 return taskGraphList;
             }
 
@@ -206,6 +175,8 @@ public class AlgorithmGenerator {
                             .addAll(taskGraph.getChannelList());
                     algorithm.getAlgorithm().getLibraryConnections().getTaskLibraryConnection()
                             .addAll(taskGraph.getLibraryConnectionList());
+                    algorithm.getAlgorithm().getPortMaps().getPortMap()
+                            .addAll(actionTask.getPortMapList());
                 }
             }
 
@@ -385,14 +356,13 @@ public class AlgorithmGenerator {
             AdditionalInfo additionalInfo, Path targetDir) throws Exception {
         makeActionTask(mission, robot, robot.getRobot().getControlStrategyList(),
                 Paths.get(additionalInfo.getTaskServerPrefix()));
+        makeResourceTask(robot, Paths.get(additionalInfo.getTaskServerPrefix()));
         makeLibraryTask(robot);
         makeGroupActionTask(robot);
         makeLeaderTask(robot);
         makeCommunicationTask(mission, robot);
         makeControlTask(mission, robot);
     }
-
-
 
     private boolean convertChannelPortToDirect(ChannelPortType port, List<UEMPortMap> portMapList) {
         String taskName = port.getTask();
@@ -451,6 +421,26 @@ public class AlgorithmGenerator {
         } while (flag);
     }
 
+    private List<UEMTaskGraph> recursiveExplore(UEMTask task, UEMRobotTask robot,
+            Path taskServerPrefix) {
+        TaskXMLtoAlgorithm convertor = new TaskXMLtoAlgorithm(robot);
+        List<UEMTaskGraph> taskGraphList = new ArrayList<>();
+        int exploreIndex = 0;
+        taskGraphList.add(convertor.convertTaskXMLtoAlgorithm(2, task.getName(),
+                Paths.get(taskServerPrefix.toString(), task.getFile())));
+        while (exploreIndex < taskGraphList.size()) {
+            UEMTaskGraph taskGraph = taskGraphList.get(exploreIndex);
+            for (UEMTask subTask : taskGraph.getTaskList()) {
+                if (subTask.getHasSubGraph().equals(AlgorithmConstant.YES)) {
+                    taskGraphList.add(convertor.convertTaskXMLtoAlgorithm(taskGraph.getLevel() + 1,
+                            subTask.getName(),
+                            Paths.get(taskServerPrefix.toString(), subTask.getFile())));
+                }
+            }
+            exploreIndex = exploreIndex + 1;
+        }
+        return taskGraphList;
+    }
 
     private void makeActionTask(MissionWrapper mission, UEMRobotTask robot,
             List<ControlStrategyWrapper> controlStrategyList, Path taskServerPrefix)
@@ -461,6 +451,30 @@ public class AlgorithmGenerator {
                 new RobotInerGraphMaker(robot, controlStrategyList, taskServerPrefix, true);
         transition.traverseTransition(new String(), team, new ArrayList<String>(),
                 new ArrayList<>(robot.getRobot().getGroupMap().keySet()), maker, maker);
+    }
+
+    private void makeResourceTask(UEMRobotTask robot, Path taskServerPrefix) {
+        for (ResourceWrapper resource : robot.getRobot().getResourceList()) {
+            UEMResourceTask resourceTask =
+                    new UEMResourceTask(robot.getName(), resource, resource.getTask());
+            if (resource.getTask().isHasSubGraph() == true) {
+                resourceTask.getSubTaskGraphs()
+                        .addAll(recursiveExplore(resourceTask, robot, taskServerPrefix));
+                for (UEMTaskGraph taskGraph : resourceTask.getSubTaskGraphs()) {
+                    algorithm.addAllTasks(taskGraph.getTaskList());
+                    algorithm.addAllLibraries(taskGraph.getLibraryList());
+                    algorithm.getAlgorithm().getChannels().getChannel()
+                            .addAll(taskGraph.getChannelList());
+                    algorithm.getAlgorithm().getLibraryConnections().getTaskLibraryConnection()
+                            .addAll(taskGraph.getLibraryConnectionList());
+                }
+            }
+            robot.getResourceTaskList().add(resourceTask);
+            algorithm.addTask(resourceTask);
+            algorithm.addMulticastGroup(
+                    robot.getName() + "_" + resource.getResource().getResourceId(),
+                    resource.getResource().getDataSize());
+        }
     }
 
     private void makeLibraryTask(UEMRobotTask robot) {
