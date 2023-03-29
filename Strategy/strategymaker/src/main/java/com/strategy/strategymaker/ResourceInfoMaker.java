@@ -22,6 +22,8 @@ public class ResourceInfoMaker {
                                 resource.setResource(DBService.getResource(
                                         robot.getRobotType().getRobotType().getRobotClass(),
                                         resourceId));
+                                resource.setTask(
+                                        DBService.getTask(resource.getResource().getTaskId()));
                                 robot.getResourceList().add(resource);
                             }
                         }
