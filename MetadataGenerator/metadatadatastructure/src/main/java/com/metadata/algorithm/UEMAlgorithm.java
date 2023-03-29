@@ -75,6 +75,13 @@ public class UEMAlgorithm {
         }
     }
 
+    public void addInnerMulticastGroup(String groupId, int size) {
+        if (getMulticastGroup(groupId) == null) {
+            algorithm.getMulticastGroups().getMulticastGroup()
+                    .add(new UEMMulticastGroup(groupId, size));
+        }
+    }
+
     public int getTaskNum() {
         return algorithm.getTasks().getTask().size() + algorithm.getLibraries().getLibrary().size();
     }

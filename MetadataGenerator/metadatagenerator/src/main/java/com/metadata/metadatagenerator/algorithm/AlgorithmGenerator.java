@@ -471,7 +471,7 @@ public class AlgorithmGenerator {
             }
             robot.getResourceTaskList().add(resourceTask);
             algorithm.addTask(resourceTask);
-            algorithm.addMulticastGroup(
+            algorithm.addInnerMulticastGroup(
                     robot.getName() + "_" + resource.getResource().getResourceId(),
                     resource.getResource().getDataSize());
         }
