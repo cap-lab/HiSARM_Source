@@ -13,6 +13,7 @@ public class CodeRobotWrapper {
     private List<CodeModeWrapper> modeList = new ArrayList<>();
     private List<CodeTransitionWrapper> transitionList = new ArrayList<>();
     private List<CodeServiceWrapper> serviceList = new ArrayList<>();
+    private List<CodeResourceWrapper> resourceList = new ArrayList<>();
 
     public String getRobotName() {
         return robot.getRobotName();

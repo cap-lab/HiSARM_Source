@@ -113,8 +113,7 @@ public class ControlTaskCodeGenerator {
         Map<String, Object> rootHash = new HashMap<>();
 
         rootHash.put(ControlTaskConstant.ROBOT_ID, robot.getRobotName());
-        rootHash.put(ControlTaskConstant.RESOURCE_LIST, robot.getRobot().getRobotTask().getRobot()
-                .getRobotType().getRobotType().getResourceList());
+        rootHash.put(ControlTaskConstant.RESOURCE_LIST, robot.getResourceList());
 
         FTLHandler.getInstance().generateCode(CodeGeneratorConstant.RESOURCE_HEADER_TEMPLATE,
                 Paths.get(targetDir.toString(),

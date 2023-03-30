@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import com.codegenerator.generator.mapper.ModeServiceMapper;
 import com.codegenerator.generator.mapper.RobotModeMapper;
+import com.codegenerator.generator.mapper.RobotResourceMapper;
 import com.codegenerator.generator.mapper.ServiceStatementMapper;
 import com.codegenerator.generator.mapper.VariableMapper;
 import com.codegenerator.wrapper.CodeModeWrapper;
@@ -37,6 +38,8 @@ public class CodeGenerator {
                     ssMapper.mapServiceStatement(service);
                 }
             }
+            RobotResourceMapper rrMaper = new RobotResourceMapper();
+            rrMaper.mapResource(codeRobot);
         }
         VariableMapper vMapper = new VariableMapper();
         vMapper.mapVariable(codeRobotList);
@@ -79,8 +82,10 @@ public class CodeGenerator {
         sharedDataCodeGenerator.generate(targetDir, codeRobotList);
         ControlTaskCodeGenerator controlTaskCodeGenerator = new ControlTaskCodeGenerator();
         controlTaskCodeGenerator.generateControlTaskCode(targetDir, codeRobotList);
-        ActionTaskCodeCopier actionTaskCodeCopier = new ActionTaskCodeCopier();
-        actionTaskCodeCopier.copyActionTaskCode(Paths.get(additionalInfo.getTaskServerPrefix()),
+        TaskCodeCopier taskCodeCopier = new TaskCodeCopier();
+        taskCodeCopier.copyActionTaskCode(Paths.get(additionalInfo.getTaskServerPrefix()),
+                targetDir, codeRobotList);
+        taskCodeCopier.copyResourceTaskCode(Paths.get(additionalInfo.getTaskServerPrefix()),
                 targetDir, codeRobotList);
         TranslatorCode translator = new TranslatorCode();
         translator.translate(targetDir, additionalInfo);
