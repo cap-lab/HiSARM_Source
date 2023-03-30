@@ -21,6 +21,7 @@ public class UEMResourceTask extends UEMTask {
         super(robotName);
         this.resource = resource;
         setName(robotName + "_" + resource.getResource().getResourceId());
+        setParentTask(robotName);
         setTaskInfo(task, robotName);
     }
 
