@@ -2,6 +2,7 @@ package com.metadata.algorithm.task;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.dbmanager.datastructure.task.ExtraSetting;
 import com.dbmanager.datastructure.task.PortDirection;
 import com.dbmanager.datastructure.task.ResourcePort;
 import com.dbmanager.datastructure.task.Task;
@@ -38,6 +39,7 @@ public class UEMResourceTask extends UEMTask {
             setLanguage(task.getLanguage());
             setResourcePorts(task, robotName);
             setMode(task);
+            setExtraSetting(task);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -66,6 +68,25 @@ public class UEMResourceTask extends UEMTask {
         uemMode.setPeriod(task.getPeriod().getTime());
         uemMode.setPeriodUnit(task.getPeriod().getUnit());
         setMode(uemMode);
+    }
+
+    private void setExtraSetting(Task task) {
+        for (ExtraSetting setting : task.getExtraSettings()) {
+            switch (setting.getType()) {
+                case EXTRA_HEADER:
+                    getExtraHeader().add(setting.getName());
+                    break;
+                case EXTRA_SOURCE:
+                    getExtraSource().add(setting.getName());
+                    break;
+                case EXTRA_CIC:
+                    getExtraCIC().add(setting.getName());
+                    break;
+                case EXTRA_FILE:
+                    getExtraFile().add(setting.getName());
+                    break;
+            }
+        }
     }
 
     public List<UEMTaskGraph> getSubTaskGraphs() {

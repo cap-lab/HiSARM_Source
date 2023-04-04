@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import com.dbmanager.datastructure.task.ChannelPort;
+import com.dbmanager.datastructure.task.ExtraSetting;
 import com.dbmanager.datastructure.task.LibraryPort;
 import com.dbmanager.datastructure.task.PortDirection;
 import com.dbmanager.datastructure.task.ResourcePort;
@@ -63,6 +64,7 @@ public class UEMActionTask extends UEMTask {
             setResourcePorts(task, robotName);
             setLibraryPorts(task);
             setMode(task);
+            setExtraSetting(task);
             if (actionImpl.getTask().getLeaderPort() != null) {
                 setLeaderPort();
             }
@@ -124,6 +126,25 @@ public class UEMActionTask extends UEMTask {
         uemMode.setPeriod(task.getPeriod().getTime());
         uemMode.setPeriodUnit(task.getPeriod().getUnit());
         setMode(uemMode);
+    }
+
+    private void setExtraSetting(Task task) {
+        for (ExtraSetting setting : task.getExtraSettings()) {
+            switch (setting.getType()) {
+                case EXTRA_HEADER:
+                    getExtraHeader().add(setting.getName());
+                    break;
+                case EXTRA_SOURCE:
+                    getExtraSource().add(setting.getName());
+                    break;
+                case EXTRA_CIC:
+                    getExtraCIC().add(setting.getName());
+                    break;
+                case EXTRA_FILE:
+                    getExtraFile().add(setting.getName());
+                    break;
+            }
+        }
     }
 
     public ActionImplWrapper getActionImpl() {
