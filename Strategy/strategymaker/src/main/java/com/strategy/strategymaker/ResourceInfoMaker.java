@@ -18,6 +18,7 @@ public class ResourceInfoMaker {
                     for (ActionImplWrapper action : cs.getActionList()) {
                         for (String resourceId : action.getActionImpl().getResource()) {
                             if (!resourceSet.contains(resourceId)) {
+                                resourceSet.add(resourceId);
                                 ResourceWrapper resource = new ResourceWrapper();
                                 resource.setResource(DBService.getResource(
                                         robot.getRobotType().getRobotType().getRobotClass(),
