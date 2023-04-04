@@ -14,6 +14,7 @@ import com.dbmanager.datastructure.variable.PrimitiveType;
 import com.metadata.algorithm.UEMAlgorithm;
 import com.metadata.algorithm.UEMChannel;
 import com.metadata.algorithm.UEMCommPort;
+import com.metadata.algorithm.UEMMulticastPortMap;
 import com.metadata.algorithm.UEMPortMap;
 import com.metadata.algorithm.UEMTaskGraph;
 import com.metadata.algorithm.library.UEMLeaderLibrary;
@@ -146,11 +147,21 @@ public class AlgorithmGenerator {
                 return afterMap;
             }
 
+            private UEMMulticastPortMap convertResourcePortMap(UEMActionTask actionTask,
+                    PortMap beforeMap) {
+                UEMMulticastPortMap afterMap = new UEMMulticastPortMap();
+                convertPortMap(actionTask, afterMap, beforeMap);
+                return afterMap;
+            }
+
             private void makeActionTaskPortMap(UEMActionTask actionTask) {
                 for (PortMap beforeMap : actionTask.getActionImpl().getTask().getPortMapSet()) {
                     if (beforeMap.getDirection().equals(PortDirection.LIBRARY)) {
                         actionTask.getLibPortMapList()
                                 .add(convertLibraryPortMap(actionTask, beforeMap));
+                    } else if (beforeMap.getDirection().equals(PortDirection.RESOURCE)) {
+                        actionTask.getMulticastPortMapList()
+                                .add(convertResourcePortMap(actionTask, beforeMap));
                     } else {
                         actionTask.getPortMapList()
                                 .add(convertChanelPortMap(actionTask, beforeMap));
@@ -175,8 +186,7 @@ public class AlgorithmGenerator {
                             .addAll(taskGraph.getChannelList());
                     algorithm.getAlgorithm().getLibraryConnections().getTaskLibraryConnection()
                             .addAll(taskGraph.getLibraryConnectionList());
-                    algorithm.getAlgorithm().getPortMaps().getPortMap()
-                            .addAll(actionTask.getPortMapList());
+                    algorithm.addAllPortMaps(actionTask.getPortMapList());
                 }
             }
 
@@ -506,23 +516,14 @@ public class AlgorithmGenerator {
     }
 
     private void makeGroupActionTask(UEMRobotTask robot) {
-        boolean existGroupAction = false;
+        UEMGroupActionTask groupAction = new UEMGroupActionTask(robot);
+        groupAction.setName(robot.getName(), AlgorithmConstant.GROUP_ACTION);
+        algorithm.addLibrary(groupAction);
+        robot.setGroupActionTask(groupAction);
         for (UEMActionTask actionTask : robot.getActionTaskList()) {
             if (actionTask.getActionImpl().getActionType().isGroupAction()) {
-                existGroupAction = true;
-                break;
-            }
-        }
-        if (existGroupAction) {
-            UEMGroupActionTask groupAction = new UEMGroupActionTask(robot);
-            groupAction.setName(robot.getName(), AlgorithmConstant.GROUP_ACTION);
-            algorithm.addLibrary(groupAction);
-            robot.setGroupActionTask(groupAction);
-            for (UEMActionTask actionTask : robot.getActionTaskList()) {
-                if (actionTask.getActionImpl().getActionType().isGroupAction()) {
-                    if (groupAction.existGroupAction(actionTask) == false) {
-                        groupAction.getGroupActionList().add(actionTask);
-                    }
+                if (groupAction.existGroupAction(actionTask) == false) {
+                    groupAction.getGroupActionList().add(actionTask);
                 }
             }
         }

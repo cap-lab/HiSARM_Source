@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import com.metadata.algorithm.UEMModeTask;
+import com.metadata.algorithm.UEMMulticastPortMap;
 import com.metadata.algorithm.UEMPortMap;
 import com.metadata.constant.AlgorithmConstant;
 import hopes.cic.xml.MulticastPortType;
@@ -16,6 +17,7 @@ public class UEMTask extends TaskType {
     private UEMModeTask uemMode;
     private List<UEMPortMap> portMapList = new ArrayList<>();
     private List<UEMLibraryPortMap> libPortMapList = new ArrayList<>();
+    private List<UEMMulticastPortMap> multicastPortMapList = new ArrayList<>();
     private String taskName;
 
     public UEMTask(String robotName) {
@@ -99,6 +101,10 @@ public class UEMTask extends TaskType {
 
     public List<UEMLibraryPortMap> getLibPortMapList() {
         return libPortMapList;
+    }
+
+    public List<UEMMulticastPortMap> getMulticastPortMapList() {
+        return multicastPortMapList;
     }
 
 }
