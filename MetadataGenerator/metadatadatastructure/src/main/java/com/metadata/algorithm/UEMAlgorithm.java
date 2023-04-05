@@ -70,15 +70,15 @@ public class UEMAlgorithm {
 
     public void addMulticastGroup(String groupId, int size) {
         if (getMulticastGroup(groupId) == null) {
-            algorithm.getMulticastGroups().getMulticastGroup().add(
-                    new UEMMulticastGroup(groupId, size + AlgorithmConstant.MULTICAST_PACKET_SIZE));
+            algorithm.getMulticastGroups().getMulticastGroup().add(new UEMMulticastGroup(groupId,
+                    size + AlgorithmConstant.MULTICAST_PACKET_SIZE, true));
         }
     }
 
     public void addInnerMulticastGroup(String groupId, int size) {
         if (getMulticastGroup(groupId) == null) {
             algorithm.getMulticastGroups().getMulticastGroup()
-                    .add(new UEMMulticastGroup(groupId, size));
+                    .add(new UEMMulticastGroup(groupId, size, false));
         }
     }
 

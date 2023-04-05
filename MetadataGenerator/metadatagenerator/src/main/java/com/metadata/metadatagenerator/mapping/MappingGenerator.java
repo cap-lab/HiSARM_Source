@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.metadata.UEMRobot;
 import com.metadata.algorithm.UEMAlgorithm;
+import com.metadata.algorithm.UEMMulticastGroup;
 import com.metadata.algorithm.UEMTaskGraph;
 import com.metadata.algorithm.task.UEMActionTask;
 import com.metadata.algorithm.task.UEMResourceTask;
@@ -70,7 +71,10 @@ public class MappingGenerator {
                         .add(mappingTaskToDevice(robot.getRobotTask().getLeaderTask(), robot));
                 for (MulticastGroupType multicast : algorithm.getAlgorithm().getMulticastGroups()
                         .getMulticastGroup()) {
-                    mapping.addMulticast(multicast.getGroupName());
+                    UEMMulticastGroup multicastGroup = (UEMMulticastGroup) multicast;
+                    if (multicastGroup.isExport()) {
+                        mapping.addMulticast(multicast.getGroupName());
+                    }
                 }
             }
         } catch (Exception e) {
