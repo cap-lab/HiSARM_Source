@@ -72,9 +72,7 @@ public class MappingGenerator {
                 for (MulticastGroupType multicast : algorithm.getAlgorithm().getMulticastGroups()
                         .getMulticastGroup()) {
                     UEMMulticastGroup multicastGroup = (UEMMulticastGroup) multicast;
-                    if (multicastGroup.isExport()) {
-                        mapping.addMulticast(multicast.getGroupName());
-                    }
+                    mapping.addMulticast(multicast.getGroupName(), multicastGroup.isExport());
                 }
             }
         } catch (Exception e) {
