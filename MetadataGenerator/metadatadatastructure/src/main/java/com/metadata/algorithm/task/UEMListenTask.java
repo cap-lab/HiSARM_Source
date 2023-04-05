@@ -77,6 +77,14 @@ public class UEMListenTask extends UEMCommTask {
             inPort.setMessage(statement.getMessage().getId());
             inPort.setVariableType(variable);
             getMulticastPort().add(inPort);
+            UEMMulticastPort outMulticastPort = new UEMMulticastPort();
+            outMulticastPort.setName(portName + "_out");
+            outMulticastPort.setGroup(counterTeamName + "_" + robot.getRobot().getTeam() + "_"
+                    + statement.getMessage().getId());
+            outMulticastPort.setDirection(PortDirectionType.OUTPUT);
+            outMulticastPort.setMessage(statement.getMessage().getId());
+            outMulticastPort.setVariableType(variable);
+            getMulticastPort().add(outMulticastPort);
             String outPortName = AlgorithmConstant.CONTROL_TASK + portName;
             UEMCommPort outPort = new UEMCommPort();;
             outPort.makePortInfo(outPortName, PortDirectionType.OUTPUT, portSize);
@@ -103,6 +111,16 @@ public class UEMListenTask extends UEMCommTask {
             inPort.setVariableType(
                     robot.getRobot().getPrimitiveVariableMap().get(PrimitiveType.INT32));
             getMulticastPort().add(inPort);
+
+            UEMMulticastPort outMulticastPort = new UEMMulticastPort();
+            outMulticastPort.setName(portName + "_out");
+            outMulticastPort.setGroup(group + "_" + AlgorithmConstant.EVENT);
+            outMulticastPort.setDirection(PortDirectionType.OUTPUT);
+            outMulticastPort.setMessage(statement.getEvent().getName());
+            outMulticastPort.setVariableType(
+                    robot.getRobot().getPrimitiveVariableMap().get(PrimitiveType.INT32));
+            getMulticastPort().add(outMulticastPort);
+
             UEMCommPort outPort = new UEMCommPort();
             outPort.makePortInfo(AlgorithmConstant.CONTROL_TASK + portName,
                     PortDirectionType.OUTPUT, 4);
