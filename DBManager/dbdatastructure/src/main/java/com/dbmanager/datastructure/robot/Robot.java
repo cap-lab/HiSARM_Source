@@ -8,6 +8,7 @@ public class Robot {
     private String primaryArchitecture;
     private List<String> architectureList = new ArrayList<>();
     private List<String> resourceList = new ArrayList<>();
+    private List<String> tagList = new ArrayList<>();
 
     public String getRobotClass() {
         return robotClass;
@@ -39,5 +40,13 @@ public class Robot {
 
     public void setResourceList(List<String> resourceList) {
         this.resourceList = resourceList;
+    }
+
+    public List<String> getTagList() {
+        return tagList;
+    }
+
+    public void setTagList(List<String> tagList) {
+        this.tagList = tagList;
     }
 }

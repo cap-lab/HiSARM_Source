@@ -1,6 +1,6 @@
-package com.dbmanager.datastructure.task;
+package com.dbmanager.datastructure.common;
 
-public class TaskFile {
+public class FileItem {
     private boolean isDirectory;
     private String path;
 

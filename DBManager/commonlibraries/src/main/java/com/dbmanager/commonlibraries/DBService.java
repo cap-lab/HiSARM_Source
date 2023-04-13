@@ -7,6 +7,7 @@ import com.dbmanager.commonlibraries.Mapper.ActionMapper;
 import com.dbmanager.commonlibraries.Mapper.ArchitectureMapper;
 import com.dbmanager.commonlibraries.Mapper.ControlStrategyMapper;
 import com.dbmanager.commonlibraries.Mapper.GroupActionMapper;
+import com.dbmanager.commonlibraries.Mapper.GroupingAlgorithmMapper;
 import com.dbmanager.commonlibraries.Mapper.ResourceMapper;
 import com.dbmanager.commonlibraries.Mapper.RobotImplMapper;
 import com.dbmanager.commonlibraries.Mapper.RobotMapper;
@@ -17,6 +18,7 @@ import com.dbmanager.datastructure.action.ActionImpl;
 import com.dbmanager.datastructure.action.GroupAction;
 import com.dbmanager.datastructure.architecture.Architecture;
 import com.dbmanager.datastructure.controlstrategy.ControlStrategy;
+import com.dbmanager.datastructure.groupingalgorithm.GroupingAlgorithm;
 import com.dbmanager.datastructure.resource.Resource;
 import com.dbmanager.datastructure.robot.Robot;
 import com.dbmanager.datastructure.robot.RobotImpl;
@@ -162,6 +164,11 @@ public class DBService {
 
     public static Resource getResource(String robotClass, String resourceId) {
         return ResourceMapper.mapToResource(dbDao.getResource(robotClass, resourceId));
+    }
+
+    public static GroupingAlgorithm getGroupingAlgorithm(String groupingId) {
+        return GroupingAlgorithmMapper
+                .mapToGroupingAlgorithm(dbDao.getGroupingAlgorithm(groupingId));
     }
 
     public static void close() {

@@ -12,4 +12,5 @@ public class DBCollections {
     public static final String Collection_Architecture = "Architecture";
     public static final String Collection_Task = "Task";
     public static final String Collection_Control_Strategy = "ControlStrategy";
+    public static final String Collection_Grouping_Algorithm = "GroupingAlgorithm";
 }

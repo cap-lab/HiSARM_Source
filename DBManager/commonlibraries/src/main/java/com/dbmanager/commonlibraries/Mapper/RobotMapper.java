@@ -1,7 +1,5 @@
 package com.dbmanager.commonlibraries.Mapper;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import com.dbmanager.datastructure.robot.Robot;
@@ -19,6 +17,7 @@ public class RobotMapper {
                     document.get("Architecture", Document.class).getString("primaryArchitecture"));
             robot.setArchitectureList(document.get("Architecture", Document.class)
                     .getList("architectureList", String.class));
+            robot.setTagList(document.getList("TagList", String.class));
         } catch (Exception e) {
             e.printStackTrace();
         }

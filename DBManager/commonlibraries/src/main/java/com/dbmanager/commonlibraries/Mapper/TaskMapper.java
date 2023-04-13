@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import com.dbmanager.datastructure.common.FileItem;
 import com.dbmanager.datastructure.task.ChannelPort;
 import com.dbmanager.datastructure.task.CommunicationType;
 import com.dbmanager.datastructure.task.ExtraSetting;
@@ -14,7 +15,6 @@ import com.dbmanager.datastructure.task.PortDirection;
 import com.dbmanager.datastructure.task.PortMap;
 import com.dbmanager.datastructure.task.ResourcePort;
 import com.dbmanager.datastructure.task.Task;
-import com.dbmanager.datastructure.task.TaskFile;
 import com.dbmanager.datastructure.task.Time;
 
 public class TaskMapper {
@@ -97,10 +97,10 @@ public class TaskMapper {
         return leaderPort;
     }
 
-    private static Set<TaskFile> makeTaskFileSet(List<Document> documentList) {
-        Set<TaskFile> taskfiles = new HashSet<TaskFile>();
+    private static Set<FileItem> makeTaskFileSet(List<Document> documentList) {
+        Set<FileItem> taskfiles = new HashSet<FileItem>();
         documentList.forEach(doc -> {
-            TaskFile taskFile = new TaskFile();
+            FileItem taskFile = new FileItem();
             taskFile.setDirectory(doc.getBoolean("isDirectory"));
             taskFile.setPath(doc.getString("path"));
             taskfiles.add(taskFile);

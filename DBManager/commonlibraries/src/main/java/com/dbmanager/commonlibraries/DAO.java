@@ -42,6 +42,7 @@ public class DAO {
 	private MongoCollection<Document> architectureCollection;
 	private MongoCollection<Document> variableCollection;
 	private MongoCollection<Document> variableImplCollection;
+	private MongoCollection<Document> groupingCollection;
 
 	private DAO() {}
 
@@ -60,6 +61,7 @@ public class DAO {
 		architectureCollection = mDB.getCollection(DBCollections.Collection_Architecture);
 		variableCollection = mDB.getCollection(DBCollections.Collection_Variable);
 		variableImplCollection = mDB.getCollection(DBCollections.Collection_VariableImpl);
+		groupingCollection = mDB.getCollection(DBCollections.Collection_Grouping_Algorithm);
 	}
 
 	private static class DBHolder {
@@ -255,6 +257,16 @@ public class DAO {
 			Bson queryFilter =
 					Filters.and(eq("RobotClass", robotClass), eq("ResourceId", resourceId));
 			return resourceCollection.find(queryFilter).first();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public Document getGroupingAlgorithm(String groupingId) {
+		try {
+			Bson queryFilter = Filters.eq("GroupingId", groupingId);
+			return groupingCollection.find(queryFilter).first();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

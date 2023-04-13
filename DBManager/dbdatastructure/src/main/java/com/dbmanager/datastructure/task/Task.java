@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import com.dbmanager.datastructure.common.FileItem;
 
 public class Task {
     private String taskId;
@@ -23,7 +24,7 @@ public class Task {
     private Set<ResourcePort> resourcePortSet = new HashSet<>();
     private Set<LibraryPort> libraryPortSet = new HashSet<>();
     private Set<PortMap> portMapSet = new HashSet<>();
-    private Set<TaskFile> taskFiles = new HashSet<>();
+    private Set<FileItem> taskFiles = new HashSet<>();
 
     public String getTaskId() {
         return taskId;
@@ -145,11 +146,11 @@ public class Task {
         this.portMapSet = portMapSet;
     }
 
-    public Set<TaskFile> getTaskFiles() {
+    public Set<FileItem> getTaskFiles() {
         return taskFiles;
     }
 
-    public void setTaskFiles(Set<TaskFile> taskFiles) {
+    public void setTaskFiles(Set<FileItem> taskFiles) {
         this.taskFiles = taskFiles;
     }
 
