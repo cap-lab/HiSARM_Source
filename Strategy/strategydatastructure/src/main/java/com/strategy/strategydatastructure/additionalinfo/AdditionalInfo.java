@@ -14,6 +14,7 @@ public class AdditionalInfo {
     private List<String> robotList;
     private List<ControlStrategyInfo> strategyList;
     private List<CustomVariableInfo> variableList;
+    private String groupingAlgorithm;
 
     public AdditionalInfo() {
         robotList = new ArrayList<String>();
@@ -102,4 +103,11 @@ public class AdditionalInfo {
         this.translatorDirectory = translatorDirectory;
     }
 
+    public String getGroupingAlgorithm() {
+        return groupingAlgorithm;
+    }
+
+    public void setGroupingAlgorithm(String groupingAlgorithm) {
+        this.groupingAlgorithm = groupingAlgorithm;
+    }
 }
