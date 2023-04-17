@@ -17,6 +17,8 @@ import com.metadata.algorithm.UEMCommPort;
 import com.metadata.algorithm.UEMMulticastPortMap;
 import com.metadata.algorithm.UEMPortMap;
 import com.metadata.algorithm.UEMTaskGraph;
+import com.metadata.algorithm.library.UEMGroupAction;
+import com.metadata.algorithm.library.UEMGroupingLibrary;
 import com.metadata.algorithm.library.UEMLeaderLibrary;
 import com.metadata.algorithm.library.UEMLibrary;
 import com.metadata.algorithm.library.UEMLibraryConnection;
@@ -24,7 +26,7 @@ import com.metadata.algorithm.library.UEMLibraryPort;
 import com.metadata.algorithm.library.UEMSharedData;
 import com.metadata.algorithm.task.UEMActionTask;
 import com.metadata.algorithm.task.UEMControlTask;
-import com.metadata.algorithm.task.UEMGroupActionTask;
+import com.metadata.algorithm.task.UEMGroupingTask;
 import com.metadata.algorithm.task.UEMLeaderTask;
 import com.metadata.algorithm.task.UEMLibraryPortMap;
 import com.metadata.algorithm.task.UEMListenTask;
@@ -55,6 +57,7 @@ import com.strategy.strategydatastructure.additionalinfo.AdditionalInfo;
 import com.strategy.strategydatastructure.wrapper.ActionImplWrapper;
 import com.strategy.strategydatastructure.wrapper.ActionTypeWrapper;
 import com.strategy.strategydatastructure.wrapper.ControlStrategyWrapper;
+import com.strategy.strategydatastructure.wrapper.GroupingAlgorithmWrapper;
 import com.strategy.strategydatastructure.wrapper.ResourceWrapper;
 import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 import com.strategy.strategydatastructure.wrapper.StrategyWrapper;
@@ -367,6 +370,7 @@ public class AlgorithmGenerator {
         makeActionTask(mission, robot, robot.getRobot().getControlStrategyList(),
                 Paths.get(additionalInfo.getTaskServerPrefix()));
         makeResourceTask(robot, Paths.get(additionalInfo.getTaskServerPrefix()));
+        makeGroupingTask(mission, robot, Paths.get(additionalInfo.getTaskServerPrefix()));
         makeLibraryTask(robot);
         makeGroupActionTask(robot);
         makeLeaderTask(robot);
@@ -487,6 +491,54 @@ public class AlgorithmGenerator {
         }
     }
 
+    private class GroupingModeVisitor implements ModeTransitionVisitor {
+        private UEMGroupingLibrary groupingLibrary;
+
+        @Override
+        public void visitMode(ModeWrapper mode, String modeId, String groupId) {
+            if (mode.getGroupList().size() > 0) {
+                groupingLibrary.addGroupMap(modeId, groupId, mode.getGroupList());
+            }
+        }
+
+        @Override
+        public void visitTransition(TransitionWrapper arg0, String arg1, String arg2) {}
+
+        public GroupingModeVisitor(UEMGroupingLibrary groupingLibrary) {
+            this.groupingLibrary = groupingLibrary;
+        }
+    }
+
+    private void makeGroupingTask(MissionWrapper mission, UEMRobotTask robot, Path taskServerPrefix)
+            throws Exception {
+        GroupingAlgorithmWrapper groupingAlgorithm = robot.getRobot().getGroupingAlgorithm();
+        UEMGroupingTask groupingTask =
+                new UEMGroupingTask(robot.getName(), groupingAlgorithm.getRunTimeTask());
+        if (groupingAlgorithm.getRunTimeTask().isHasSubGraph() == true) {
+            groupingTask.getSubTaskGraphs()
+                    .addAll(recursiveExplore(groupingTask, robot, taskServerPrefix));
+            for (UEMTaskGraph taskGraph : groupingTask.getSubTaskGraphs()) {
+                algorithm.addAllTasks(taskGraph.getTaskList());
+                algorithm.addAllLibraries(taskGraph.getLibraryList());
+                algorithm.getAlgorithm().getChannels().getChannel()
+                        .addAll(taskGraph.getChannelList());
+                algorithm.getAlgorithm().getLibraryConnections().getTaskLibraryConnection()
+                        .addAll(taskGraph.getLibraryConnectionList());
+            }
+        }
+        algorithm.addTask(groupingTask);
+        robot.setGroupingTask(groupingTask);
+        UEMGroupingLibrary groupingLibrary =
+                new UEMGroupingLibrary(robot.getName(), groupingAlgorithm);
+        algorithm.addLibrary(groupingLibrary);
+        robot.setGroupingLibrary(groupingLibrary);
+        String team = robot.getRobot().getTeam();
+        TransitionWrapper transition = mission.getTransition(team);
+        GroupingModeVisitor visitor = new GroupingModeVisitor(groupingLibrary);
+        transition.traverseTransition(new String(), team, new ArrayList<String>(),
+                new ArrayList<>(robot.getRobot().getGroupMap().keySet()), visitor, null);
+    }
+
     private void makeLibraryTask(UEMRobotTask robot) {
         for (UEMActionTask actionTask : robot.getActionTaskList()) {
             if (actionTask.getActionImpl().getActionType().isGroupAction()) {
@@ -516,7 +568,7 @@ public class AlgorithmGenerator {
     }
 
     private void makeGroupActionTask(UEMRobotTask robot) {
-        UEMGroupActionTask groupAction = new UEMGroupActionTask(robot);
+        UEMGroupAction groupAction = new UEMGroupAction(robot);
         groupAction.setName(robot.getName(), AlgorithmConstant.GROUP_ACTION);
         algorithm.addLibrary(groupAction);
         robot.setGroupActionTask(groupAction);
@@ -595,7 +647,7 @@ public class AlgorithmGenerator {
             robot.getReportTask().addLeaderPort(leaderLibrary);
             UEMLibraryConnection reportConnection = new UEMLibraryConnection();
             reportConnection.setSlaveLibrary(leaderLibrary.getName());
-            reportConnection.setMasterPort(leaderLibrary.getName());
+            reportConnection.setMasterPort(AlgorithmConstant.LEADER);
             reportConnection.setMasterTask(robot.getReportTask().getName());
             algorithm.getAlgorithm().getLibraryConnections().getTaskLibraryConnection()
                     .add(reportConnection);
@@ -635,6 +687,29 @@ public class AlgorithmGenerator {
         }
     }
 
+    private void makeGroupingPortForCommunication(UEMRobotTask robot) {
+        UEMGroupingLibrary groupingLibrary = robot.getGroupingLibrary();
+        if (groupingLibrary != null) {
+            robot.getListenTask().addGroupingPort(groupingLibrary);
+            UEMLibraryConnection listenConnection = new UEMLibraryConnection();
+            listenConnection.setSlaveLibrary(groupingLibrary.getName());
+            listenConnection.setMasterPort(AlgorithmConstant.GROUPING);
+            listenConnection.setMasterTask(robot.getListenTask().getName());
+            algorithm.getAlgorithm().getLibraryConnections().getTaskLibraryConnection()
+                    .add(listenConnection);
+            robot.getReportTask().addGroupingPort(groupingLibrary);
+            UEMLibraryConnection reportConnection = new UEMLibraryConnection();
+            reportConnection.setSlaveLibrary(groupingLibrary.getName());
+            reportConnection.setMasterPort(AlgorithmConstant.GROUPING);
+            reportConnection.setMasterTask(robot.getReportTask().getName());
+            algorithm.getAlgorithm().getLibraryConnections().getTaskLibraryConnection()
+                    .add(reportConnection);
+            robot.getListenTask().getGroupingPortList().forEach(port -> {
+                algorithm.addMulticastGroup(port.getGroup(), groupingLibrary.getSharedDataSize());
+            });
+        }
+    }
+
     private void makeCommunicationTask(MissionWrapper mission, UEMRobotTask robot)
             throws Exception {
         algorithm.addTask(robot.getListenTask());
@@ -647,6 +722,7 @@ public class AlgorithmGenerator {
         makeSharedDataLibraryConnectionForCommunication(robot);
         makeLeaderLibraryConnectionForCommunication(robot);
         makeGroupActionPortForCommunication(robot);
+        makeGroupingPortForCommunication(robot);
     }
 
     private void makeControlTask(MissionWrapper mission, UEMRobotTask robot) {
@@ -655,6 +731,7 @@ public class AlgorithmGenerator {
         for (UEMActionTask actionTask : robot.getActionTaskList()) {
             channelList.addAll(controlTask.setActionPortInfo(actionTask));
         }
+
         UEMListenTask listenTask = robot.getListenTask();
         channelList.addAll(controlTask.setCommPortInfo(listenTask));
 
@@ -665,7 +742,9 @@ public class AlgorithmGenerator {
         channelList.add(
                 controlTask.setLeaderPortInfo(leaderTask, robot.getRobot().getGroupMap().size()));
 
-        UEMGroupActionTask groupActionTask = robot.getGroupActionTask();
+        channelList.addAll(controlTask.setGroupingPortInfo(robot.getGroupingTask()));
+
+        UEMGroupAction groupActionTask = robot.getGroupActionTask();
         if (groupActionTask != null) {
             controlTask.setGroupActionPortInfo(groupActionTask);
             UEMLibraryConnection con = new UEMLibraryConnection();

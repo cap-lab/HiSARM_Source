@@ -69,6 +69,8 @@ public class MappingGenerator {
                         .add(mappingTaskToDevice(robot.getRobotTask().getControlTask(), robot));
                 mapping.getTask()
                         .add(mappingTaskToDevice(robot.getRobotTask().getLeaderTask(), robot));
+                mapping.getTask()
+                        .add(mappingTaskToDevice(robot.getRobotTask().getGroupingTask(), robot));
                 for (MulticastGroupType multicast : algorithm.getAlgorithm().getMulticastGroups()
                         .getMulticastGroup()) {
                     UEMMulticastGroup multicastGroup = (UEMMulticastGroup) multicast;

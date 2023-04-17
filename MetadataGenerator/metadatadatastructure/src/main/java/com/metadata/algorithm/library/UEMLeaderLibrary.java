@@ -21,24 +21,24 @@ public class UEMLeaderLibrary extends UEMLibrary {
         setName(robot.getName(), AlgorithmConstant.LEADER);
         setPort();
         this.groupList = new ArrayList<>(robot.getRobot().getGroupMap().keySet());
-        getFunction().add(UEMLibraryFunction.makeSetFuncForLeaderFromListenOfRobotId());
-        getFunction().add(UEMLibraryFunction.makeSetFuncForLeaderFromListenOfHeartBeat());
-        getFunction().add(UEMLibraryFunction.makeSetFuncForLeaderFromLeaderOfRobotId());
-        getFunction().add(UEMLibraryFunction.makeSetFuncForLeaderFromLeaderOfHeartBeat());
-        getFunction().add(UEMLibraryFunction.makeAvailFuncForLeaderFromLeaderOfRobotId());
-        getFunction().add(UEMLibraryFunction.makeAvailFuncForLeaderFromLeaderOfHeartBeat());
-        getFunction().add(UEMLibraryFunction.makeAvailFuncForLeaderFromReportOfRobotId());
-        getFunction().add(UEMLibraryFunction.makeAvailFuncForLeaderFromReportOfHeartBeat());
-        getFunction().add(UEMLibraryFunction.makeGetFuncForLeaderFromLeaderOfRobotId());
-        getFunction().add(UEMLibraryFunction.makeGetFuncForLeaderFromLeaderOfHeartBeat());
-        getFunction().add(UEMLibraryFunction.makeGetFuncForLeaderFromReportOfRobotId());
-        getFunction().add(UEMLibraryFunction.makeGetFuncForLeaderFromReportOfHeartBeat());
-        getFunction().add(UEMLibraryFunction.makeSetLeaderSelectionState());
-        getFunction().add(UEMLibraryFunction.makeGetLeaderSelectionState());
-        getFunction().add(UEMLibraryFunction.makeSetLastTime());
-        getFunction().add(UEMLibraryFunction.makeGetLastTime());
-        getFunction().add(UEMLibraryFunction.makeGetLeader());
-        getFunction().add(UEMLibraryFunction.makeSetLeader());
+        getFunction().add(UEMLeaderLibraryFunction.makeSetFuncForLeaderFromListenOfRobotId());
+        getFunction().add(UEMLeaderLibraryFunction.makeSetFuncForLeaderFromListenOfHeartBeat());
+        getFunction().add(UEMLeaderLibraryFunction.makeSetFuncForLeaderFromLeaderOfRobotId());
+        getFunction().add(UEMLeaderLibraryFunction.makeSetFuncForLeaderFromLeaderOfHeartBeat());
+        getFunction().add(UEMLeaderLibraryFunction.makeAvailFuncForLeaderFromLeaderOfRobotId());
+        getFunction().add(UEMLeaderLibraryFunction.makeAvailFuncForLeaderFromLeaderOfHeartBeat());
+        getFunction().add(UEMLeaderLibraryFunction.makeAvailFuncForLeaderFromReportOfRobotId());
+        getFunction().add(UEMLeaderLibraryFunction.makeAvailFuncForLeaderFromReportOfHeartBeat());
+        getFunction().add(UEMLeaderLibraryFunction.makeGetFuncForLeaderFromLeaderOfRobotId());
+        getFunction().add(UEMLeaderLibraryFunction.makeGetFuncForLeaderFromLeaderOfHeartBeat());
+        getFunction().add(UEMLeaderLibraryFunction.makeGetFuncForLeaderFromReportOfRobotId());
+        getFunction().add(UEMLeaderLibraryFunction.makeGetFuncForLeaderFromReportOfHeartBeat());
+        getFunction().add(UEMLeaderLibraryFunction.makeSetLeaderSelectionState());
+        getFunction().add(UEMLeaderLibraryFunction.makeGetLeaderSelectionState());
+        getFunction().add(UEMLeaderLibraryFunction.makeSetLastTime());
+        getFunction().add(UEMLeaderLibraryFunction.makeGetLastTime());
+        getFunction().add(UEMLeaderLibraryFunction.makeGetLeader());
+        getFunction().add(UEMLeaderLibraryFunction.makeSetLeader());
     }
 
     private void setPort() {

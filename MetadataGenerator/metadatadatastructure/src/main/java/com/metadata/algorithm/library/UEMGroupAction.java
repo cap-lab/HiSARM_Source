@@ -1,16 +1,16 @@
-package com.metadata.algorithm.task;
+package com.metadata.algorithm.library;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.metadata.algorithm.library.UEMLibrary;
-import com.metadata.algorithm.library.UEMLibraryFunction;
+import com.metadata.algorithm.task.UEMActionTask;
+import com.metadata.algorithm.task.UEMRobotTask;
 import com.metadata.constant.AlgorithmConstant;
 import hopes.cic.xml.YesNoType;
 
-public class UEMGroupActionTask extends UEMLibrary {
+public class UEMGroupAction extends UEMLibrary {
     private List<UEMActionTask> groupActionList = new ArrayList<>();
 
-    public UEMGroupActionTask(UEMRobotTask robot) {
+    public UEMGroupAction(UEMRobotTask robot) {
         super(robot.getRobot().getRobot().getRobotId());
         setName(AlgorithmConstant.GROUP_ACTION);
         setType(getName());
@@ -24,15 +24,16 @@ public class UEMGroupActionTask extends UEMLibrary {
         setLanguage(AlgorithmConstant.LANGUAGE_C);
         getExtraHeader().add(AlgorithmConstant.COMMON_LEADER_HEADER);
         getExtraHeader().add(AlgorithmConstant.MUTEX_HEADER);
-        setFunctionList(robot);
+        setFunctionList();
     }
 
-    private void setFunctionList(UEMRobotTask robot) {
-        getFunction().add(UEMLibraryFunction.makeSetFuncFromListenForGroupAction());
-        getFunction().add(UEMLibraryFunction.makeGetFuncFromControlForGroupAction());
-        getFunction().add(UEMLibraryFunction.makeSetFuncFromControlForGroupAction());
-        getFunction().add(UEMLibraryFunction.makeSetRobotIdFuncFromControlForGroupAction());
-        getFunction().add(UEMLibraryFunction.makeAvailFuncFromReportForGroupAction());
+    private void setFunctionList() {
+        getFunction().add(UEMGroupActionLibraryFunction.makeSetFuncFromListenForGroupAction());
+        getFunction().add(UEMGroupActionLibraryFunction.makeGetFuncFromControlForGroupAction());
+        getFunction().add(UEMGroupActionLibraryFunction.makeSetFuncFromControlForGroupAction());
+        getFunction()
+                .add(UEMGroupActionLibraryFunction.makeSetRobotIdFuncFromControlForGroupAction());
+        getFunction().add(UEMGroupActionLibraryFunction.makeAvailFuncFromReportForGroupAction());
     }
 
     public List<UEMActionTask> getGroupActionList() {

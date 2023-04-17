@@ -4,6 +4,7 @@ import java.util.Map;
 import com.dbmanager.datastructure.variable.PrimitiveType;
 import com.metadata.algorithm.UEMCommPort;
 import com.metadata.algorithm.UEMMulticastPort;
+import com.metadata.algorithm.library.UEMGroupingLibrary;
 import com.metadata.algorithm.library.UEMLeaderLibrary;
 import com.metadata.algorithm.library.UEMLibraryPort;
 import com.metadata.algorithm.library.UEMSharedData;
@@ -184,5 +185,24 @@ public class UEMReportTask extends UEMCommTask {
             getGroupActionPortList().add(groupActionPort);
             getMulticastPort().add(groupActionPort);
         }
+    }
+
+    public void addGroupingPort(UEMGroupingLibrary groupingLibrary) {
+        this.groupingPort = new UEMLibraryPort();
+        this.groupingPort.setName(AlgorithmConstant.GROUPING);
+        this.groupingPort.setType(AlgorithmConstant.GROUPING);
+        this.groupingPort.setLibrary(groupingLibrary);
+        getLibraryMasterPort().add(this.leaderPort);
+        groupingLibrary.getGroupMap().keySet().forEach(modeName -> {
+            String sharedDataPortName = makePortName(modeName, AlgorithmConstant.GROUPING);
+            if (!existMulticastPort(sharedDataPortName)) {
+                UEMMulticastPort sharedDataPort = new UEMMulticastPort();
+                sharedDataPort.setName(sharedDataPortName);
+                sharedDataPort.setGroup(sharedDataPortName);
+                sharedDataPort.setDirection(PortDirectionType.OUTPUT);
+                getMulticastPort().add(sharedDataPort);
+                getGroupingPortList().add(sharedDataPort);
+            }
+        });
     }
 }

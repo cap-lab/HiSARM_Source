@@ -23,6 +23,8 @@ public class UEMCommTask extends UEMTask {
     private Map<UEMMulticastPort, UEMMulticastPort> leaderPortMap = new HashMap<>();
     protected UEMLibraryPort groupActionPort;
     private List<UEMMulticastPort> groupActionPortList = new ArrayList<>();
+    protected UEMLibraryPort groupingPort;
+    private List<UEMMulticastPort> groupingPortList = new ArrayList<>();
 
     public UEMCommTask(String robotId, String name) {
         super(robotId);
@@ -103,6 +105,14 @@ public class UEMCommTask extends UEMTask {
 
     public List<UEMMulticastPort> getGroupActionPortList() {
         return groupActionPortList;
+    }
+
+    public UEMLibraryPort getGroupingPort() {
+        return groupingPort;
+    }
+
+    public List<UEMMulticastPort> getGroupingPortList() {
+        return groupingPortList;
     }
 
 }

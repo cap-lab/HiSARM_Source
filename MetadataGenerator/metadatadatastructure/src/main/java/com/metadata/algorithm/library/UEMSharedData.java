@@ -35,12 +35,12 @@ public class UEMSharedData extends UEMLibrary {
 
     public void setVariableType(VariableTypeWrapper variableType) {
         this.variableType = variableType;
-        getFunction().add(UEMLibraryFunction.makeAvailFuncFromReport(variableType));
-        getFunction().add(UEMLibraryFunction.makeAvailFuncFromAction(variableType));
-        getFunction().add(UEMLibraryFunction.makeGetFuncFromAction(variableType));
-        getFunction().add(UEMLibraryFunction.makeGetFuncFromReport(variableType));
-        getFunction().add(UEMLibraryFunction.makeSetFuncFromListen(variableType));
-        getFunction().add(UEMLibraryFunction.makeSetFuncFromAction(variableType));
+        getFunction().add(UEMSharedDataLibraryFunction.makeAvailFuncFromReport(variableType));
+        getFunction().add(UEMSharedDataLibraryFunction.makeAvailFuncFromAction(variableType));
+        getFunction().add(UEMSharedDataLibraryFunction.makeGetFuncFromAction(variableType));
+        getFunction().add(UEMSharedDataLibraryFunction.makeGetFuncFromReport(variableType));
+        getFunction().add(UEMSharedDataLibraryFunction.makeSetFuncFromListen(variableType));
+        getFunction().add(UEMSharedDataLibraryFunction.makeSetFuncFromAction(variableType));
 
     }
 

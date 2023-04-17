@@ -9,10 +9,12 @@ import com.metadata.algorithm.UEMChannel;
 import com.metadata.algorithm.UEMChannelPort;
 import com.metadata.algorithm.UEMCommPort;
 import com.metadata.algorithm.UEMModeTask;
+import com.metadata.algorithm.library.UEMGroupAction;
 import com.metadata.algorithm.library.UEMLibraryPort;
 import com.metadata.constant.AlgorithmConstant;
 import hopes.cic.xml.PortTypeType;
 import hopes.cic.xml.RunConditionType;
+import hopes.cic.xml.TaskPortType;
 import hopes.cic.xml.TimeMetricType;
 import hopes.cic.xml.YesNoType;
 
@@ -146,12 +148,24 @@ public class UEMControlTask extends UEMTask {
         return channel;
     }
 
-    public void setGroupActionPortInfo(UEMGroupActionTask groupActionTask) {
+    public void setGroupActionPortInfo(UEMGroupAction groupActionTask) {
         UEMLibraryPort groupActionPort = new UEMLibraryPort();
         groupActionPort.setName(AlgorithmConstant.GROUP_ACTION);
         groupActionPort.setType(AlgorithmConstant.GROUP_ACTION);
         groupActionPort.setLibrary(groupActionTask);
         getLibraryMasterPort().add(groupActionPort);
+    }
+
+    public List<UEMChannel> setGroupingPortInfo(UEMGroupingTask groupingTask) {
+        List<UEMChannel> channelList = new ArrayList<>();
+        for (TaskPortType counterPort : groupingTask.getPort()) {
+            UEMChannelPort port = new UEMChannelPort();
+            port.setPortInfo(groupingTask.getName(), (UEMChannelPort) counterPort);
+            getPort().add(port);
+            channelList.add(
+                    UEMChannel.makeChannel(this, port, groupingTask, (UEMChannelPort) counterPort));
+        }
+        return channelList;
     }
 
     public List<UEMChannelPort> getInputPortList(UEMTask task) {

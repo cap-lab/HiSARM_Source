@@ -5,6 +5,8 @@ import java.util.List;
 import com.metadata.algorithm.UEMCommPort;
 import com.metadata.algorithm.UEMModeTask;
 import com.metadata.algorithm.UEMPortMap;
+import com.metadata.algorithm.library.UEMGroupAction;
+import com.metadata.algorithm.library.UEMGroupingLibrary;
 import com.metadata.algorithm.library.UEMLeaderLibrary;
 import com.metadata.algorithm.library.UEMSharedData;
 import com.metadata.constant.AlgorithmConstant;
@@ -24,7 +26,9 @@ public class UEMRobotTask extends UEMTask {
     private UEMReportTask reportTask;
     private UEMLeaderLibrary leaderLibraryTask;
     private UEMLeaderTask leaderTask;
-    private UEMGroupActionTask groupActionTask;
+    private UEMGroupAction groupActionTask;
+    private UEMGroupingTask groupingTask;
+    private UEMGroupingLibrary groupingLibrary;
 
     public UEMRobotTask(String name, RobotImplWrapper robot) {
         super(name);
@@ -177,15 +181,31 @@ public class UEMRobotTask extends UEMTask {
         this.leaderTask = leaderTask;
     }
 
-    public UEMGroupActionTask getGroupActionTask() {
+    public UEMGroupAction getGroupActionTask() {
         return groupActionTask;
     }
 
-    public void setGroupActionTask(UEMGroupActionTask groupActionTask) {
+    public void setGroupActionTask(UEMGroupAction groupActionTask) {
         this.groupActionTask = groupActionTask;
     }
 
     public List<UEMResourceTask> getResourceTaskList() {
         return resourceTaskList;
+    }
+
+    public UEMGroupingTask getGroupingTask() {
+        return groupingTask;
+    }
+
+    public void setGroupingTask(UEMGroupingTask groupingTask) {
+        this.groupingTask = groupingTask;
+    }
+
+    public UEMGroupingLibrary getGroupingLibrary() {
+        return groupingLibrary;
+    }
+
+    public void setGroupingLibrary(UEMGroupingLibrary groupingLibrary) {
+        this.groupingLibrary = groupingLibrary;
     }
 }

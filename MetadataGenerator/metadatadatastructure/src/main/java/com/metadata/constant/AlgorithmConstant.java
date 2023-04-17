@@ -12,6 +12,7 @@ public class AlgorithmConstant {
     public static final String DEFAULT = "Default";
     public static final String DEFAULT_FILE = "task.xml";
     public static final String LANGUAGE_C = "C";
+    public static final String LANGUAGE_CPP = "C++";
     public static final String LISTEN = "listen";
     public static final String REPORT = "report";
     public static final String ACTION = "action";
@@ -19,6 +20,7 @@ public class AlgorithmConstant {
     public static final String LEADER = "leader";
     public static final String GROUP_ACTION = "group_action";
     public static final String GROUP = "group";
+    public static final String GROUPING = "grouping";
     public static final String ROBOT_ID = "robotId";
     public static final String HEARTBEAT = "heartbeat";
     public static final String EVENT = "event";
@@ -60,6 +62,7 @@ public class AlgorithmConstant {
     public static final String COMMON_COMMUNICATION_SOURCE = "semo_communication.c";
     public static final String COMMON_VARIABLE_HEADER = "semo_variable.h";
     public static final String COMMON_VARIABLE_SOURCE = "semo_variable.c";
+    public static final String COMMON_GROUP_HEADER = "semo_group.h";
     public static final String MUTEX_HEADER = "UCThreadMutex.h";
     public static final int MULTICAST_PACKET_SIZE = 12;
 }
