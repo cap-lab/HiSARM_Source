@@ -7,12 +7,13 @@ import com.scriptparser.parserdatastructure.wrapper.TransitionModeWrapper;
 import com.scriptparser.parserdatastructure.wrapper.TransitionWrapper;
 
 public interface VariableVisitor {
-    public void visitTransitionToMode(TransitionWrapper transition, ModeWrapper previousMode,
-            String event, TransitionModeWrapper currentMode, String groupId);
+        public void visitTransitionToMode(TransitionWrapper transition, String transitionId,
+                        ModeWrapper previousMode, String event, TransitionModeWrapper currentMode,
+                        String groupId);
 
-    public void visitModeToTransition(ModeWrapper mode, GroupModeTransitionWrapper transition,
-            String groupId);
+        public void visitModeToTransition(ModeWrapper mode, String modeId,
+                        GroupModeTransitionWrapper transition, String groupId);
 
-    public void visitModeToService(ModeWrapper mode, ParallelServiceWrapper service,
-            String groupId);
+        public void visitModeToService(ModeWrapper mode, String modeId,
+                        ParallelServiceWrapper service, String groupId);
 }

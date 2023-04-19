@@ -38,7 +38,7 @@ public class TransitionModeWrapper {
          List<String> visitedId, List<String> groupList, ModeTransitionVisitor visitor,
          VariableVisitor variableVisitor) {
       if (variableVisitor != null) {
-         variableVisitor.visitTransitionToMode(transition, previousMode, event, this,
+         variableVisitor.visitTransitionToMode(transition, lastId, previousMode, event, this,
                currentGroupId);
       }
       mode.visitMode(lastId, currentGroupId, visitedId, groupList, visitor, variableVisitor);

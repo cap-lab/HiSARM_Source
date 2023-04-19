@@ -38,8 +38,8 @@ public class ModeWrapper {
         return lastId + "_" + mode.getName();
     }
 
-    public String makeGroupId(String lastGroupId, String currentGroupId) {
-        return lastGroupId + "_" + currentGroupId;
+    public static String makeGroupId(String lastId, String currentGroupId) {
+        return lastId + "_" + currentGroupId;
     }
 
     public Map<String, String> makeArgumentMap(List<String> argumentList) {
@@ -67,7 +67,7 @@ public class ModeWrapper {
             visitor.visitMode(this, id, currentGroupId);
         }
         for (ParallelServiceWrapper service : this.serviceList) {
-            service.visitModeService(this, currentGroupId, variableVisitor);
+            service.visitModeService(this, id, currentGroupId, variableVisitor);
         }
         for (GroupWrapper group : this.groupList) {
             String newGroupId = makeGroupId(currentGroupId, group.getGroup().getName());
@@ -76,8 +76,8 @@ public class ModeWrapper {
                     continue;
                 }
             }
-            group.getModeTransition().traverseModeTransition(id, newGroupId, this, visitedList,
-                    groupList, visitor, variableVisitor);
+            group.getModeTransition().traverseModeTransition(newGroupId, newGroupId, this, id,
+                    visitedList, groupList, visitor, variableVisitor);
         }
     }
 }

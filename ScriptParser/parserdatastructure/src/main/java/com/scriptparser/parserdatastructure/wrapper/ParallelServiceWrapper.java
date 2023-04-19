@@ -40,10 +40,10 @@ public class ParallelServiceWrapper {
         return argumentList;
     }
 
-    public void visitModeService(ModeWrapper mode, String currentGroupId,
+    public void visitModeService(ModeWrapper mode, String modeId, String currentGroupId,
             VariableVisitor variableVisitor) {
         if (variableVisitor != null) {
-            variableVisitor.visitModeToService(mode, this, currentGroupId);
+            variableVisitor.visitModeToService(mode, modeId, this, currentGroupId);
         }
     }
 

@@ -38,10 +38,10 @@ public class GroupModeTransitionWrapper {
     }
 
     public void traverseModeTransition(String lastId, String currentGroupId, ModeWrapper mode,
-            List<String> visitedList, List<String> groupList, ModeTransitionVisitor visitor,
-            VariableVisitor variableVisitor) {
+            String lastModeId, List<String> visitedList, List<String> groupList,
+            ModeTransitionVisitor visitor, VariableVisitor variableVisitor) {
         if (variableVisitor != null) {
-            variableVisitor.visitModeToTransition(mode, this, currentGroupId);
+            variableVisitor.visitModeToTransition(mode, lastModeId, this, currentGroupId);
         }
         modeTransition.traverseTransition(lastId, currentGroupId, visitedList, groupList, visitor,
                 variableVisitor);
