@@ -34,10 +34,10 @@ public class UEMActionTask extends UEMTask {
     private UEMChannelPort groupPort = null;
     private int groupActionIndex = -1;
 
-    public UEMActionTask(String robotTask, String groupId, String serviceId,
+    public UEMActionTask(String robotTask, String modeId, String serviceId,
             ActionImplWrapper actionImpl, ActionStatement actionStatement) {
         super(robotTask);
-        this.scope = makeScope(groupId, serviceId);
+        this.scope = makeScope(modeId, serviceId);
         setName(robotTask, scope + "_" + actionImpl.getActionImpl().getActionImplId());
         this.actionImpl = actionImpl;
         this.actionStatement = actionStatement;

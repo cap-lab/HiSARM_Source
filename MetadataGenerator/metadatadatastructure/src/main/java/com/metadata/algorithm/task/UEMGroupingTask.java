@@ -12,20 +12,25 @@ import com.metadata.algorithm.UEMMulticastPort;
 import com.metadata.algorithm.UEMTaskGraph;
 import com.metadata.algorithm.library.UEMLibraryPort;
 import com.metadata.constant.AlgorithmConstant;
+import com.strategy.strategydatastructure.enumeration.AdditionalTaskType;
 import hopes.cic.xml.PortDirectionType;
 import hopes.cic.xml.YesNoType;
 
 public class UEMGroupingTask extends UEMTask {
+    private Task groupingTask;
     private List<UEMTaskGraph> subTaskGraphs = new ArrayList<>();
     private UEMChannelPort modePort;
     private UEMChannelPort resultPort;
     private UEMLibraryPort groupPort;
 
-    public UEMGroupingTask(String robotName, Task task) {
-        super(robotName);
-        setName(robotName, task.getTaskId());
+    public UEMGroupingTask(UEMRobotTask robotTask) throws Exception {
+        super(robotTask.getName());
+        groupingTask = robotTask.getRobot().getAdditionalTask(AdditionalTaskType.GROUP_SELECTION)
+                .getTask();
+        setParentTask(robotTask.getName());
+        setName(robotTask.getName(), groupingTask.getTaskId());
         getExtraHeader().add(AlgorithmConstant.COMMON_GROUP_HEADER);
-        setTaskInfo(task, robotName);
+        setTaskInfo(groupingTask, robotTask.getName());
         addDefaultPort();
     }
 
@@ -123,4 +128,7 @@ public class UEMGroupingTask extends UEMTask {
         return subTaskGraphs;
     }
 
+    public Task getGroupingTask() {
+        return groupingTask;
+    }
 }

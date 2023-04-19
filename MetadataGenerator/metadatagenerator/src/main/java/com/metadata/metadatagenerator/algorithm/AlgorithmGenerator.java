@@ -110,15 +110,15 @@ public class AlgorithmGenerator {
 
 
         private class TaskMakerForStatement implements StatementVisitor {
-            private String currentGroup;
-            private ModeWrapper mode;
+            private String groupId;
+            private String modeId;
             private Map<String, String> argumentMap;
             private ServiceWrapper service;
 
-            public TaskMakerForStatement(String currentGroup, ModeWrapper mode,
+            public TaskMakerForStatement(String modeId, String groupId,
                     Map<String, String> argumentMap, ServiceWrapper service) {
-                this.currentGroup = currentGroup;
-                this.mode = mode;
+                this.groupId = groupId;
+                this.modeId = modeId;
                 this.argumentMap = argumentMap;
                 this.service = service;
             }
@@ -203,8 +203,7 @@ public class AlgorithmGenerator {
                     if (controlStrategy.getControlStrategy().getActionName()
                             .equals(action.getActionName())) {
                         for (ActionImplWrapper actionImpl : controlStrategy.getActionList()) {
-                            UEMActionTask actionTask = new UEMActionTask(robot.getName(),
-                                    currentGroup + "_" + mode.getMode().getName(),
+                            UEMActionTask actionTask = new UEMActionTask(robot.getName(), modeId,
                                     statement.getService().getService().getName(), actionImpl,
                                     action);
                             if (actionImpl.getTask().isHasSubGraph()) {
@@ -281,9 +280,9 @@ public class AlgorithmGenerator {
                 if (isActionTask == true) {
                     return;
                 }
-                robot.getListenTask().addThrow(statement, currentGroup, robot);
-                robot.getReportTask().addThrow(statement, currentGroup, robot);
-                algorithm.addMulticastGroup(currentGroup + "_" + AlgorithmConstant.EVENT, 4);
+                robot.getListenTask().addThrow(statement, groupId, robot);
+                robot.getReportTask().addThrow(statement, groupId, robot);
+                algorithm.addMulticastGroup(groupId + "_" + AlgorithmConstant.EVENT, 4);
             }
 
             @Override
@@ -304,36 +303,38 @@ public class AlgorithmGenerator {
         }
 
         @Override
-        public void visitModeToService(ModeWrapper mode, ParallelServiceWrapper service,
-                String groupId) {
-            TaskMakerForStatement taskMaker = new TaskMakerForStatement(groupId, mode,
-                    service.getService().makeArgumentMap(
-                            service.makeArgumentList(modeArgumentMap.get(groupId))),
+        public void visitModeToService(ModeWrapper mode, String modeId,
+                ParallelServiceWrapper service, String groupId) {
+            TaskMakerForStatement taskMaker = new TaskMakerForStatement(modeId, groupId,
+                    service.getService()
+                            .makeArgumentMap(service.makeArgumentList(modeArgumentMap.get(modeId))),
                     service.getService());
             service.getService().traverseService(taskMaker);
         }
 
         @Override
-        public void visitModeToTransition(ModeWrapper mode, GroupModeTransitionWrapper transition,
-                String groupId) {
-            variableStack.add(transition.makeArgumentList(modeArgumentMap.get(groupId)));
+        public void visitModeToTransition(ModeWrapper mode, String modeId,
+                GroupModeTransitionWrapper transition, String groupId) {
+            variableStack.add(transition.makeArgumentList(modeArgumentMap.get(modeId)));
         }
 
         @Override
-        public void visitTransitionToMode(TransitionWrapper transition, ModeWrapper previousMode,
-                String event, TransitionModeWrapper mode, String groupId) {
-            variableStack.add(mode.makeArgumentList(transitionArgumentMap.get(groupId)));
+        public void visitTransitionToMode(TransitionWrapper transition, String transitionId,
+                ModeWrapper previousMode, String event, TransitionModeWrapper mode,
+                String groupId) {
+            variableStack.add(mode.makeArgumentList(transitionArgumentMap.get(transitionId)));
         }
 
         @Override
         public void visitMode(ModeWrapper mode, String modeId, String groupId) {
-            modeArgumentMap.put(groupId, mode.makeArgumentMap(variableStack.pop()));
+            modeArgumentMap.put(modeId, mode.makeArgumentMap(variableStack.pop()));
         }
 
         @Override
         public void visitTransition(TransitionWrapper transition, String transitionId,
                 String groupId) {
-            transitionArgumentMap.put(groupId, transition.makeArgumentMap(variableStack.pop()));
+            transitionArgumentMap.put(transitionId,
+                    transition.makeArgumentMap(variableStack.pop()));
         }
 
     }
@@ -512,8 +513,7 @@ public class AlgorithmGenerator {
     private void makeGroupingTask(MissionWrapper mission, UEMRobotTask robot, Path taskServerPrefix)
             throws Exception {
         GroupingAlgorithmWrapper groupingAlgorithm = robot.getRobot().getGroupingAlgorithm();
-        UEMGroupingTask groupingTask =
-                new UEMGroupingTask(robot.getName(), groupingAlgorithm.getRunTimeTask());
+        UEMGroupingTask groupingTask = new UEMGroupingTask(robot);
         if (groupingAlgorithm.getRunTimeTask().isHasSubGraph() == true) {
             groupingTask.getSubTaskGraphs()
                     .addAll(recursiveExplore(groupingTask, robot, taskServerPrefix));
@@ -529,7 +529,7 @@ public class AlgorithmGenerator {
         algorithm.addTask(groupingTask);
         robot.setGroupingTask(groupingTask);
         UEMGroupingLibrary groupingLibrary =
-                new UEMGroupingLibrary(robot.getName(), groupingAlgorithm);
+                new UEMGroupingLibrary(robot.getRobot(), groupingAlgorithm);
         algorithm.addLibrary(groupingLibrary);
         robot.setGroupingLibrary(groupingLibrary);
         String team = robot.getRobot().getTeam();
@@ -537,6 +537,10 @@ public class AlgorithmGenerator {
         GroupingModeVisitor visitor = new GroupingModeVisitor(groupingLibrary);
         transition.traverseTransition(new String(), team, new ArrayList<String>(),
                 new ArrayList<>(robot.getRobot().getGroupMap().keySet()), visitor, null);
+        UEMLibraryConnection connection = new UEMLibraryConnection();
+        connection.setConnection(groupingTask.getName(), groupingTask.getGroupPort(),
+                groupingLibrary);
+        algorithm.getAlgorithm().getLibraryConnections().getTaskLibraryConnection().add(connection);
     }
 
     private void makeLibraryTask(UEMRobotTask robot) {
@@ -581,7 +585,7 @@ public class AlgorithmGenerator {
         }
     }
 
-    private void makeLeaderTask(UEMRobotTask robot) {
+    private void makeLeaderTask(UEMRobotTask robot) throws Exception {
         UEMLeaderTask leader = new UEMLeaderTask(robot);
         UEMLeaderLibrary leaderLibrary = new UEMLeaderLibrary(robot, leader);
         UEMLibraryConnection connection = new UEMLibraryConnection();

@@ -209,8 +209,8 @@ public class UEMListenTask extends UEMCommTask {
         this.groupingPort.setName(AlgorithmConstant.GROUPING);
         this.groupingPort.setType(AlgorithmConstant.GROUPING);
         this.groupingPort.setLibrary(groupingLibrary);
-        getLibraryMasterPort().add(this.leaderPort);
-        groupingLibrary.getGroupMap().keySet().forEach(modeName -> {
+        getLibraryMasterPort().add(this.groupingPort);
+        groupingLibrary.getModeSet().forEach(modeName -> {
             String sharedDataPortName = makePortName(modeName, AlgorithmConstant.GROUPING);
             if (!existMulticastPort(sharedDataPortName)) {
                 UEMMulticastPort sharedDataPort = new UEMMulticastPort();

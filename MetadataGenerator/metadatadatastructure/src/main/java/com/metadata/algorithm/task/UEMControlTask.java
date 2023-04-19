@@ -14,7 +14,6 @@ import com.metadata.algorithm.library.UEMLibraryPort;
 import com.metadata.constant.AlgorithmConstant;
 import hopes.cic.xml.PortTypeType;
 import hopes.cic.xml.RunConditionType;
-import hopes.cic.xml.TaskPortType;
 import hopes.cic.xml.TimeMetricType;
 import hopes.cic.xml.YesNoType;
 
@@ -158,13 +157,25 @@ public class UEMControlTask extends UEMTask {
 
     public List<UEMChannel> setGroupingPortInfo(UEMGroupingTask groupingTask) {
         List<UEMChannel> channelList = new ArrayList<>();
-        for (TaskPortType counterPort : groupingTask.getPort()) {
-            UEMChannelPort port = new UEMChannelPort();
-            port.setPortInfo(groupingTask.getName(), (UEMChannelPort) counterPort);
-            getPort().add(port);
-            channelList.add(
-                    UEMChannel.makeChannel(this, port, groupingTask, (UEMChannelPort) counterPort));
-        }
+        channelPortMap.put(groupingTask, new HashMap<>());
+        List<UEMChannelPort> inputPortList = new ArrayList<>();
+        List<UEMChannelPort> outputPortList = new ArrayList<>();
+        channelPortMap.get(groupingTask).put(inputPortList, outputPortList);
+
+        UEMChannelPort modePort = groupingTask.getModePort();
+        UEMChannelPort mPort = new UEMChannelPort();
+        mPort.setPortInfo(groupingTask.getName(), modePort);
+        getPort().add(mPort);
+        inputPortList.add(mPort);
+        channelList.add(UEMChannel.makeChannel(this, mPort, groupingTask, modePort));
+
+        UEMChannelPort resultPort = groupingTask.getResultPort();
+        UEMChannelPort rPort = new UEMChannelPort();
+        rPort.setPortInfo(groupingTask.getName(), resultPort);
+        getPort().add(rPort);
+        outputPortList.add(rPort);
+        channelList.add(UEMChannel.makeChannel(this, rPort, groupingTask, resultPort));
+
         return channelList;
     }
 

@@ -6,6 +6,7 @@ import com.metadata.algorithm.UEMChannelPort;
 import com.metadata.algorithm.UEMModeTask;
 import com.metadata.algorithm.library.UEMLibraryPort;
 import com.metadata.constant.AlgorithmConstant;
+import com.strategy.strategydatastructure.enumeration.AdditionalTaskType;
 import hopes.cic.xml.PortDirectionType;
 import hopes.cic.xml.PortTypeType;
 import hopes.cic.xml.RunConditionType;
@@ -17,9 +18,10 @@ public class UEMLeaderTask extends UEMTask {
     private UEMLibraryPort leaderPort;
     private UEMChannelPort controlTaskPort;
 
-    public UEMLeaderTask(UEMRobotTask robotTask) {
+    public UEMLeaderTask(UEMRobotTask robotTask) throws Exception {
         super(robotTask.getName());
-        leaderTask = robotTask.getRobot().getAdditionalTaskList().get(0).getTask();
+        leaderTask = robotTask.getRobot().getAdditionalTask(AdditionalTaskType.LEADER_SELECTION)
+                .getTask();
         setFile(leaderTask.getCICFile());
         setName(robotTask.getName(), AlgorithmConstant.LEADER);
         setParentTask(robotTask.getName());
@@ -69,5 +71,9 @@ public class UEMLeaderTask extends UEMTask {
 
     public UEMChannelPort getControlTaskPort() {
         return controlTaskPort;
+    }
+
+    public Task getLeaderTask() {
+        return leaderTask;
     }
 }
