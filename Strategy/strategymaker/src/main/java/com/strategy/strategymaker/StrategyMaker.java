@@ -35,7 +35,7 @@ public class StrategyMaker {
         ControlStrategyInfoMaker.makeControlStrategyList(additionalInfo, strategy.getRobotList());
         ResourceInfoMaker.makeResourceInfoList(strategy.getRobotList());
         VariableInfoMaker.makeVariableInfoList(mission, additionalInfo, strategy.getRobotList());
-        AdditionalTaskInfoMaker.makeAddtionalTaskInfo(strategy.getRobotList());
+        AdditionalTaskInfoMaker.makeAddtionalTaskInfo(strategy.getRobotList(), additionalInfo);
         return strategy;
     }
 }

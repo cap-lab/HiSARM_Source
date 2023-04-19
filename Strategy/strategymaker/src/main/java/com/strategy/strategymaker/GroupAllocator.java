@@ -5,28 +5,15 @@ import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import com.dbmanager.commonlibraries.DBService;
 import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
-import com.scriptparser.parserdatastructure.wrapper.ModeWrapper;
-import com.scriptparser.parserdatastructure.wrapper.TransitionWrapper;
 import com.strategy.strategydatastructure.additionalinfo.AdditionalInfo;
 import com.strategy.strategydatastructure.util.CompileTimeAllocatorInterface;
 import com.strategy.strategydatastructure.wrapper.GroupingAlgorithmWrapper;
 import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 
 public class GroupAllocator {
-    public static String makeGroupKey(String previousKey, String choosedGroup) {
-        return previousKey + "_" + choosedGroup;
-    }
-
-    public static String makeTransitionId(String previousKey, TransitionWrapper transition) {
-        return previousKey + "_" + transition.getTransition().getName();
-    }
-
-    public static String makeModeId(String previousKey, ModeWrapper mode) {
-        return previousKey + "_" + mode.getMode().getName();
-    }
-
     public static void allocateGroup(MissionWrapper mission, List<RobotImplWrapper> robotList,
             AdditionalInfo additionalInfo) {
         try {
@@ -45,7 +32,9 @@ public class GroupAllocator {
                     .loadClass(groupingAlgorithm.getGroupingAlgorithm().getCompileTimeClass());
             CompileTimeAllocatorInterface allocator =
                     (CompileTimeAllocatorInterface) clazz.getDeclaredConstructor().newInstance();
-            robotList = allocator.allocate(robotList, mission);
+            Map<String, Map<String, Integer>> groupMap = allocator.allocate(robotList, mission);
+            robotList.forEach(r -> r.setGroupMap(groupMap.get(r.getRobot().getRobotId())));
+
         } catch (Exception e) {
             e.printStackTrace();
         }

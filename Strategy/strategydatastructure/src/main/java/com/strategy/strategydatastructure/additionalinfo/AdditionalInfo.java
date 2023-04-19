@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+import com.strategy.strategydatastructure.constant.AdditionalInfoConstant;
 
 public class AdditionalInfo {
     private String projectName;
@@ -14,6 +15,7 @@ public class AdditionalInfo {
     private List<String> robotList;
     private List<ControlStrategyInfo> strategyList;
     private List<CustomVariableInfo> variableList;
+    private String leaderSelectionAlgorithm;
     private String groupingAlgorithm;
 
     public AdditionalInfo() {
@@ -104,10 +106,26 @@ public class AdditionalInfo {
     }
 
     public String getGroupingAlgorithm() {
-        return groupingAlgorithm;
+        if (groupingAlgorithm != null) {
+            return groupingAlgorithm;
+        } else {
+            return AdditionalInfoConstant.DEFAULT_GROUPING_ALGORITHM;
+        }
     }
 
     public void setGroupingAlgorithm(String groupingAlgorithm) {
         this.groupingAlgorithm = groupingAlgorithm;
+    }
+
+    public String getLeaderSelectionAlgorithm() {
+        if (leaderSelectionAlgorithm != null) {
+            return leaderSelectionAlgorithm;
+        } else {
+            return AdditionalInfoConstant.DEFAULT_LEADER_SELECTION_ALGORITHM;
+        }
+    }
+
+    public void setLeaderSelectionAlgorithm(String leaderSelectionAlgorithm) {
+        this.leaderSelectionAlgorithm = leaderSelectionAlgorithm;
     }
 }
