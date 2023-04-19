@@ -43,6 +43,7 @@ public class DAO {
 	private MongoCollection<Document> variableCollection;
 	private MongoCollection<Document> variableImplCollection;
 	private MongoCollection<Document> groupingCollection;
+	private MongoCollection<Document> leaderCollection;
 
 	private DAO() {}
 
@@ -62,6 +63,7 @@ public class DAO {
 		variableCollection = mDB.getCollection(DBCollections.Collection_Variable);
 		variableImplCollection = mDB.getCollection(DBCollections.Collection_VariableImpl);
 		groupingCollection = mDB.getCollection(DBCollections.Collection_Grouping_Algorithm);
+		leaderCollection = mDB.getCollection(DBCollections.Collection_Leader_Selection_Algorithm);
 	}
 
 	private static class DBHolder {
@@ -267,6 +269,16 @@ public class DAO {
 		try {
 			Bson queryFilter = Filters.eq("GroupingId", groupingId);
 			return groupingCollection.find(queryFilter).first();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public Document getLeaderSelectionAlgorithm(String leaderSelectionId) {
+		try {
+			Bson queryFilter = Filters.eq("LeaderSelectionId", leaderSelectionId);
+			return leaderCollection.find(queryFilter).first();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
