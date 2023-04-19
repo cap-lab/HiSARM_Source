@@ -7,11 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.codegenerator.constant.GroupActionTaskConstant;
+import com.codegenerator.constant.GroupingTaskConstant;
 import com.codegenerator.constant.LeaderTaskConstant;
 import com.codegenerator.generator.constant.CodeGeneratorConstant;
 import com.codegenerator.generator.util.LocalFileCopier;
 import com.codegenerator.wrapper.CodeRobotWrapper;
-import com.metadata.algorithm.task.UEMLeaderTask;
+import com.metadata.algorithm.library.UEMGroupingLibrary;
 import com.strategy.strategydatastructure.additionalinfo.AdditionalInfo;
 
 public class AdditionalCodeGenerator {
@@ -23,9 +24,12 @@ public class AdditionalCodeGenerator {
         for (CodeRobotWrapper robot : robotList) {
             generateLeaderLibraryTaskCode(targetDir, robot);
             copyLeaderHeaderFile(targetDir);
-            copyLeaderSourceFile(targetDir, Paths.get(additionalInfo.getTaskServerPrefix()),
-                    robot.getRobot().getRobotTask().getLeaderTask());
         }
+        for (CodeRobotWrapper robot : robotList) {
+            generateGroupingLibraryTaskCode(targetDir, robot, robotList.size());
+            copyGroupingHeaderFile(targetDir);
+        }
+
     }
 
     public void generateGroupActionLibraryTaskCode(Path targetDir, CodeRobotWrapper robot,
@@ -74,12 +78,32 @@ public class AdditionalCodeGenerator {
         }
     }
 
-    private void copyLeaderSourceFile(Path targetDir, Path taskServer, UEMLeaderTask leaderTask) {
+    public void generateGroupingLibraryTaskCode(Path targetDir, CodeRobotWrapper robot,
+            int robotNum) {
+        Map<String, Object> rootHash = new HashMap<>();
+        UEMGroupingLibrary groupingLib = robot.getRobot().getRobotTask().getGroupingLibrary();
+
+        rootHash.put(GroupingTaskConstant.ROBOT_ID, robot.getRobotName());
+        rootHash.put(GroupingTaskConstant.GROUPING_LIBRARY, groupingLib);
+        rootHash.put(GroupingTaskConstant.MAX_ROBOT_NUM, robotNum);
+        rootHash.put(GroupingTaskConstant.SHARED_DATA_SIZE, groupingLib.getSharedDataSize());
+        rootHash.put(GroupingTaskConstant.GROUPING_MODE_SET, groupingLib.getModeSet());
+
+        FTLHandler.getInstance().generateCode(CodeGeneratorConstant.GROUPING_HEADER_TEMPLATE,
+                Paths.get(targetDir.toString(),
+                        robot.getRobot().getRobotTask().getGroupingLibrary().getHeader()),
+                rootHash);
+        FTLHandler.getInstance()
+                .generateCode(CodeGeneratorConstant.GROUPING_SOURCE_TEMPLATE,
+                        Paths.get(targetDir.toString(),
+                                robot.getRobot().getRobotTask().getGroupingLibrary().getFile()),
+                        rootHash);
+    }
+
+    private void copyGroupingHeaderFile(Path targetDir) {
         try {
-            LocalFileCopier.copyFile(
-                    Paths.get(taskServer.toString(),
-                            CodeGeneratorConstant.LEADER_SOURCE_CODE.toString()),
-                    Paths.get(targetDir.toString(), leaderTask.getFile()));
+            LocalFileCopier.copyFile(CodeGeneratorConstant.GROUPING_HEADER_CODE,
+                    Paths.get(targetDir.toString(), CodeGeneratorConstant.GROUPING_HEADER));
         } catch (Exception e) {
             e.printStackTrace();
         }

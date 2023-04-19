@@ -19,8 +19,8 @@ public class CodeServiceWrapper {
     private List<CodeVariableWrapper> variableList = new ArrayList<>();
     private List<CodeStatementWrapper> statementList = new ArrayList<>();
 
-    public static String makeServiceId(String modeId, String serviceId) {
-        return modeId + "_" + serviceId;
+    public static String makeServiceId(String groupId, String serviceId) {
+        return groupId + "_" + serviceId;
     }
 
     public List<CodeActionWrapper> getActionList() {

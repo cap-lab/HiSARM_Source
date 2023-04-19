@@ -7,4 +7,6 @@ public class CommunicationTaskConstant {
     public static final String SHARED_DATA_PORT_MAP = "sharedDataPortMap";
     public static final String GROUP_ACTION_PORT_LIST = "groupActionPortList";
     public static final String LEADER_PORT_MAP = "leaderPortMap";
+    public static final String GROUPING_PORT_LIST = "groupingPortList";
+    public static final String GROUPING_LIB_PORT = "groupingLibPort";
 }

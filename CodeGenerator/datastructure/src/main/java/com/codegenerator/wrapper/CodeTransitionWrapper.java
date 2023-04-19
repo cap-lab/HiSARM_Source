@@ -22,12 +22,8 @@ public class CodeTransitionWrapper {
     private Map<CodeTransitionElementWrapper, List<CodeVariableWrapper>> modeMap =
             new LinkedHashMap<>();
 
-    public static String makeTransitionId(String groupId, String transitionName) {
-        return groupId + "_" + transitionName;
-    }
-
-    public void setTransitionId(String groupId, String transitionName) {
-        this.transitionId = makeTransitionId(groupId, transitionName);
+    public void setTransitionId(String transitionId) {
+        this.transitionId = transitionId;
     }
 
     public Map<String, CodeModeWrapper> getTransitionMapOfMode(CodeModeWrapper mode) {

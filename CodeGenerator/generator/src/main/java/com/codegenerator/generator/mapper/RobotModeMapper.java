@@ -23,7 +23,7 @@ public class RobotModeMapper {
         @Override
         public void visitMode(ModeWrapper mode, String modeId, String groupId) {
             CodeModeWrapper codeMode = new CodeModeWrapper();
-            codeMode.setModeId(groupId, mode.getMode().getName());
+            codeMode.setModeId(modeId);
             codeMode.setMode(mode);
             codeMode.setGroupId(groupId);
             modeList.add(codeMode);
@@ -40,7 +40,7 @@ public class RobotModeMapper {
                     codeMode.getVariableList().add(variable);
                 });
             }
-            modeMap.put(codeMode.getGroupId(), codeMode);
+            modeMap.put(groupId, codeMode);
         }
 
         @Override
@@ -49,7 +49,7 @@ public class RobotModeMapper {
             CodeTransitionWrapper codeTransition = new CodeTransitionWrapper();
             codeTransition.setTransition(transition);
             codeTransition.setGroupId(groupId);
-            codeTransition.setTransitionId(groupId, transition.getTransition().getName());
+            codeTransition.setTransitionId(transitionId);
             codeTransition.setDepth(groupId.split("_").length - 1);
             if (transition.getParameterList() != null) {
                 transition.getParameterList().forEach(param -> {
@@ -63,11 +63,6 @@ public class RobotModeMapper {
                     codeTransition.getVariableList().add(variable);
                 });
             }
-            String previousGroup =
-                    groupId.contains("_") ? groupId.substring(0, groupId.lastIndexOf("_"))
-                            : groupId;
-            if (modeMap.containsKey(previousGroup))
-                modeMap.get(previousGroup).addTransition(codeTransition);
             transitionMap.put(groupId, codeTransition);
         }
 

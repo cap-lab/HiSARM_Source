@@ -13,6 +13,8 @@ public class ControlTaskConstant {
     public static final String COMM_STATEMENT_LIST = "commStatementList";
     public static final String THROW_STATEMENT_LIST = "throwStatementList";
     public static final String LEADER_PORT = "leaderPort";
+    public static final String GROUPING_MODE_PORT = "groupingModePort";
+    public static final String GROUPING_RESULT_PORT = "groupingResultPort";
 
     // RESOURCE
     public static final String RESOURCE_LIST = "resourceList";

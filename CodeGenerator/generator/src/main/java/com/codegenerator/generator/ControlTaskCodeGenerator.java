@@ -95,6 +95,14 @@ public class ControlTaskCodeGenerator {
         rootHash.put(ControlTaskConstant.LEADER_PORT,
                 robot.getRobot().getRobotTask().getControlTask()
                         .getInputPortList(robot.getRobot().getRobotTask().getLeaderTask()).get(0));
+        rootHash.put(ControlTaskConstant.GROUPING_MODE_PORT,
+                robot.getRobot().getRobotTask().getControlTask()
+                        .getInputPortList(robot.getRobot().getRobotTask().getGroupingTask())
+                        .get(0));
+        rootHash.put(ControlTaskConstant.GROUPING_RESULT_PORT,
+                robot.getRobot().getRobotTask().getControlTask()
+                        .getOutputPortList(robot.getRobot().getRobotTask().getGroupingTask())
+                        .get(0));
 
         FTLHandler.getInstance()
                 .generateCode(CodeGeneratorConstant.PORT_HEADER_TEMPLATE,

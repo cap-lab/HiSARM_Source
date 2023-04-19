@@ -65,6 +65,9 @@ semo_int32 throw_in_port_list_size = ${thInPortList?size};
 
 PORT port_of_leader = {"${leaderPort.name}", -1, &variable_leader};
 
+PORT port_of_grouping_mode = {"${groupingModePort.name}", -1, &variable_grouping_mode};
+PORT port_of_grouping_result = {"${groupingResultPort.name}", -1, &variable_grouping_result};
+
 COMM_PORT* get_team_port(COMM_PORT* port_list, semo_int32 port_list_size, semo_int32 team_id)
 {
     for (semo_int32 i = 0; i < port_list_size; i++) 
@@ -105,6 +108,8 @@ static void comm_port_init() {
 
 static void additional_port_init() {
     UFPort_Initialize(CONTROL_TASK_ID, port_of_leader.port_name, &(port_of_leader.port_id));
+    UFPort_Initialize(CONTROL_TASK_ID, port_of_grouping_mode.port_name, &(port_of_grouping_mode.port_id));
+    UFPort_Initialize(CONTROL_TASK_ID, port_of_grouping_result.port_name, &(port_of_grouping_result.port_id));
 }
 
 void port_init() {

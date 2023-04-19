@@ -21,14 +21,6 @@ public class CodeModeWrapper {
             new HashMap<>();
     private Map<CodeServiceWrapper, List<CodeVariableWrapper>> serviceMap = new HashMap<>();
 
-    public static String makeModeId(String groupId, String modeName) {
-        return groupId + "_" + modeName;
-    }
-
-    public void setModeId(String groupId, String modeName) {
-        this.modeId = makeModeId(groupId, modeName);
-    }
-
     public Map<CodeVariableWrapper, List<CodeVariableWrapper>> getArgumentMap() {
         Map<CodeVariableWrapper, List<CodeVariableWrapper>> argumentMap = new HashMap<>();
         for (CodeVariableWrapper parameter : parameterList) {

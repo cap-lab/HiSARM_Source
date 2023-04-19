@@ -27,7 +27,7 @@ ACTION_TASK action_task_list[${actionTaskList?size}] = {
     {ID_ACTION_TASK_${actionTask.name}, // ACTION_TASK_ID action_task_id
      ID_ACTION_TYPE_${actionTask.actionImpl.actionType.action.name}, // ACTION_TYPE_ID action_type_id
      ${actionTask.id}, // semo_int32 task_id
-     "${actionTask.taskName}", // char *task_name
+     "${actionTask.name}", // char *task_name
      SEMO_RUN, // SEMO_STATE state
      <#if actionTask.actionImpl.actionImpl.getReturnImmediate()>TRUE<#else>FALSE</#if>, // semo_int8 return_immediate
      <#if actionTask.actionImpl.actionImpl.needdedResource?has_content>${actionTask.actionImpl.actionImpl.needdedResource?size}<#else>0</#if>, // semo_int32 resource_list_size 
@@ -68,7 +68,7 @@ void run_action_task(semo_int32 action_task_id)
         int run = TRUE;
         if (action->state == SEMO_STOP)
         {
-            SEMO_LOG_INFO("run action task id %d name %s", action_task_id, action->task_name);
+            SEMO_LOG_DEBUG("run action task id %d name %s", action_task_id, action->task_name);
         }
         for (int port_index = 0 ; port_index < action->input_list_size ; port_index++)
         {
@@ -104,7 +104,7 @@ void stop_action_task(semo_int32 action_task_id)
     {
         int dataLen = 0;
         ACTION_TASK *action = action_task_list + action_task_id;
-        SEMO_LOG_INFO("stop action task %d name %s", action_task_id, action->task_name);
+        SEMO_LOG_DEBUG("stop action task %d name %s", action_task_id, action->task_name);
         UFControl_StopTask(CONTROL_TASK_ID, action->task_name, FALSE);
         for (int port_index = 0 ; port_index < action->output_list_size ; port_index++)
         {

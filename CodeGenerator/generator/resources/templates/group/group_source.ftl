@@ -8,6 +8,7 @@ GROUP_ID group_list[${groupMap?size}] = {
 };
 static semo_int32 group_state_list[${groupMap?size}];
 semo_int32 group_num = ${groupMap?size};
+semo_int32 *selecting_mode;
 
 static semo_int32 get_group_index(GROUP_ID group_id)
 {
@@ -31,6 +32,7 @@ void group_init(void)
     ((semo_int32 *)port_of_leader.variable->buffer)[0] = ID_GROUP_${team};
     ((semo_int32 *)port_of_leader.variable->buffer)[1] = TRUE;
     UFPort_WriteToQueue(port_of_leader.port_id, (unsigned char *) port_of_leader.variable->buffer, port_of_leader.variable->size, 0, &dataLen);
+    selecting_mode = (semo_int32 *) NULL;
 }
 
 void set_group_state(GROUP_ID group_id, semo_int32 refer_count)
@@ -41,4 +43,23 @@ void set_group_state(GROUP_ID group_id, semo_int32 refer_count)
 semo_int8 get_group_state(GROUP_ID group_id)
 {
     return group_state_list[get_group_index(group_id)];
+}
+
+void register_group_selection(semo_int32 mode_id, semo_int32 *field_of_mode) {
+    int dataLen = 0;
+    UFPort_WriteToBuffer(port_of_grouping_mode.port_id, (semo_uint8*)&mode_id, sizeof(semo_int32), 0, &dataLen);
+    selecting_mode = field_of_mode;
+}
+
+void check_group_selection_state() {
+    int dataLen = 0;
+    UFPort_GetNumOfAvailableData(port_of_grouping_result.port_id, 0, &dataLen);
+    if (dataLen > 0) {
+        UFPort_ReadFromQueue(port_of_grouping_result.port_id, (semo_uint8*)selecting_mode, sizeof(GROUP_ID), 0, &dataLen);
+        ((semo_int32 *)port_of_leader.variable->buffer)[0] = *selecting_mode;
+        ((semo_int32 *)port_of_leader.variable->buffer)[1] = TRUE;
+        UFPort_WriteToQueue(port_of_leader.port_id, (unsigned char *) port_of_leader.variable->buffer, port_of_leader.variable->size, 0, &dataLen);
+        set_group_state(*selecting_mode, SEMO_INCREASE);
+        selecting_mode = (semo_int32*) NULL;
+    }
 }

@@ -118,4 +118,34 @@ typedef struct _LEADER_PORT
     semo_int32 group_id;
     semo_int32 size;
 } LEADER_PORT;
+
+#pragma pack(push, 1)
+typedef struct _GROUPING_PACKET_HEADER
+{
+    semo_int64 time;
+    semo_int32 sender_robot_id;
+    semo_int32 mode_id;
+} GROUPING_PACKET_HEADER;
+typedef struct _GROUPING_PACKET
+{
+    GROUPING_PACKET_HEADER *header;
+    void *data;
+} GROUPING_PACKET;
+#pragma pack(pop)
+typedef semo_int8 GROUPING_AVAIL_FUNC();
+typedef void GROUPING_GET_FUNC(semo_int32 *mode_id, semo_uint8 *data, semo_int32 length);
+typedef void GROUPING_SET_FUNC(semo_int32 robot_id, semo_int32 mode_id, semo_uint8 *data, semo_int32 length);
+typedef struct _GROUPING_PORT
+{
+    char *multicast_port_name;
+    int multicast_group_id;
+    int multicast_port_id;
+    GROUPING_AVAIL_FUNC *lib_avail_func;
+    GROUPING_GET_FUNC *lib_get_func;
+    GROUPING_SET_FUNC *lib_set_func;
+    void *buffer;
+    GROUPING_PACKET *packet;
+    semo_int32 size;
+    semo_int64 before_time;
+} GROUPING_PORT;
 #endif

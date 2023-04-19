@@ -27,14 +27,12 @@ public class VariableMapper {
         }
 
         @Override
-        public void visitModeToService(ModeWrapper mode, ParallelServiceWrapper service,
-                String groupId) {
-            CodeModeWrapper codeMode =
-                    robot.getMode(CodeModeWrapper.makeModeId(groupId, mode.getMode().getName()));
+        public void visitModeToService(ModeWrapper mode, String modeId,
+                ParallelServiceWrapper service, String groupId) {
+            CodeModeWrapper codeMode = robot.getMode(modeId);
             List<CodeVariableWrapper> variableList = new ArrayList<>();
-            CodeServiceWrapper codeService =
-                    robot.getService(CodeServiceWrapper.makeServiceId(codeMode.getModeId(),
-                            service.getService().getService().getName()));
+            CodeServiceWrapper codeService = robot.getService(CodeServiceWrapper
+                    .makeServiceId(modeId, service.getService().getService().getName()));
             for (int i = 0; i < codeService.getParameterList().size(); i++) {
                 Identifier input = service.getInputList().get(i).getIdentifierSet().get(0);
                 CodeVariableWrapper param = codeService.getParameterList().get(i);
@@ -70,20 +68,18 @@ public class VariableMapper {
         }
 
         @Override
-        public void visitModeToTransition(ModeWrapper mode, GroupModeTransitionWrapper transition,
-                String groupId) {
-            CodeModeWrapper codeMode = robot.getMode(CodeModeWrapper.makeModeId(
-                    groupId.substring(0, groupId.lastIndexOf("_")), mode.getMode().getName()));
+        public void visitModeToTransition(ModeWrapper mode, String modeId,
+                GroupModeTransitionWrapper transition, String groupId) {
+            CodeModeWrapper codeMode = robot.getMode(modeId);
             List<CodeVariableWrapper> variableList = new ArrayList<>();
             CodeTransitionWrapper codeTransition =
-                    robot.getTransition(CodeTransitionWrapper.makeTransitionId(groupId,
-                            transition.getModeTransition().getTransition().getName()));
+                    robot.getTransition(transition.getModeTransition().makeTransitionid(groupId));
             for (int i = 0; i < codeTransition.getParameterList().size(); i++) {
                 CodeVariableWrapper param = codeTransition.getParameterList().get(i);
                 Identifier input = transition.getInputList().get(i).getIdentifierSet().get(0);
                 if (input.getType() == IdentifierType.CONSTANT) {
-                    String variableId =
-                            CodeVariableWrapper.makeVariableId(codeMode.getModeId(), groupId, i);
+                    String variableId = CodeVariableWrapper.makeVariableId(codeMode.getModeId(),
+                            transition.getModeTransition().getTransition().getName(), i);
                     CodeVariableWrapper variable = codeMode.getVariable(variableId);
                     if (variable == null) {
                         variable = new CodeVariableWrapper();
@@ -109,15 +105,13 @@ public class VariableMapper {
         }
 
         @Override
-        public void visitTransitionToMode(TransitionWrapper transition, ModeWrapper srcMode,
-                String event, TransitionModeWrapper dstMode, String groupId) {
-            CodeTransitionWrapper codeTransition = robot.getTransition(CodeTransitionWrapper
-                    .makeTransitionId(groupId, transition.getTransition().getName()));
+        public void visitTransitionToMode(TransitionWrapper transition, String transitionId,
+                ModeWrapper srcMode, String event, TransitionModeWrapper dstMode, String groupId) {
+            CodeTransitionWrapper codeTransition = robot.getTransition(transitionId);
             List<CodeVariableWrapper> variableList = new ArrayList<>();
             CodeModeWrapper srcCodeMode = null;
             if (event != null) {
-                srcCodeMode = robot
-                        .getMode(CodeModeWrapper.makeModeId(groupId, srcMode.getMode().getName()));
+                srcCodeMode = robot.getMode(srcMode.makeModeId(transitionId));
             }
             CodeTransitionElementWrapper transitionElement =
                     codeTransition.getTransitionElement(srcCodeMode, event);
@@ -128,15 +122,14 @@ public class VariableMapper {
             }
             transitionElement.setSrcMode(srcCodeMode);
             transitionElement.setEvent(event);
-            transitionElement.setDstMode(robot.getMode(
-                    CodeModeWrapper.makeModeId(groupId, dstMode.getMode().getMode().getName())));
+            transitionElement.setDstMode(robot.getMode(dstMode.getMode().makeModeId(transitionId)));
             CodeModeWrapper codeDstMode = transitionElement.getDstMode();
             for (int i = 0; i < transitionElement.getDstMode().getParameterList().size(); i++) {
                 CodeVariableWrapper param = codeDstMode.getParameterList().get(i);
                 Identifier identifier = dstMode.getInputList().get(i).getIdentifierSet().get(0);
                 if (identifier.getType() == IdentifierType.CONSTANT) {
-                    String variableId =
-                            CodeVariableWrapper.makeVariableId(codeDstMode.getModeId(), groupId, i);
+                    String variableId = CodeVariableWrapper.makeVariableId(codeDstMode.getModeId(),
+                            transitionId, i);
                     CodeVariableWrapper variable = codeTransition.getVariable(variableId);
                     if (variable == null) {
                         variable = new CodeVariableWrapper();
@@ -226,11 +219,11 @@ public class VariableMapper {
             for (CodeRobotWrapper robot : robotList) {
                 Mapper mapper = new Mapper(robot);
                 String teamName = robot.getRobot().getRobotTask().getRobot().getTeam();
-                robot.getTransition(CodeTransitionWrapper.makeTransitionId(teamName, teamName))
-                        .getTransition().traverseTransition(
-                                new String(), teamName, null, new ArrayList<>(robot.getRobot()
-                                        .getRobotTask().getRobot().getGroupMap().keySet()),
-                                null, mapper);
+                robot.getTransition(teamName).getTransition().traverseTransition(new String(),
+                        teamName, null,
+                        new ArrayList<>(
+                                robot.getRobot().getRobotTask().getRobot().getGroupMap().keySet()),
+                        null, mapper);
                 mapTransitionModeVariable(robot);
                 setDefaultValueForTeamVariable(robot);
             }

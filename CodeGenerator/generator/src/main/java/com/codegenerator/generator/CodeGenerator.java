@@ -87,6 +87,10 @@ public class CodeGenerator {
                 targetDir, codeRobotList);
         taskCodeCopier.copyResourceTaskCode(Paths.get(additionalInfo.getTaskServerPrefix()),
                 targetDir, codeRobotList);
+        taskCodeCopier.copyLeaderSourceFile(Paths.get(additionalInfo.getTaskServerPrefix()),
+                targetDir, codeRobotList);
+        taskCodeCopier.copyGroupingTaskCode(Paths.get(additionalInfo.getTaskServerPrefix()),
+                targetDir, codeRobotList);
         TranslatorCode translator = new TranslatorCode();
         translator.translate(targetDir, additionalInfo);
     }
