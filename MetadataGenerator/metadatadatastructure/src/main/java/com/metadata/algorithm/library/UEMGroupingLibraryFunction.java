@@ -40,6 +40,9 @@ public class UEMGroupingLibraryFunction extends UEMLibraryFunction {
         UEMLibraryFunction libraryFunction =
                 makeGetFunction("shared_data", AlgorithmConstant.REPORT, "void");
         libraryFunction.getArgument().add(makeArgument("semo_int32*", "mode_id", YesNoType.YES));
+        libraryFunction.getArgument()
+                .add(makeArgument("SEMO_GROUPING_SHARED*", "robot_info_list", YesNoType.YES));
+        libraryFunction.getArgument().add(makeArgument("semo_int32*", "robot_num", YesNoType.YES));
         libraryFunction.getArgument().add(makeArgument("semo_uint8*", "data", YesNoType.YES));
         libraryFunction.getArgument()
                 .add(makeArgument(PrimitiveType.INT32.getValue(), "length", YesNoType.NO));
@@ -83,9 +86,11 @@ public class UEMGroupingLibraryFunction extends UEMLibraryFunction {
         UEMLibraryFunction libraryFunction =
                 makeSetFunction("shared_data", AlgorithmConstant.LISTEN, "void");
         libraryFunction.getArgument()
-                .add(makeArgument(PrimitiveType.INT32.getValue(), "robot_id", YesNoType.NO));
-        libraryFunction.getArgument()
                 .add(makeArgument(PrimitiveType.INT32.getValue(), "mode_id", YesNoType.NO));
+        libraryFunction.getArgument()
+                .add(makeArgument("SEMO_GROUPING_SHARED*", "robot_info_list", YesNoType.YES));
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "robot_num", YesNoType.NO));
         libraryFunction.getArgument().add(makeArgument("semo_uint8*", "data", YesNoType.YES));
         libraryFunction.getArgument()
                 .add(makeArgument(PrimitiveType.INT32.getValue(), "length", YesNoType.NO));
