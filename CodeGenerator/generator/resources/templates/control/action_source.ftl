@@ -27,7 +27,7 @@ ACTION_TASK action_task_list[${actionTaskList?size}] = {
     {ID_ACTION_TASK_${actionTask.name}, // ACTION_TASK_ID action_task_id
      ID_ACTION_TYPE_${actionTask.actionImpl.actionType.action.name}, // ACTION_TYPE_ID action_type_id
      ${actionTask.id}, // semo_int32 task_id
-     "${actionTask.name}", // char *task_name
+     "${actionTask.taskName}", // char *task_name
      SEMO_RUN, // SEMO_STATE state
      <#if actionTask.actionImpl.actionImpl.getReturnImmediate()>TRUE<#else>FALSE</#if>, // semo_int8 return_immediate
      <#if actionTask.actionImpl.actionImpl.needdedResource?has_content>${actionTask.actionImpl.actionImpl.needdedResource?size}<#else>0</#if>, // semo_int32 resource_list_size 
