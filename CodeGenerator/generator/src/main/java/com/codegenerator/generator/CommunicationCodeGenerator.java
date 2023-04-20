@@ -15,14 +15,14 @@ import com.metadata.algorithm.task.UEMReportTask;
 public class CommunicationCodeGenerator {
     public void generateCommunicationCode(Path targetDir, List<UEMRobot> robotList) {
         for (UEMRobot robot : robotList) {
-            generateListenTaskCode(targetDir, robot);
-            generateReportTaskCode(targetDir, robot);
+            generateListenTaskCode(targetDir, robot, robotList.size());
+            generateReportTaskCode(targetDir, robot, robotList.size());
             copyPortCode(targetDir);
             copyCommunicationCode(targetDir);
         }
     }
 
-    private void generateListenTaskCode(Path targetDir, UEMRobot robot) {
+    private void generateListenTaskCode(Path targetDir, UEMRobot robot, int robotNum) {
         UEMListenTask task = robot.getRobotTask().getListenTask();
         Map<String, Object> rootHash = new HashMap<>();
 
@@ -35,12 +35,13 @@ public class CommunicationCodeGenerator {
         rootHash.put(CommunicationTaskConstant.LEADER_PORT_MAP, task.getLeaderPortMap());
         rootHash.put(CommunicationTaskConstant.GROUPING_PORT_LIST, task.getGroupingPortList());
         rootHash.put(CommunicationTaskConstant.GROUPING_LIB_PORT, task.getGroupingPort());
+        rootHash.put(CommunicationTaskConstant.MAX_ROBOT_NUM, robotNum);
 
         FTLHandler.getInstance().generateCode(CodeGeneratorConstant.LISTEN_TASK_TEMPLATE,
                 Paths.get(targetDir.toString(), task.getFile()), rootHash);
     }
 
-    private void generateReportTaskCode(Path targetDir, UEMRobot robot) {
+    private void generateReportTaskCode(Path targetDir, UEMRobot robot, int robotNum) {
         UEMReportTask task = robot.getRobotTask().getReportTask();
         Map<String, Object> rootHash = new HashMap<>();
 
@@ -53,6 +54,7 @@ public class CommunicationCodeGenerator {
         rootHash.put(CommunicationTaskConstant.LEADER_PORT_MAP, task.getLeaderPortMap());
         rootHash.put(CommunicationTaskConstant.GROUPING_PORT_LIST, task.getGroupingPortList());
         rootHash.put(CommunicationTaskConstant.GROUPING_LIB_PORT, task.getGroupingPort());
+        rootHash.put(CommunicationTaskConstant.MAX_ROBOT_NUM, robotNum);
 
         FTLHandler.getInstance().generateCode(CodeGeneratorConstant.REPORT_TASK_TEMPLATE,
                 Paths.get(targetDir.toString(), task.getFile()), rootHash);

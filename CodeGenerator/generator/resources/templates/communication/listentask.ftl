@@ -94,10 +94,12 @@ STATIC MULTICAST_PACKET packet_${heartbeatPort.getVariableName()} = {&${heartbea
 #pragma pack(push, 1)
 STATIC struct _grouping {
     GROUPING_PACKET_HEADER header;
-    semo_uint8 body[${groupingLibPort.library.sharedDataSize}];
-} grouping = {{-1, -1, -1}, {0,}};
+    semo_int32 robot_num;
+    SEMO_GROUPING_SHARED robot_info_list[${maxRobotNum}];
+    semo_uint8 body[${groupingLibPort.library.sharedDataSize*maxRobotNum}];
+} grouping = {{-1, -1, -1}, 0,};
 #pragma pack(pop)
-STATIC GROUPING_PACKET packet_grouping = {&grouping.header, grouping.body};
+STATIC GROUPING_PACKET packet_grouping = {&grouping.header, &grouping.robot_num, grouping.robot_info_list, grouping.body};
 
 </#if>
 <#if channelPortMap?size gt 0>
@@ -350,13 +352,13 @@ STATIC void grouping_port_receive() {
     int data_len;
     for (int i = 0 ; i<sizeof(grouping_port_list)/sizeof(GROUPING_PORT) ; i++)
     {
-        UFMulticastPort_ReadFromBuffer(grouping_port_list[i].multicast_group_id, grouping_port_list[i].multicast_port_id, (unsigned char*) grouping_port_list[i].buffer, grouping_port_list[i].size + sizeof(GROUPING_PACKET_HEADER), &data_len);
+        UFMulticastPort_ReadFromBuffer(grouping_port_list[i].multicast_group_id, grouping_port_list[i].multicast_port_id, (unsigned char*) grouping_port_list[i].buffer, sizeof(grouping), &data_len);
         if (data_len > 0) 
         {
 	         if (grouping_port_list[i].before_time < grouping_port_list[i].packet->header->time 
                  && grouping_port_list[i].packet->header->sender_robot_id != THIS_ROBOT_ID) 
 	         {
-        		    grouping_port_list[i].lib_set_func(grouping_port_list[i].packet->header->sender_robot_id, grouping_port_list[i].packet->header->mode_id, grouping_port_list[i].packet->data, grouping_port_list[i].size);
+        		    grouping_port_list[i].lib_set_func(grouping_port_list[i].packet->header->mode_id, grouping_port_list[i].packet->robot_info_list, *grouping_port_list[i].packet->shared_robot_num, grouping_port_list[i].packet->data, grouping_port_list[i].size);
         		    grouping_port_list[i].before_time = grouping_port_list[i].packet->header->time;
          	 }
         }

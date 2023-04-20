@@ -9,4 +9,5 @@ public class CommunicationTaskConstant {
     public static final String LEADER_PORT_MAP = "leaderPortMap";
     public static final String GROUPING_PORT_LIST = "groupingPortList";
     public static final String GROUPING_LIB_PORT = "groupingLibPort";
+    public static final String MAX_ROBOT_NUM = "maxRobotNum";
 }

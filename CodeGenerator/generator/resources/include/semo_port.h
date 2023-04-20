@@ -4,6 +4,7 @@
 #include <UFPort.h>
 #include "semo_common.h"
 #include "semo_variable.h"
+#include "semo_group.h"
 
 typedef struct _PORT
 {
@@ -129,12 +130,14 @@ typedef struct _GROUPING_PACKET_HEADER
 typedef struct _GROUPING_PACKET
 {
     GROUPING_PACKET_HEADER *header;
+    SEMO_GROUPING_SHARED *robot_info_list;
+    semo_int32 *shared_robot_num;
     void *data;
 } GROUPING_PACKET;
 #pragma pack(pop)
 typedef semo_int8 GROUPING_AVAIL_FUNC();
-typedef void GROUPING_GET_FUNC(semo_int32 *mode_id, semo_uint8 *data, semo_int32 length);
-typedef void GROUPING_SET_FUNC(semo_int32 robot_id, semo_int32 mode_id, semo_uint8 *data, semo_int32 length);
+typedef void GROUPING_GET_FUNC(semo_int32 *mode_id, SEMO_GROUPING_SHARED *robot_info_list, semo_int32 *robot_num, semo_uint8 *data, semo_int32 length);
+typedef void GROUPING_SET_FUNC(semo_int32 mode_id, SEMO_GROUPING_SHARED *robot_info_list, semo_int32 robot_num, semo_uint8 *data, semo_int32 length);
 typedef struct _GROUPING_PORT
 {
     char *multicast_port_name;
