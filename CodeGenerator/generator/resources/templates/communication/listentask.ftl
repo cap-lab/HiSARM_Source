@@ -350,7 +350,7 @@ STATIC void grouping_port_receive() {
     int data_len;
     for (int i = 0 ; i<sizeof(grouping_port_list)/sizeof(GROUPING_PORT) ; i++)
     {
-        UFMulticastPort_ReadFromBuffer(grouping_port_list[i].multicast_group_id, grouping_port_list[i].multicast_port_id, (unsigned char*) grouping_port_list[i].buffer, shared_data_port_list[i].size + sizeof(MULTICAST_PACKET_HEADER), &data_len);
+        UFMulticastPort_ReadFromBuffer(grouping_port_list[i].multicast_group_id, grouping_port_list[i].multicast_port_id, (unsigned char*) grouping_port_list[i].buffer, grouping_port_list[i].size + sizeof(GROUPING_PACKET_HEADER), &data_len);
         if (data_len > 0) 
         {
 	         if (grouping_port_list[i].before_time < grouping_port_list[i].packet->header->time 
