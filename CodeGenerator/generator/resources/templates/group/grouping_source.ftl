@@ -208,16 +208,14 @@ LIBFUNC(void, set_shared_data_listen, semo_int32 mode_id, SEMO_GROUPING_SHARED *
     for (int i = 0 ; i < robot_num ; i++) {
         SEMO_GROUPING_SHARED *robot_info = find_shared_robot_info(robot_info_list[i].robot_id);
         if (robot_info == (SEMO_GROUPING_SHARED*) NULL) {
-            memcpy(shared_data_buffer + length*shared_robot_num, data, length);
+            memcpy(shared_data_buffer + length*shared_robot_num, data+i*length, length);
             shared_robot_list[shared_robot_num].robot_id = robot_info_list[i].robot_id;
             shared_robot_list[shared_robot_num].count = robot_info_list[i].count;
             shared_robot_num++;
-            shared_data_refreshed = TRUE;
         } else if (robot_info->count < robot_info_list[i].count) {
             semo_uint8 *shared_data = find_shared_data_for_target_robot(robot_info_list[i].robot_id, length);
             robot_info->count = robot_info_list[i].count;
-            memcpy(shared_data, data, length);
-            shared_data_refreshed = TRUE;
+            memcpy(shared_data, data+i*length, length);
         }
     }
     UCThreadMutex_Unlock(shared_data_mutex);

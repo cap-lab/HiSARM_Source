@@ -130,8 +130,8 @@ typedef struct _GROUPING_PACKET_HEADER
 typedef struct _GROUPING_PACKET
 {
     GROUPING_PACKET_HEADER *header;
-    SEMO_GROUPING_SHARED *robot_info_list;
     semo_int32 *shared_robot_num;
+    SEMO_GROUPING_SHARED *robot_info_list;
     void *data;
 } GROUPING_PACKET;
 #pragma pack(pop)
