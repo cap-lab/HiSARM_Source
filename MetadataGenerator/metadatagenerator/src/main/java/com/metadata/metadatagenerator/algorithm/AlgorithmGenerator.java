@@ -86,7 +86,8 @@ public class AlgorithmGenerator {
         try {
             for (RobotImplWrapper robot : strategy.getRobotList()) {
                 UEMRobotTask robotTask = new UEMRobotTask(robot.getRobot().getRobotId(), robot);
-                makeRobotInerGraph(mission, robotTask, additionalInfo, targetDir);
+                makeRobotInerGraph(mission, robotTask, additionalInfo, targetDir,
+                        strategy.getRobotList().size());
                 robotTask.setPort();
                 algorithm.addTask(robotTask);
                 algorithm.getRobotTaskList().add(robotTask);
@@ -367,7 +368,7 @@ public class AlgorithmGenerator {
     }
 
     private void makeRobotInerGraph(MissionWrapper mission, UEMRobotTask robot,
-            AdditionalInfo additionalInfo, Path targetDir) throws Exception {
+            AdditionalInfo additionalInfo, Path targetDir, int robotNum) throws Exception {
         makeActionTask(mission, robot, robot.getRobot().getControlStrategyList(),
                 Paths.get(additionalInfo.getTaskServerPrefix()));
         makeResourceTask(robot, Paths.get(additionalInfo.getTaskServerPrefix()));
@@ -375,7 +376,7 @@ public class AlgorithmGenerator {
         makeLibraryTask(robot);
         makeGroupActionTask(robot);
         makeLeaderTask(robot);
-        makeCommunicationTask(mission, robot);
+        makeCommunicationTask(mission, robot, robotNum);
         makeControlTask(mission, robot);
     }
 
@@ -691,7 +692,7 @@ public class AlgorithmGenerator {
         }
     }
 
-    private void makeGroupingPortForCommunication(UEMRobotTask robot) {
+    private void makeGroupingPortForCommunication(UEMRobotTask robot, int robotNum) {
         UEMGroupingLibrary groupingLibrary = robot.getGroupingLibrary();
         if (groupingLibrary != null) {
             robot.getListenTask().addGroupingPort(groupingLibrary);
@@ -709,12 +710,13 @@ public class AlgorithmGenerator {
             algorithm.getAlgorithm().getLibraryConnections().getTaskLibraryConnection()
                     .add(reportConnection);
             robot.getListenTask().getGroupingPortList().forEach(port -> {
-                algorithm.addMulticastGroup(port.getGroup(), groupingLibrary.getSharedDataSize());
+                algorithm.addMulticastGroup(port.getGroup(),
+                        groupingLibrary.getPacketSize(robotNum));
             });
         }
     }
 
-    private void makeCommunicationTask(MissionWrapper mission, UEMRobotTask robot)
+    private void makeCommunicationTask(MissionWrapper mission, UEMRobotTask robot, int robotNum)
             throws Exception {
         algorithm.addTask(robot.getListenTask());
         algorithm.addTask(robot.getReportTask());
@@ -726,7 +728,7 @@ public class AlgorithmGenerator {
         makeSharedDataLibraryConnectionForCommunication(robot);
         makeLeaderLibraryConnectionForCommunication(robot);
         makeGroupActionPortForCommunication(robot);
-        makeGroupingPortForCommunication(robot);
+        makeGroupingPortForCommunication(robot, robotNum);
     }
 
     private void makeControlTask(MissionWrapper mission, UEMRobotTask robot) {
