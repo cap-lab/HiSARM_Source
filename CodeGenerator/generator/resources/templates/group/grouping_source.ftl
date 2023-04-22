@@ -82,6 +82,24 @@ static SEMO_GROUP* find_group_in_current_mode(semo_int32 group_id) {
     return (SEMO_GROUP*) NULL;
 }
 
+static void parameter_wrapup() {
+    UCThreadMutex_Lock(shared_data_mutex);
+    current_mode_grouping_data = (SEMO_GROUPING_DATA*) NULL;
+    shared_robot_num = -1;
+    shared_data_refreshed = FALSE;
+    UCThreadMutex_Unlock(shared_data_mutex);
+}
+
+static void parameter_init(SEMO_GROUPING_DATA *mode_group) {
+    UCThreadMutex_Lock(shared_data_mutex);
+    current_mode_grouping_data = mode_group;
+    shared_robot_list[0].robot_id = THIS_ROBOT_ID;
+    shared_robot_list[0].count = 0;
+    shared_robot_num = 1;
+    shared_data_refreshed = FALSE;
+    UCThreadMutex_Unlock(shared_data_mutex);
+}
+
 LIBFUNC(SEMO_GROUP*, get_grouping_candidate_list) {
     if (current_mode_grouping_data == (SEMO_GROUPING_DATA*) NULL) {
         SEMO_LOG_ERROR("Group Selection has not Initialized");
@@ -135,27 +153,21 @@ LIBFUNC(void, get_shared_data_report, semo_int32 *mode, SEMO_GROUPING_SHARED *ro
     memcpy(data, shared_data_buffer, shared_robot_num*length);
     shared_data_refreshed = FALSE;
     UCThreadMutex_Unlock(shared_data_mutex);
+    if (current_mode_grouping_data->state == SEMO_GROUP_SELECTION_WRAPUP) {
+        SEMO_GROUPING_DATA *mode_group = find_data_for_target_mode(mode);
+        if (mode_group == (SEMO_GROUPING_DATA*) NULL) {
+            return;
+        }
+        mode_group->state = SEMO_GROUP_SELECTION_STOP;
+        parameter_wrapup();
+    }
 }
 
 LIBFUNC(semo_int8, avail_shared_data_report) {
+    if (current_mode_grouping_data == (SEMO_GROUPING_DATA*) NULL) {
+        return FALSE;
+    }
     return shared_data_refreshed;
-}
-
-static void parameter_init(SEMO_GROUPING_DATA *mode_group) {
-    UCThreadMutex_Lock(shared_data_mutex);
-    current_mode_grouping_data = mode_group;
-    shared_robot_list[0].robot_id = THIS_ROBOT_ID;
-    shared_robot_list[0].count = 0;
-    shared_robot_num = 1;
-    shared_data_refreshed = FALSE;
-    UCThreadMutex_Unlock(shared_data_mutex);
-}
-static void parameter_wrapup() {
-    UCThreadMutex_Lock(shared_data_mutex);
-    current_mode_grouping_data = (SEMO_GROUPING_DATA*) NULL;
-    shared_robot_num = -1;
-    shared_data_refreshed = FALSE;
-    UCThreadMutex_Unlock(shared_data_mutex);
 }
 
 LIBFUNC(void, set_grouping_state, semo_int32 mode, SEMO_GROUP_SELECTION_STATE state) {
@@ -171,6 +183,7 @@ LIBFUNC(void, set_grouping_state, semo_int32 mode, SEMO_GROUP_SELECTION_STATE st
         case SEMO_GROUP_SELECTION_STOP:
             parameter_wrapup();
             break;
+        case SEMO_GROUP_SELECTION_WRAPUP:
         case SEMO_GROUP_SELECTION_PAUSE:
         case SEMO_GROUP_SELECTION_RUN:
             break;
