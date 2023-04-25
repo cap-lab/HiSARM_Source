@@ -404,6 +404,7 @@ public class ServiceStatementMapper {
                         && ((UEMCommPort) p).getCounterTeam().equals(groupId)) {
                     CodePortWrapper port = new CodePortWrapper();
                     port.setPort(p);
+                    port.setGroupId(groupId);
                     codeThrow.setInPort(port);
                 }
             }
@@ -413,6 +414,7 @@ public class ServiceStatementMapper {
                         && ((UEMCommPort) p).getCounterTeam().equals(groupId)) {
                     CodePortWrapper port = new CodePortWrapper();
                     port.setPort(p);
+                    port.setGroupId(groupId);
                     codeThrow.setOutPort(port);
                 }
             }

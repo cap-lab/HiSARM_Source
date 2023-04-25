@@ -1,5 +1,6 @@
 #include "${robotId}_event.h"
 #include "${robotId}_port.h"
+#include "${robotId}_group.h"
 #include <string.h>
 #include "semo_logger.h"
 
@@ -17,6 +18,10 @@ void event_polling() {
     semo_int32 event;
     for (int i = 0 ; i < throw_in_port_list_size ; i++)
     {
+        if(get_group_state(throw_in_port_list[i].team_id) <= 0) 
+        {
+            continue;
+        }
         uem_result result = UFPort_GetNumOfAvailableData(throw_in_port_list[i].port->port_id, 0, &dataNum);
         ERRIFGOTO(result, _EXIT);
         if (dataNum > 0)

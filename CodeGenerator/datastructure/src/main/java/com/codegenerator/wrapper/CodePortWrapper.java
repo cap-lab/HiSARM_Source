@@ -9,4 +9,5 @@ import lombok.Setter;
 public class CodePortWrapper {
     private UEMChannelPort port;
     private CodeVariableWrapper variable;
+    private String groupId;
 }

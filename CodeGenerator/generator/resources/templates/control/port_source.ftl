@@ -1,6 +1,7 @@
 #include "${robotId}_port.h"
 #include "${robotId}_common.h"
 #include "${robotId}_variable.h"
+#include "${robotId}_group.h"
 #include "${robotId}_team.h"
 #include "semo_logger.h"
 
@@ -47,18 +48,20 @@ COMM_PORT throw_out_port_of_${throwStatement.statementId} = {&port_of_${throwSta
     </#if>
 </#list>
 
+<#assign thInPortNameList = []>
 <#assign thInPortList = []>
 <#list throwStatementList as throwStatement>
     <#if throwStatement.statement.statement.isBroadcast() == true>
-        <#if thInPortList?seq_contains(throwStatement.th.inPort.port.name)>
+        <#if thInPortNameList?seq_contains(throwStatement.th.inPort.port.name)>
         <#else>
-        <#assign thInPortList = thInPortList + [throwStatement.th.inPort.port.name]>
+        <#assign thInPortList = thInPortList + [throwStatement.th.inPort]>
+        <#assign thInPortNameList = thInPortNameList + [throwStatement.th.inPort.port.name]>
         </#if>
     </#if>
 </#list>
 COMM_PORT throw_in_port_list[${thInPortList?size}] = {
 <#list thInPortList as thInPort>
-{&port_of_${thInPort}, NULL, 0},
+{&port_of_${thInPort.port.name}, NULL, ID_GROUP_${thInPort.groupId}},
 </#list>
 };
 semo_int32 throw_in_port_list_size = ${thInPortList?size};
