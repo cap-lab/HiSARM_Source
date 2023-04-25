@@ -154,11 +154,7 @@ LIBFUNC(void, get_shared_data_report, semo_int32 *mode, SEMO_GROUPING_SHARED *ro
     shared_data_refreshed = FALSE;
     UCThreadMutex_Unlock(shared_data_mutex);
     if (current_mode_grouping_data->state == SEMO_GROUP_SELECTION_WRAPUP) {
-        SEMO_GROUPING_DATA *mode_group = find_data_for_target_mode(mode);
-        if (mode_group == (SEMO_GROUPING_DATA*) NULL) {
-            return;
-        }
-        mode_group->state = SEMO_GROUP_SELECTION_STOP;
+        current_mode_grouping_data->state = SEMO_GROUP_SELECTION_STOP;
         parameter_wrapup();
     }
 }
