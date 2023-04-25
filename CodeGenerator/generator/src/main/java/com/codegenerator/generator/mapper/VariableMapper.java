@@ -79,7 +79,7 @@ public class VariableMapper {
                 Identifier input = transition.getInputList().get(i).getIdentifierSet().get(0);
                 if (input.getType() == IdentifierType.CONSTANT) {
                     String variableId = CodeVariableWrapper.makeVariableId(codeMode.getModeId(),
-                            transition.getModeTransition().getTransition().getName(), i);
+                            groupId, transition.getModeTransition().getTransition().getName(), i);
                     CodeVariableWrapper variable = codeMode.getVariable(variableId);
                     if (variable == null) {
                         variable = new CodeVariableWrapper();
@@ -129,7 +129,7 @@ public class VariableMapper {
                 Identifier identifier = dstMode.getInputList().get(i).getIdentifierSet().get(0);
                 if (identifier.getType() == IdentifierType.CONSTANT) {
                     String variableId = CodeVariableWrapper.makeVariableId(codeDstMode.getModeId(),
-                            transitionId, i);
+                            groupId, transitionId, i);
                     CodeVariableWrapper variable = codeTransition.getVariable(variableId);
                     if (variable == null) {
                         variable = new CodeVariableWrapper();
