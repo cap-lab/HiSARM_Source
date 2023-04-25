@@ -50,7 +50,7 @@ void stop_mode(MODE_ID mode_id)
     {
         stop_service(mode_list[mode_id].service_list[i]);
     }
-    if (mode_list[mode_id].need_select_group == TRUE && mode_list[mode_id].selected_group != -1) {
+    if (mode_list[mode_id].need_select_group == TRUE) {
         stop_selecting_group(mode_id, &mode_list[mode_id].selected_group);
     }
     set_group_state(mode_list[mode_id].group, SEMO_DECREASE);

@@ -54,7 +54,7 @@ void register_group_selection(semo_int32 mode_id, semo_int32 *field_of_mode) {
     }
     UFPort_WriteToBuffer(port_of_grouping_mode.port_id, (semo_uint8*)&mode_id, sizeof(semo_int32), 0, &dataLen);
     selecting_mode = field_of_mode;
-    current_selecting_mode = mode;
+    current_selecting_mode = mode_id;
 }
 
 void check_group_selection_state() {
@@ -62,7 +62,7 @@ void check_group_selection_state() {
     UFPort_GetNumOfAvailableData(port_of_grouping_result.port_id, 0, &dataLen);
     if (dataLen > 0) {
         UFPort_ReadFromQueue(port_of_grouping_result.port_id, (semo_uint8*)selecting_mode, sizeof(GROUP_ID), 0, &dataLen);
-        if (current_mode_grouping_data != -1) {
+        if (current_selecting_mode != -1) {
             ((semo_int32 *)port_of_leader.variable->buffer)[0] = *selecting_mode;
             ((semo_int32 *)port_of_leader.variable->buffer)[1] = TRUE;
             UFPort_WriteToQueue(port_of_leader.port_id, (unsigned char *) port_of_leader.variable->buffer, port_of_leader.variable->size, 0, &dataLen);
@@ -77,7 +77,8 @@ void stop_selecting_group(semo_int32 mode_id, semo_int32 *field_of_mode) {
     if (current_selecting_mode == mode_id) {
         selecting_mode = (semo_int32*) NULL;
         current_selecting_mode = -1;
-    } else if (field_of_mode != -1){
+    } 
+    if (*field_of_mode != -1) {
         set_group_state(*field_of_mode, SEMO_DECREASE);
         *field_of_mode = -1;
     }
