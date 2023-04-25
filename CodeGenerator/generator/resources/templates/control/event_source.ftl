@@ -18,15 +18,15 @@ void event_polling() {
     semo_int32 event;
     for (int i = 0 ; i < throw_in_port_list_size ; i++)
     {
-        if(get_group_state(throw_in_port_list[i].team_id) <= 0) 
-        {
-            continue;
-        }
         uem_result result = UFPort_GetNumOfAvailableData(throw_in_port_list[i].port->port_id, 0, &dataNum);
         ERRIFGOTO(result, _EXIT);
         if (dataNum > 0)
         {
             UFPort_ReadFromQueue(throw_in_port_list[i].port->port_id, (unsigned char*) &event, sizeof(semo_int32), 0, &dataLen);
+            if(get_group_state(throw_in_port_list[i].team_id) <= 0) 
+            {
+                continue;
+            }
             event_occured = TRUE;
             event_list[event] = TRUE;
         }
