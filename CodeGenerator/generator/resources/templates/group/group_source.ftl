@@ -46,7 +46,7 @@ semo_int8 get_group_state(GROUP_ID group_id)
     return group_state_list[get_group_index(group_id)];
 }
 
-void register_group_selection(semo_int32 mode_id, semo_int32 *field_of_mode) {
+void register_group_selection(semo_int32 mode_id, GROUP_ID *field_of_mode) {
     int dataLen = 0;
     UFPort_GetNumOfAvailableData(port_of_grouping_result.port_id, 0, &dataLen);
     if (dataLen > 0) {
@@ -73,7 +73,7 @@ void check_group_selection_state() {
     }
 }
 
-void stop_selecting_group(semo_int32 mode_id, semo_int32 *field_of_mode) {
+void stop_selecting_group(semo_int32 mode_id, GROUP_ID *field_of_mode) {
     if (current_selecting_mode == mode_id) {
         selecting_mode = (semo_int32*) NULL;
         current_selecting_mode = -1;
