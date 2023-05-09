@@ -14,14 +14,14 @@ import com.metadata.algorithm.task.UEMGroupingTask;
 import com.metadata.algorithm.task.UEMLeaderTask;
 
 public class TaskCodeCopier {
-    private void copyTaskCode(FileItem file, String fileName, Path componentPrefix, Path targetDir)
+    private void copyTaskCode(FileItem file, Path componentPrefix, Path targetDir)
             throws Exception {
         if (file.isDirectory()) {
             LocalFileCopier.copyDirectory(Paths.get(componentPrefix.toString(), file.getPath()),
                     targetDir);
         } else {
-            LocalFileCopier.copyFile(Paths.get(componentPrefix.toString(), file.getPath()),
-                    Paths.get(targetDir.toString(), fileName));
+            LocalFileCopier.copyFile(Paths.get(componentPrefix.toString(), file.getPath()), Paths
+                    .get(targetDir.toString(), Paths.get(file.getPath()).getFileName().toString()));
         }
     }
 
@@ -34,8 +34,7 @@ public class TaskCodeCopier {
                         for (CodeActionWrapper action : service.getActionList()) {
                             for (FileItem file : action.getActionTask().getActionImpl().getTask()
                                     .getTaskFiles()) {
-                                copyTaskCode(file, action.getActionTask().getFile(),
-                                        componentPrefix, targetDir);
+                                copyTaskCode(file, componentPrefix, targetDir);
                             }
                         }
                     }
@@ -53,8 +52,7 @@ public class TaskCodeCopier {
                 for (CodeResourceWrapper resourceWrapper : codeRobot.getResourceList()) {
                     for (FileItem file : resourceWrapper.getResource().getResource().getTask()
                             .getTaskFiles()) {
-                        copyTaskCode(file, resourceWrapper.getResource().getFile(), componentPrefix,
-                                targetDir);
+                        copyTaskCode(file, componentPrefix, targetDir);
                     }
                 }
             }
@@ -69,7 +67,7 @@ public class TaskCodeCopier {
             for (CodeRobotWrapper codeRobot : codeRobotList) {
                 UEMLeaderTask leaderTask = codeRobot.getRobot().getRobotTask().getLeaderTask();
                 for (FileItem file : leaderTask.getLeaderTask().getTaskFiles()) {
-                    copyTaskCode(file, leaderTask.getFile(), componentPrefix, targetDir);
+                    copyTaskCode(file, componentPrefix, targetDir);
                 }
             }
         } catch (Exception e) {
@@ -84,7 +82,7 @@ public class TaskCodeCopier {
                 UEMGroupingTask groupingTask =
                         codeRobot.getRobot().getRobotTask().getGroupingTask();
                 for (FileItem file : groupingTask.getGroupingTask().getTaskFiles()) {
-                    copyTaskCode(file, groupingTask.getFile(), componentPrefix, targetDir);
+                    copyTaskCode(file, componentPrefix, targetDir);
                 }
             }
         } catch (Exception e) {
