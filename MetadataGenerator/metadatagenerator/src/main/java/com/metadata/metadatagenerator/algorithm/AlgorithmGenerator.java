@@ -46,6 +46,7 @@ import com.scriptparser.parserdatastructure.util.ModeTransitionVisitor;
 import com.scriptparser.parserdatastructure.util.StatementVisitor;
 import com.scriptparser.parserdatastructure.util.VariableVisitor;
 import com.scriptparser.parserdatastructure.wrapper.GroupModeTransitionWrapper;
+import com.scriptparser.parserdatastructure.wrapper.GroupWrapper;
 import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
 import com.scriptparser.parserdatastructure.wrapper.ModeWrapper;
 import com.scriptparser.parserdatastructure.wrapper.ParallelServiceWrapper;
@@ -495,19 +496,28 @@ public class AlgorithmGenerator {
 
     private class GroupingModeVisitor implements ModeTransitionVisitor {
         private UEMGroupingLibrary groupingLibrary;
+        private RobotImplWrapper robot;
 
         @Override
         public void visitMode(ModeWrapper mode, String modeId, String groupId) {
-            if (mode.getGroupList().size() > 0) {
-                groupingLibrary.addGroupMap(modeId, groupId, mode.getGroupList());
+            if (mode.getGroupList().size() > 0 && robot.getGroupMap().keySet().contains(groupId)) {
+                List<GroupWrapper> groupList = new ArrayList<>();
+                mode.getGroupList().forEach(g -> {
+                    if (robot.getGroupMap().keySet()
+                            .contains(ModeWrapper.makeGroupId(groupId, g.getGroup().getName()))) {
+                        groupList.add(g);
+                    }
+                });
+                groupingLibrary.addGroupMap(modeId, groupId, groupList);
             }
         }
 
         @Override
         public void visitTransition(TransitionWrapper arg0, String arg1, String arg2) {}
 
-        public GroupingModeVisitor(UEMGroupingLibrary groupingLibrary) {
+        public GroupingModeVisitor(UEMGroupingLibrary groupingLibrary, RobotImplWrapper robot) {
             this.groupingLibrary = groupingLibrary;
+            this.robot = robot;
         }
     }
 
@@ -535,7 +545,7 @@ public class AlgorithmGenerator {
         robot.setGroupingLibrary(groupingLibrary);
         String team = robot.getRobot().getTeam();
         TransitionWrapper transition = mission.getTransition(team);
-        GroupingModeVisitor visitor = new GroupingModeVisitor(groupingLibrary);
+        GroupingModeVisitor visitor = new GroupingModeVisitor(groupingLibrary, robot.getRobot());
         transition.traverseTransition(new String(), team, new ArrayList<String>(),
                 new ArrayList<>(robot.getRobot().getGroupMap().keySet()), visitor, null);
         UEMLibraryConnection connection = new UEMLibraryConnection();
