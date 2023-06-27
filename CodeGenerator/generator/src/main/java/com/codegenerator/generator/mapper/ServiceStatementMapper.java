@@ -152,6 +152,21 @@ public class ServiceStatementMapper {
             return outputVariableList;
         }
 
+        private List<CodeVariableWrapper> makeVariableListFromActionShared(ActionStatement action,
+                int statementId, ActionTypeWrapper actionType) {
+            List<CodeVariableWrapper> sharedVariableList = new ArrayList<>();
+            for (VariableTypeWrapper variable : actionType.getVariableSharedList()) {
+                CodeVariableWrapper codeVariable = new CodeVariableWrapper();
+                codeVariable.setType(variable);
+                codeVariable.setName(variable.getVariableType().getName());
+                codeVariable.setId(CodeVariableWrapper.makeVariableId(service.getServiceId(),
+                        codeVariable.getName()));
+                codeVariable.setRealVariable(false);
+                sharedVariableList.add(codeVariable);
+            }
+            return sharedVariableList;
+        }
+
         private UEMChannelPort getChannelPort(List<UEMChannelPort> portList, int index) {
             for (UEMChannelPort port : portList) {
                 if (port.getIndex() == index) {
@@ -208,6 +223,8 @@ public class ServiceStatementMapper {
                         makeInputListFromActionInput(action, statementId, actionType);
                 List<CodeVariableWrapper> outputVariableList =
                         makeVariableListFromActionOutput(action, statementId, actionType);
+                List<CodeVariableWrapper> sharedVariableList =
+                        makeVariableListFromActionShared(action, statementId, actionType);
                 List<UEMActionTask> actionTaskList = robot.getRobot().getRobotTask()
                         .getActionTaskList(service.getServiceId(), action);
                 CodeStatementWrapper codeStatement = new CodeStatementWrapper();
@@ -216,6 +233,7 @@ public class ServiceStatementMapper {
                         CodeStatementWrapper.makeStatementId(service.getServiceId(), statementId));
                 codeStatement.getVariableList().addAll(inputVariableList);
                 codeStatement.getVariableList().addAll(outputVariableList);
+                codeStatement.getVariableList().addAll(sharedVariableList);
                 codeStatement.setActionList(
                         makeActionImplList(actionTaskList, inputVariableList, outputVariableList));
                 statementList.add(codeStatement);

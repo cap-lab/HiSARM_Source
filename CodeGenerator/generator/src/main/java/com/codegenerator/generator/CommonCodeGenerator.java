@@ -15,6 +15,7 @@ import com.codegenerator.generator.util.LocalFileCopier;
 import com.codegenerator.wrapper.CodeModeWrapper;
 import com.codegenerator.wrapper.CodeRobotWrapper;
 import com.codegenerator.wrapper.CodeServiceWrapper;
+import com.codegenerator.wrapper.CodeStatementWrapper;
 import com.codegenerator.wrapper.CodeTransitionWrapper;
 import com.codegenerator.wrapper.CodeVariableWrapper;
 import com.metadata.UEMRobot;
@@ -112,13 +113,27 @@ public class CommonCodeGenerator {
         return new ArrayList<>(variableList);
     }
 
-    private List<VariableTypeWrapper> makeVariableTypeList(List<CodeVariableWrapper> variableList) {
+    private List<VariableTypeWrapper> makeVariableTypeList(CodeRobotWrapper robot,
+            List<CodeVariableWrapper> variableList) {
         List<VariableTypeWrapper> variableTypeList = new ArrayList<>();
         for (CodeVariableWrapper variable : variableList) {
             VariableTypeWrapper variableType = variable.getType();
             if (variableTypeList.stream().filter(v -> v.getVariableType().getName()
                     .equals(variableType.getVariableType().getName())).count() == 0) {
                 variableTypeList.add(variableType);
+            }
+        }
+        for (CodeServiceWrapper service : robot.getServiceList()) {
+            for (CodeStatementWrapper statement : service.getStatementList()) {
+                for (CodeVariableWrapper variable : statement.getVariableList()) {
+                    VariableTypeWrapper variableType = variable.getType();
+                    if (variableTypeList.stream()
+                            .filter(v -> v.getVariableType().getName()
+                                    .equals(variableType.getVariableType().getName()))
+                            .count() == 0) {
+                        variableTypeList.add(variableType);
+                    }
+                }
             }
         }
         return variableTypeList;
@@ -130,7 +145,8 @@ public class CommonCodeGenerator {
 
         rootHash.put(VariableConstant.ROBOT_ID, robot.getRobotName());
         rootHash.put(VariableConstant.VARIABLE_LIST, variableList);
-        rootHash.put(VariableConstant.VARIABLE_TYPE_LIST, makeVariableTypeList(variableList));
+        rootHash.put(VariableConstant.VARIABLE_TYPE_LIST,
+                makeVariableTypeList(robot, variableList));
 
         FTLHandler.getInstance().generateCode(CodeGeneratorConstant.VARIABLE_HEADER_TEMPLATE,
                 Paths.get(targetDir.toString(),
