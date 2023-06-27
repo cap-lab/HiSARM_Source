@@ -574,6 +574,19 @@ public class AlgorithmGenerator {
                         library.setVariableType(variable);
                     }
                     UEMLibraryConnection connection = new UEMLibraryConnection();
+                    boolean flag = true;
+                    String taskName = actionTask.getName();
+                    while (flag) {
+                        flag = false;
+                        for (UEMLibraryPortMap portMap : actionTask.getLibPortMapList()) {
+                            if (portMap.getTask().equals(taskName)) {
+                                taskName = portMap.getChildTask();
+                                flag = true;
+                                break;
+                            }
+                        }
+                    }
+                    connection.setConnection(taskName, actionTask.getLeaderPort(), library);
                     connection.setConnection(actionTask, libPort, library);
                     algorithm.getAlgorithm().getLibraryConnections().getTaskLibraryConnection()
                             .add(connection);
