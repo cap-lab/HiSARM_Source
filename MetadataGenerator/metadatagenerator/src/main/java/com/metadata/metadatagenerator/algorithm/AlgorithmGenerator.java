@@ -586,8 +586,7 @@ public class AlgorithmGenerator {
                             }
                         }
                     }
-                    connection.setConnection(taskName, actionTask.getLeaderPort(), library);
-                    connection.setConnection(actionTask, libPort, library);
+                    connection.setConnection(taskName, libPort, library);
                     algorithm.getAlgorithm().getLibraryConnections().getTaskLibraryConnection()
                             .add(connection);
                 }
