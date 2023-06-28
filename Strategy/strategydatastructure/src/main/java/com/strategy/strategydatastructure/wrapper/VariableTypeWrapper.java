@@ -13,6 +13,10 @@ public class VariableTypeWrapper {
     private Variable variableType;
     private List<String> defaultValueList = new ArrayList<>();
 
+    public String getName() {
+        return variableType.getName();
+    }
+
     public int getSize() {
         return variableType.getCount() * variableType.getSize();
     }
