@@ -26,8 +26,7 @@ public class SharedDataCodeGenerator {
 
         rootHash.put(SharedDataTaskConstant.ROBOT_ID, robot.getRobotName());
         rootHash.put(SharedDataTaskConstant.LIB_NAME, library.getName());
-        rootHash.put(SharedDataTaskConstant.VARIABLE_TYPE,
-                library.getVariableType().getVariableType());
+        rootHash.put(SharedDataTaskConstant.VARIABLE_TYPE, library.getVariableType());
 
         FTLHandler.getInstance().generateCode(CodeGeneratorConstant.SHARED_DATA_HEADER_TEMPLATE,
                 Paths.get(targetDir.toString(), library.getHeader()), rootHash);
