@@ -31,6 +31,7 @@ LIBFUNC(void, set_${variableType.name}_listen, void *buffer) {
     listen_${variableType.name}_updated = TRUE;
     memcpy(listen_${variableType.name}.buffer, buffer, listen_${variableType.name}.size);
     UCThreadMutex_Unlock(listen_${variableType.name}_mutex);
+    SEMO_LOG_DEBUG("Multicast from others");
 }
 
 LIBFUNC(void, get_${variableType.name}_action, void *buffer) {
@@ -38,6 +39,7 @@ LIBFUNC(void, get_${variableType.name}_action, void *buffer) {
     listen_${variableType.name}_updated = FALSE;
     memcpy(buffer, listen_${variableType.name}.buffer, listen_${variableType.name}.size);
     UCThreadMutex_Unlock(listen_${variableType.name}_mutex);
+    SEMO_LOG_DEBUG("Get from action");
 }
 
 LIBFUNC(semo_int8, avail_${variableType.name}_action) {
@@ -49,6 +51,7 @@ LIBFUNC(void, set_${variableType.name}_action, void *buffer) {
     action_${variableType.name}_updated = TRUE;
     memcpy(action_${variableType.name}.buffer, buffer, action_${variableType.name}.size);
     UCThreadMutex_Unlock(action_${variableType.name}_mutex);
+    SEMO_LOG_DEBUG("Set from action");
 }
 
 LIBFUNC(void, get_${variableType.name}_report, void *buffer) {
@@ -56,6 +59,7 @@ LIBFUNC(void, get_${variableType.name}_report, void *buffer) {
     action_${variableType.name}_updated = FALSE;
     memcpy(buffer, action_${variableType.name}.buffer, action_${variableType.name}.size);
     UCThreadMutex_Unlock(action_${variableType.name}_mutex);
+    SEMO_LOG_DEBUG("Multicast to others");
 }
 
 LIBFUNC(semo_int8, avail_${variableType.name}_report) {
