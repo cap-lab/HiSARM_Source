@@ -8,6 +8,7 @@ public class Action {
     private String description;
     private List<String> inputList = new ArrayList<>();
     private List<String> outputList = new ArrayList<>();
+    private GroupAction groupAction;
 
     public String getName() {
         return name;
@@ -39,5 +40,13 @@ public class Action {
 
     public void setOutputList(List<String> outputList) {
         this.outputList = outputList;
+    }
+
+    public GroupAction getGroupAction() {
+        return groupAction;
+    }
+
+    public void setGroupAction(GroupAction groupAction) {
+        this.groupAction = groupAction;
     }
 }

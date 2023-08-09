@@ -32,7 +32,6 @@ public class DAO {
 	private Path PRIVATE_KEY = Paths.get(System.getProperty("user.home"), ".ssh", "id_rsa");
 
 	private MongoCollection<Document> strategyCollection;
-	private MongoCollection<Document> groupActionCollection;
 	private MongoCollection<Document> actionCollection;
 	private MongoCollection<Document> actionImplCollection;
 	private MongoCollection<Document> robotCollection;
@@ -52,7 +51,6 @@ public class DAO {
 		connectDB(ip, port, user, epwd, pwd, dbName);
 
 		strategyCollection = mDB.getCollection(DBCollections.Collection_Control_Strategy);
-		groupActionCollection = mDB.getCollection(DBCollections.Collection_GroupAction);
 		actionCollection = mDB.getCollection(DBCollections.Collection_Action);
 		actionImplCollection = mDB.getCollection(DBCollections.Collection_ActionImpl);
 		robotCollection = mDB.getCollection(DBCollections.Collection_Robot);
@@ -176,16 +174,6 @@ public class DAO {
 			Bson queryFilter = Filters.eq("TaskId", taskId);
 			Bson projection = Projections.include("TaskType");
 			return taskCollection.find(queryFilter).projection(projection).first();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public Document getGroupAction(String GroupActionName) {
-		try {
-			Bson queryFilter = Filters.eq("Name", GroupActionName);
-			return groupActionCollection.find(queryFilter).first();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

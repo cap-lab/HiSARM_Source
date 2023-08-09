@@ -6,7 +6,6 @@ import com.dbmanager.commonlibraries.Mapper.ActionImplMapper;
 import com.dbmanager.commonlibraries.Mapper.ActionMapper;
 import com.dbmanager.commonlibraries.Mapper.ArchitectureMapper;
 import com.dbmanager.commonlibraries.Mapper.ControlStrategyMapper;
-import com.dbmanager.commonlibraries.Mapper.GroupActionMapper;
 import com.dbmanager.commonlibraries.Mapper.GroupingAlgorithmMapper;
 import com.dbmanager.commonlibraries.Mapper.LeaderSelectionAlgorithmMapper;
 import com.dbmanager.commonlibraries.Mapper.ResourceMapper;
@@ -16,7 +15,6 @@ import com.dbmanager.commonlibraries.Mapper.TaskMapper;
 import com.dbmanager.commonlibraries.Mapper.VariableMapper;
 import com.dbmanager.datastructure.action.Action;
 import com.dbmanager.datastructure.action.ActionImpl;
-import com.dbmanager.datastructure.action.GroupAction;
 import com.dbmanager.datastructure.architecture.Architecture;
 import com.dbmanager.datastructure.controlstrategy.ControlStrategy;
 import com.dbmanager.datastructure.groupingalgorithm.GroupingAlgorithm;
@@ -51,10 +49,6 @@ public class DBService {
         return dbDao.getAction(actionName) != null;
     }
 
-    public static boolean isExistentGroupAction(String groupActionName) {
-        return dbDao.getGroupAction(groupActionName) != null;
-    }
-
     public static boolean isExistentAction(String robotClass, String actionName) {
         return dbDao.getActionImpl(robotClass, actionName) != null;
     }
@@ -65,10 +59,6 @@ public class DBService {
 
     public static Action getAction(String actionName) {
         return ActionMapper.mapToAction(dbDao.getAction(actionName));
-    }
-
-    public static GroupAction getGroupAction(String actionName) {
-        return GroupActionMapper.mapToGroupAction(dbDao.getGroupAction(actionName));
     }
 
     public static ActionImpl getActionImpl(String actionImplId) {
@@ -89,57 +79,34 @@ public class DBService {
             case OUTPUT:
                 return VariableMapper
                         .mapToVariable(dbDao.getVariable(action.getOutputList().get(index)));
-            default:
-                return null;
-        }
-    }
-
-    private static Variable getVariableOfGroupAction(GroupAction groupAction, int index,
-            VariableDirection direction) {
-        switch (direction) {
-            case INPUT:
-                return VariableMapper
-                        .mapToVariable(dbDao.getVariable(groupAction.getInputList().get(index)));
-            case OUTPUT:
-                return VariableMapper
-                        .mapToVariable(dbDao.getVariable(groupAction.getOutputList().get(index)));
             case SHARED:
                 return VariableMapper.mapToVariable(
-                        dbDao.getVariable(groupAction.getSharedDataList().get(index)));
+                        dbDao.getVariable(action.getGroupAction().getSharedDataList().get(index)));
             default:
                 return null;
         }
     }
 
-    public static Variable getVariableOfGroupAction(String actionName, int index,
+    public static List<Variable> getVariableListOfAction(String actionName,
             VariableDirection direction) {
-        GroupAction groupAction =
-                GroupActionMapper.mapToGroupAction(dbDao.getGroupAction(actionName));
-        return getVariableOfGroupAction(groupAction, index, direction);
-
-    }
-
-    public static List<Variable> getVariableListOfGroupAction(String actionName,
-            VariableDirection direction) {
-        GroupAction groupAction =
-                GroupActionMapper.mapToGroupAction(dbDao.getGroupAction(actionName));
+        Action action = ActionMapper.mapToAction(dbDao.getAction(actionName));
         List<Variable> dbVariableList = new ArrayList<Variable>();
         int length = 0;
         switch (direction) {
             case INPUT:
-                length = groupAction.getInputList().size();
+                length = action.getInputList().size();
                 break;
             case OUTPUT:
-                length = groupAction.getOutputList().size();
+                length = action.getOutputList().size();
                 break;
             case SHARED:
-                length = groupAction.getSharedDataList().size();
+                length = action.getGroupAction().getSharedDataList().size();
                 break;
             default:
                 length = 0;
         }
         for (int i = 0; i < length; i++) {
-            dbVariableList.add(getVariableOfGroupAction(groupAction, i, direction));
+            dbVariableList.add(getVariableOfAction(actionName, i, direction));
         }
         return dbVariableList;
     }

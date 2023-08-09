@@ -3,8 +3,17 @@ package com.dbmanager.commonlibraries.Mapper;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import com.dbmanager.datastructure.action.Action;
+import com.dbmanager.datastructure.action.GroupAction;
 
 public class ActionMapper {
+
+    private static GroupAction makeGroupAction(Document document) {
+        GroupAction groupAction = new GroupAction();
+        groupAction.setSharedDataList(document.getList("SharedDataList", String.class));
+        groupAction.setSynchronization(document.getBoolean("Synchronization"));
+        return groupAction;
+    }
+
     public static Action mapToAction(Bson bson) {
         Action action = new Action();
         Document document = (Document) bson;
@@ -14,6 +23,9 @@ public class ActionMapper {
             action.setDescription(document.getString("Description"));
             action.setInputList(document.getList("Input", String.class));
             action.setOutputList(document.getList("Output", String.class));
+            if (document.containsKey("Swarm") == true) {
+                action.setGroupAction(makeGroupAction(document.get("Swarm", Document.class)));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
