@@ -1,5 +1,6 @@
 package com.dbmanager.commonlibraries.Mapper;
 
+import java.util.ArrayList;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import com.dbmanager.datastructure.action.Action;
@@ -9,7 +10,8 @@ public class ActionMapper {
 
     private static GroupAction makeGroupAction(Document document) {
         GroupAction groupAction = new GroupAction();
-        groupAction.setSharedDataList(document.getList("sharedDataList", String.class));
+        groupAction.setSharedDataList(
+                document.getList("sharedDataList", String.class, new ArrayList<String>()));
         groupAction.setSynchronization(document.getBoolean("synchronization"));
         return groupAction;
     }
