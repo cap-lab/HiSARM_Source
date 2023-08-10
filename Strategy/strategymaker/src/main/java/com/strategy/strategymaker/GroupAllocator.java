@@ -34,7 +34,7 @@ public class GroupAllocator {
                     (CompileTimeAllocatorInterface) clazz.getDeclaredConstructor().newInstance();
             Map<String, Map<String, Integer>> groupMap = allocator.allocate(robotList, mission);
             robotList.forEach(r -> r.setGroupMap(groupMap.get(r.getRobot().getRobotId())));
-
+            classLoader.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
