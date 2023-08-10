@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import com.dbmanager.commonlibraries.DBService;
-import com.dbmanager.datastructure.action.GroupAction;
 import com.scriptparser.parserdatastructure.entity.statement.ActionStatement;
 import com.scriptparser.parserdatastructure.enumeration.StatementType;
 import com.scriptparser.parserdatastructure.wrapper.CatchEventWrapper;
@@ -107,16 +106,11 @@ public class ActionTypeInfoMaker {
                                 actionType.getVariableInputList());
                         getVariableType(actionType, actionType.getAction().getOutputList(),
                                 actionType.getVariableOutputList());
-                    } else if (DBService.isExistentGroupAction(action.getActionName())) {
-                        actionType.setAction(DBService.getGroupAction(action.getActionName()));
-                        actionType.setGroupAction(true);
-                        getVariableType(actionType, actionType.getAction().getInputList(),
-                                actionType.getVariableInputList());
-                        getVariableType(actionType, actionType.getAction().getOutputList(),
-                                actionType.getVariableOutputList());
-                        getVariableType(actionType,
-                                ((GroupAction) (actionType.getAction())).getSharedDataList(),
-                                actionType.getVariableSharedList());
+                        if (actionType.getAction().getGroupAction() != null) {
+                            getVariableType(actionType,
+                                    actionType.getAction().getGroupAction().getSharedDataList(),
+                                    actionType.getVariableSharedList());
+                        }
                     } else {
                         throw new Exception("no action in DB :" + action.getActionName());
                     }
