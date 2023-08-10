@@ -9,8 +9,8 @@ public class ActionMapper {
 
     private static GroupAction makeGroupAction(Document document) {
         GroupAction groupAction = new GroupAction();
-        groupAction.setSharedDataList(document.getList("SharedDataList", String.class));
-        groupAction.setSynchronization(document.getBoolean("Synchronization"));
+        groupAction.setSharedDataList(document.getList("sharedDataList", String.class));
+        groupAction.setSynchronization(document.getBoolean("synchronization"));
         return groupAction;
     }
 
