@@ -11,7 +11,7 @@ public class ActionMapper {
     private static GroupAction makeGroupAction(Document document) {
         GroupAction groupAction = new GroupAction();
         groupAction.setSharedDataList(
-                document.getList("sharedDataList", String.class, new ArrayList<String>()));
+                document.getList("sharedData", String.class, new ArrayList<String>()));
         groupAction.setSynchronization(document.getBoolean("synchronization"));
         return groupAction;
     }
