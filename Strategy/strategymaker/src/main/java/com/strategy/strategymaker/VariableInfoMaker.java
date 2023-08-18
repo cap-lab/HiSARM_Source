@@ -218,7 +218,8 @@ public class VariableInfoMaker {
         }
 
         @Override
-        public void visitMode(ModeWrapper mode, String modeId, String groupId) {
+        public void visitMode(ModeWrapper mode, String modeId, String groupId,
+                String newGroupPrefix) {
             for (ParallelServiceWrapper service : mode.getServiceList()) {
                 StatementVariableTypeListMaker visitor =
                         new StatementVariableTypeListMaker(service.getService());
