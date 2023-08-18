@@ -68,12 +68,12 @@ public class VariableMapper {
         }
 
         @Override
-        public void visitModeToTransition(ModeWrapper mode, String modeId,
+        public void visitModeToTransition(ModeWrapper mode, String lastId, String modeId,
                 GroupModeTransitionWrapper transition, String groupId) {
             CodeModeWrapper codeMode = robot.getMode(modeId);
             List<CodeVariableWrapper> variableList = new ArrayList<>();
             CodeTransitionWrapper codeTransition =
-                    robot.getTransition(transition.getModeTransition().makeTransitionid(groupId));
+                    robot.getTransition(transition.getModeTransition().makeTransitionid(lastId));
             for (int i = 0; i < codeTransition.getParameterList().size(); i++) {
                 CodeVariableWrapper param = codeTransition.getParameterList().get(i);
                 Identifier input = transition.getInputList().get(i).getIdentifierSet().get(0);
@@ -106,7 +106,8 @@ public class VariableMapper {
 
         @Override
         public void visitTransitionToMode(TransitionWrapper transition, String transitionId,
-                ModeWrapper srcMode, String event, TransitionModeWrapper dstMode, String groupId) {
+                String dstModePrefix, ModeWrapper srcMode, String event,
+                TransitionModeWrapper dstMode, String groupId) {
             CodeTransitionWrapper codeTransition = robot.getTransition(transitionId);
             List<CodeVariableWrapper> variableList = new ArrayList<>();
             CodeModeWrapper srcCodeMode = null;
@@ -122,7 +123,8 @@ public class VariableMapper {
             }
             transitionElement.setSrcMode(srcCodeMode);
             transitionElement.setEvent(event);
-            transitionElement.setDstMode(robot.getMode(dstMode.getMode().makeModeId(transitionId)));
+            transitionElement
+                    .setDstMode(robot.getMode(dstMode.getMode().makeModeId(dstModePrefix)));
             CodeModeWrapper codeDstMode = transitionElement.getDstMode();
             for (int i = 0; i < transitionElement.getDstMode().getParameterList().size(); i++) {
                 CodeVariableWrapper param = codeDstMode.getParameterList().get(i);

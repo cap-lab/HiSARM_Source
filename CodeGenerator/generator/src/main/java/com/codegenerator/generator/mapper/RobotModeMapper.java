@@ -21,7 +21,8 @@ public class RobotModeMapper {
         Map<String, CodeModeWrapper> modeMap = new HashMap<>();
 
         @Override
-        public void visitMode(ModeWrapper mode, String modeId, String groupId) {
+        public void visitMode(ModeWrapper mode, String modeId, String groupId,
+                String newGroupPrefix) {
             CodeModeWrapper codeMode = new CodeModeWrapper();
             codeMode.setModeId(modeId);
             codeMode.setMode(mode);
