@@ -100,7 +100,6 @@ public class ActionTypeInfoMaker {
                         actionType = getActionType(action.getActionName());
                     } else if (DBService.isExistentAction(action.getActionName())) {
                         actionType.setAction(DBService.getAction(action.getActionName()));
-                        actionType.setGroupAction(false);
                         actionType.setActionId(actionTypeStore.size());
                         getVariableType(actionType, actionType.getAction().getInputList(),
                                 actionType.getVariableInputList());

@@ -10,9 +10,12 @@ import lombok.Setter;
 @Setter
 public class ActionTypeWrapper {
     private Action action;
-    private boolean groupAction;
     private int actionId;
     private List<VariableTypeWrapper> variableInputList = new ArrayList<>();
     private List<VariableTypeWrapper> variableOutputList = new ArrayList<>();
     private List<VariableTypeWrapper> variableSharedList = new ArrayList<>();
+
+    public boolean isGroupAction() {
+        return action.getGroupAction() != null;
+    }
 }
