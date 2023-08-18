@@ -33,14 +33,24 @@ public class TransitionModeWrapper {
       return argumentList;
    }
 
-   public void visitTransitionMode(String lastId, String currentGroupId,
-         TransitionWrapper transition, ModeWrapper previousMode, String event,
-         List<String> visitedId, List<String> groupList, ModeTransitionVisitor visitor,
-         VariableVisitor variableVisitor) {
-      if (variableVisitor != null) {
-         variableVisitor.visitTransitionToMode(transition, lastId, previousMode, event, this,
-               currentGroupId);
+   public void visitTransitionMode(String lastId, String currentGroup, TransitionWrapper transition,
+         ModeWrapper previousMode, String event, List<String> visitedId, List<String> scopeList,
+         ModeTransitionVisitor visitor, VariableVisitor variableVisitor) {
+      String newId;
+      String groupPrefix;
+      if (previousMode != null) {
+         newId = lastId + "_" + previousMode.getMode().getName();
+         groupPrefix = currentGroup + "_" + previousMode.getMode().getName();
+      } else {
+         newId = lastId + "_default";
+         groupPrefix = currentGroup + "_default";
       }
-      mode.visitMode(lastId, currentGroupId, visitedId, groupList, visitor, variableVisitor);
+      if (variableVisitor != null) {
+         variableVisitor.visitTransitionToMode(transition, lastId, newId, previousMode, event, this,
+               currentGroup);
+      }
+
+      mode.visitMode(newId, currentGroup, groupPrefix, visitedId, scopeList, visitor,
+            variableVisitor);
    }
 }

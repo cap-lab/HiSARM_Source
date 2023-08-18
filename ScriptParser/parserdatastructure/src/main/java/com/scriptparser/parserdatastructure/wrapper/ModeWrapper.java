@@ -52,8 +52,8 @@ public class ModeWrapper {
         return argumentMap;
     }
 
-    public void visitMode(String lastId, String currentGroupId, List<String> visitedList,
-            List<String> groupList, ModeTransitionVisitor visitor,
+    public void visitMode(String lastId, String currentGroup, String newGroupPrefix,
+            List<String> visitedList, List<String> groupList, ModeTransitionVisitor visitor,
             VariableVisitor variableVisitor) {
         String id = makeModeId(lastId);
         if (visitedList != null) {
@@ -64,19 +64,15 @@ public class ModeWrapper {
             }
         }
         if (visitor != null) {
-            visitor.visitMode(this, id, currentGroupId);
+            visitor.visitMode(this, id, currentGroup, newGroupPrefix);
         }
         for (ParallelServiceWrapper service : this.serviceList) {
-            service.visitModeService(this, id, currentGroupId, variableVisitor);
+            service.visitModeService(this, id, currentGroup, variableVisitor);
         }
         for (GroupWrapper group : this.groupList) {
-            String newGroupId = makeGroupId(currentGroupId, group.getGroup().getName());
-            if (groupList != null) {
-                if (!groupList.contains(newGroupId)) {
-                    continue;
-                }
-            }
-            group.getModeTransition().traverseModeTransition(newGroupId, newGroupId, this, id,
+            String newGroupId = makeGroupId(newGroupPrefix, group.getGroup().getName());
+            String newId = makeGroupId(id, group.getGroup().getName());
+            group.getModeTransition().traverseModeTransition(newId, newGroupId, this, id,
                     visitedList, groupList, visitor, variableVisitor);
         }
     }

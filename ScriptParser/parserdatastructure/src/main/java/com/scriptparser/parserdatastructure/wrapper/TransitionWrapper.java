@@ -37,7 +37,7 @@ public class TransitionWrapper {
         return argumentMap;
     }
 
-    public void traverseTransition(String lastId, String currentGroupId, List<String> visitedList,
+    public void traverseTransition(String lastId, String currentGroup, List<String> visitedList,
             List<String> groupList, ModeTransitionVisitor visitor,
             VariableVisitor variableVisitor) {
         String id = lastId.length() > 0 ? makeTransitionid(lastId) : transition.getName();
@@ -49,13 +49,13 @@ public class TransitionWrapper {
             }
         }
         if (visitor != null) {
-            visitor.visitTransition(this, id, currentGroupId);
+            visitor.visitTransition(this, id, currentGroup);
         }
-        defaultMode.visitTransitionMode(id, currentGroupId, this, null, null, visitedList,
-                groupList, visitor, variableVisitor);
+        defaultMode.visitTransitionMode(id, currentGroup, this, null, null, visitedList, groupList,
+                visitor, variableVisitor);
         for (ModeWrapper key : transitionMap.keySet()) {
             for (CatchEventWrapper ce : transitionMap.get(key)) {
-                ce.getMode().visitTransitionMode(id, currentGroupId, this, key,
+                ce.getMode().visitTransitionMode(id, currentGroup, this, key,
                         ce.getEvent().getName(), visitedList, groupList, visitor, variableVisitor);
             }
         }
