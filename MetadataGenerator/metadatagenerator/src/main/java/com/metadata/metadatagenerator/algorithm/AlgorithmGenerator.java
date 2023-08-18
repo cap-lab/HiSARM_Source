@@ -211,11 +211,13 @@ public class AlgorithmGenerator {
                             if (actionImpl.getTask().isHasSubGraph()) {
                                 makeSubGraphOfAction(actionTask, taskServerPrefix);
                             }
-                            if (!groupActionList.contains(actionTask.getActionName())) {
-                                groupActionList.add(actionTask.getActionName());
+                            if (actionImpl.getActionType().isGroupAction()) {
+                                if (!groupActionList.contains(actionTask.getActionName())) {
+                                    groupActionList.add(actionTask.getActionName());
+                                }
+                                actionTask.setGroupActionIndex(
+                                        groupActionList.indexOf(actionTask.getActionName()));
                             }
-                            actionTask.setGroupActionIndex(
-                                    groupActionList.indexOf(actionTask.getActionName()));
                             robot.getActionTaskList().add(actionTask);
                             algorithm.addTask(actionTask);
                         }
@@ -315,20 +317,21 @@ public class AlgorithmGenerator {
         }
 
         @Override
-        public void visitModeToTransition(ModeWrapper mode, String modeId,
+        public void visitModeToTransition(ModeWrapper mode, String lastId, String modeId,
                 GroupModeTransitionWrapper transition, String groupId) {
             variableStack.add(transition.makeArgumentList(modeArgumentMap.get(modeId)));
         }
 
         @Override
         public void visitTransitionToMode(TransitionWrapper transition, String transitionId,
-                ModeWrapper previousMode, String event, TransitionModeWrapper mode,
-                String groupId) {
+                String dstMOdePrefix, ModeWrapper previousMode, String event,
+                TransitionModeWrapper mode, String groupId) {
             variableStack.add(mode.makeArgumentList(transitionArgumentMap.get(transitionId)));
         }
 
         @Override
-        public void visitMode(ModeWrapper mode, String modeId, String groupId) {
+        public void visitMode(ModeWrapper mode, String modeId, String groupId,
+                String newGroupPrefix) {
             modeArgumentMap.put(modeId, mode.makeArgumentMap(variableStack.pop()));
         }
 
@@ -499,16 +502,17 @@ public class AlgorithmGenerator {
         private RobotImplWrapper robot;
 
         @Override
-        public void visitMode(ModeWrapper mode, String modeId, String groupId) {
+        public void visitMode(ModeWrapper mode, String modeId, String groupId,
+                String newGroupPrefix) {
             if (mode.getGroupList().size() > 0 && robot.getGroupMap().keySet().contains(groupId)) {
                 List<GroupWrapper> groupList = new ArrayList<>();
                 mode.getGroupList().forEach(g -> {
-                    if (robot.getGroupMap().keySet()
-                            .contains(ModeWrapper.makeGroupId(groupId, g.getGroup().getName()))) {
+                    if (robot.getGroupMap().keySet().contains(
+                            ModeWrapper.makeGroupId(newGroupPrefix, g.getGroup().getName()))) {
                         groupList.add(g);
                     }
                 });
-                groupingLibrary.addGroupMap(modeId, groupId, groupList);
+                groupingLibrary.addGroupMap(modeId, newGroupPrefix, groupList);
             }
         }
 
@@ -556,7 +560,7 @@ public class AlgorithmGenerator {
 
     private void makeLibraryTask(UEMRobotTask robot) {
         for (UEMActionTask actionTask : robot.getActionTaskList()) {
-            if (actionTask.getActionImpl().getActionType().isGroupAction()) {
+            if (!actionTask.getActionImpl().getActionType().getVariableSharedList().isEmpty()) {
                 ActionTypeWrapper actionType = actionTask.getActionImpl().getActionType();
                 for (int i = 0; i < actionType.getVariableSharedList().size(); i++) {
                     VariableTypeWrapper variable = actionType.getVariableSharedList().get(i);
