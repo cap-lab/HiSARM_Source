@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CodeTransitionElementWrapper {
-    CodeModeWrapper srcMode;
+    String srcModeScopeId;
     String event;
     CodeModeWrapper dstMode;
 }

@@ -110,18 +110,18 @@ public class VariableMapper {
                 TransitionModeWrapper dstMode, String groupId) {
             CodeTransitionWrapper codeTransition = robot.getTransition(transitionId);
             List<CodeVariableWrapper> variableList = new ArrayList<>();
-            CodeModeWrapper srcCodeMode = null;
+            String srcModeScopeId = null;
             if (event != null) {
-                srcCodeMode = robot.getMode(srcMode.makeModeId(transitionId));
+                srcModeScopeId = groupId + "_" + srcMode.getMode().getName();
             }
             CodeTransitionElementWrapper transitionElement =
-                    codeTransition.getTransitionElement(srcCodeMode, event);
+                    codeTransition.getTransitionElement(srcModeScopeId, event);
             if (transitionElement != null) {
                 return;
             } else {
                 transitionElement = new CodeTransitionElementWrapper();
             }
-            transitionElement.setSrcMode(srcCodeMode);
+            transitionElement.setSrcModeScopeId(srcModeScopeId);
             transitionElement.setEvent(event);
             transitionElement
                     .setDstMode(robot.getMode(dstMode.getMode().makeModeId(dstModePrefix)));

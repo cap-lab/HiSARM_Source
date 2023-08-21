@@ -12,6 +12,7 @@ import lombok.Setter;
 @Setter
 public class CodeModeWrapper {
     private String modeId;
+    private String scopeId;
     private String groupId;
     private ModeWrapper mode;
     private List<CodeVariableWrapper> parameterList = new ArrayList<>();
@@ -59,5 +60,9 @@ public class CodeModeWrapper {
             groupCandidateList.add(transition.getGroupId());
         });
         return groupCandidateList;
+    }
+
+    public void setScopeId(String groupId, String modeName) {
+        this.scopeId = groupId + "_" + modeName;
     }
 }

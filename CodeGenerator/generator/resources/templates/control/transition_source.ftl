@@ -6,7 +6,7 @@
 <#list transitionList as transition>
     <#list transition.getTransitionElementList() as transitionElement>
         <#if transition.getArgumentMap(transitionElement)?size gt 0>
-VARIABLE_MAP variable_map_of_${transition.transitionId}_<#if transitionElement.srcMode?has_content>${transitionElement.srcMode.modeId}_${transitionElement.event}<#else>default_mode</#if>_${transitionElement.dstMode.modeId}[${transition.getArgumentMap(transitionElement)?size}] = {
+VARIABLE_MAP variable_map_of_${transition.transitionId}_<#if transitionElement.srcModeScopeId?has_content>${transitionElement.srcModeScopeId}_${transitionElement.event}<#else>default_mode</#if>_${transitionElement.dstMode.modeId}[${transition.getArgumentMap(transitionElement)?size}] = {
             <#list transition.getArgumentMap(transitionElement) as argument, parameter>
     {&variable_${argument.id}, &variable_${parameter.id}},
             </#list>
@@ -17,11 +17,11 @@ VARIABLE_MAP variable_map_of_${transition.transitionId}_<#if transitionElement.s
 
 // DEFINE EVENT MODE MAP
 <#list transitionList as transition>
-    <#list transition.modeList as srcMode>
+    <#list transition.getSourceModeScopeIdList() as srcMode>
         <#if transition.getTransitionElementList(srcMode)?size gt 0>
-EVENT_MODE_MAP event_mode_map_of_${transition.transitionId}_${srcMode.modeId}[${transition.getTransitionElementList(srcMode)?size}] = {
+EVENT_MODE_MAP event_mode_map_of_${transition.transitionId}_${srcMode}[${transition.getTransitionElementList(srcMode)?size}] = {
             <#list transition.getTransitionElementList(srcMode) as transitionElement>
-    {ID_EVENT_${transitionElement.event}, ${transition.getModeIndex(transitionElement.dstMode)}, ${transition.getArgumentMap(transitionElement)?size}, <#if transition.getArgumentMap(transitionElement)?size gt 0>variable_map_of_${transition.transitionId}_<#if testElement.srcMode?has_content>${testElement.srcMode.modeId}_${transitionElement.event}<#else>default_mode</#if>_${transitionElement.dstMode.modeId}<#else>NULL</#if>, ID_MODE_${transitionElement.dstMode.modeId}},
+    {ID_EVENT_${transitionElement.event}, ${transition.getModeIndex(transitionElement.dstMode)}, ${transition.getArgumentMap(transitionElement)?size}, <#if transition.getArgumentMap(transitionElement)?size gt 0>variable_map_of_${transition.transitionId}_<#if transitionElement.srcModeScopeId?has_content>${transitionElement.srcModeScopeId}_${transitionElement.event}<#else>default_mode</#if>_${transitionElement.dstMode.modeId}<#else>NULL</#if>, ID_MODE_${transitionElement.dstMode.modeId}},
             </#list>
 };
         </#if>
@@ -32,7 +32,7 @@ EVENT_MODE_MAP event_mode_map_of_${transition.transitionId}_${srcMode.modeId}[${
 <#list transitionList as transition>
 MODE_EVENT_MAP ${transition.transitionId}_mode_event_map[${transition.modeList?size}] = {
     <#list transition.modeList as mode>
-    {ID_MODE_${mode.modeId}, ${transition.getTransitionElementList(mode)?size}, <#if transition.getTransitionElementList(mode)?size gt 0>event_mode_map_of_${transition.transitionId}_${mode.modeId}<#else>NULL</#if>},
+    {ID_MODE_${mode.modeId}, ${transition.getTransitionElementList(mode.scopeId)?size}, <#if transition.getTransitionElementList(mode)?size gt 0>event_mode_map_of_${transition.transitionId}_${mode.scopeId}<#else>NULL</#if>},
     </#list>
 };
 </#list>

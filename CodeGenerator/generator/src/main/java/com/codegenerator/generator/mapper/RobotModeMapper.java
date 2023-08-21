@@ -27,6 +27,7 @@ public class RobotModeMapper {
             codeMode.setModeId(modeId);
             codeMode.setMode(mode);
             codeMode.setGroupId(groupId);
+            codeMode.setScopeId(groupId, mode.getMode().getName());
             modeList.add(codeMode);
             transitionMap.get(groupId).addMode(codeMode);
             if (mode.getParameterList() != null) {

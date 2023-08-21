@@ -2,9 +2,11 @@ package com.codegenerator.wrapper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import com.scriptparser.parserdatastructure.wrapper.TransitionWrapper;
 import lombok.Getter;
 import lombok.Setter;
@@ -58,10 +60,10 @@ public class CodeTransitionWrapper {
         return new ArrayList<>(modeMap.keySet());
     }
 
-    public List<CodeTransitionElementWrapper> getTransitionElementList(CodeModeWrapper srcMode) {
+    public List<CodeTransitionElementWrapper> getTransitionElementList(String srcModeScopeId) {
         List<CodeTransitionElementWrapper> elementList = new ArrayList<>();
         for (CodeTransitionElementWrapper element : modeMap.keySet()) {
-            if (srcMode.equals(element.getSrcMode())) {
+            if (srcModeScopeId.equals(element.getSrcModeScopeId())) {
                 elementList.add(element);
             }
         }
@@ -81,13 +83,23 @@ public class CodeTransitionWrapper {
         return null;
     }
 
-    public CodeTransitionElementWrapper getTransitionElement(CodeModeWrapper srcMode,
-            String event) {
+    public CodeTransitionElementWrapper getTransitionElement(String srcModeScopeId, String event) {
         for (CodeTransitionElementWrapper element : modeMap.keySet()) {
-            if ((srcMode == element.getSrcMode()) && (event == element.getEvent())) {
+            if (srcModeScopeId == null) {
+                if (element.getSrcModeScopeId() == null) {
+                    return element;
+                }
+            } else if (srcModeScopeId.equals(element.getSrcModeScopeId())
+                    && event.equals(element.getEvent())) {
                 return element;
             }
         }
         return null;
+    }
+
+    public List<String> getSourceModeScopeIdList() {
+        Set<String> sourceModeScopeIdSet = new HashSet<>();
+        modeList.forEach(mode -> sourceModeScopeIdSet.add(mode.getScopeId()));
+        return new ArrayList<>(sourceModeScopeIdSet);
     }
 }
