@@ -32,7 +32,7 @@ EVENT_MODE_MAP event_mode_map_of_${transition.transitionId}_${srcMode}[${transit
 <#list transitionList as transition>
 MODE_EVENT_MAP ${transition.transitionId}_mode_event_map[${transition.modeList?size}] = {
     <#list transition.modeList as mode>
-    {ID_MODE_${mode.modeId}, ${transition.getTransitionElementList(mode.scopeId)?size}, <#if transition.getTransitionElementList(mode)?size gt 0>event_mode_map_of_${transition.transitionId}_${mode.scopeId}<#else>NULL</#if>},
+    {ID_MODE_${mode.modeId}, ${transition.getTransitionElementList(mode.scopeId)?size}, <#if transition.getTransitionElementList(mode.scopeId)?size gt 0>event_mode_map_of_${transition.transitionId}_${mode.scopeId}<#else>NULL</#if>},
     </#list>
 };
 </#list>
