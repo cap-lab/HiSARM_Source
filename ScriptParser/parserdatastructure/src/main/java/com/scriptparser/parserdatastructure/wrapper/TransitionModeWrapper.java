@@ -3,6 +3,7 @@ package com.scriptparser.parserdatastructure.wrapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.CRC32;
 import com.scriptparser.parserdatastructure.entity.common.Identifier;
 import com.scriptparser.parserdatastructure.entity.common.IdentifierSet;
 import com.scriptparser.parserdatastructure.enumeration.IdentifierType;
@@ -38,18 +39,16 @@ public class TransitionModeWrapper {
          ModeTransitionVisitor visitor, VariableVisitor variableVisitor) {
       String newId;
       String groupPrefix;
-      if (previousMode != null) {
-         newId = lastId + "_" + previousMode.getMode().getName();
-         groupPrefix = currentGroup + "_" + previousMode.getMode().getName();
-      } else {
-         newId = lastId + "_default";
-         groupPrefix = currentGroup + "_default";
-      }
+      String mergedInput = String.join(";",
+            inputList.stream().map(IdentifierSet::toString).toArray(String[]::new));
+      CRC32 crc32 = new CRC32();
+      crc32.update(mergedInput.getBytes());
+      newId = lastId + "_" + Long.toHexString(crc32.getValue());
+      groupPrefix = currentGroup + "_" + Long.toHexString(crc32.getValue());
       if (variableVisitor != null) {
          variableVisitor.visitTransitionToMode(transition, lastId, newId, previousMode, event, this,
                currentGroup);
       }
-
       mode.visitMode(newId, currentGroup, groupPrefix, visitedId, scopeList, visitor,
             variableVisitor);
    }
