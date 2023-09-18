@@ -15,6 +15,11 @@ public class ResourceMapper {
             resource.setTaskId(document.getString("TaskId"));
             resource.setDataSize(document.getInteger("DataSize"));
             resource.setConflict(document.getBoolean("Conflict"));
+            resource.setResourceType(Resource.ResourceType.valueOf(document.getString("Type")));
+            if (resource.getResourceType().equals(Resource.ResourceType.VIRTUAL_ACTUATOR)
+                    || resource.getResourceType().equals(Resource.ResourceType.VIRTUAL_SENSOR)) {
+                resource.setRequiredResources(document.getList("RequiredResource", String.class));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,11 +1,35 @@
 package com.dbmanager.datastructure.resource;
 
+import java.util.List;
+
 public class Resource {
+    public enum ResourceType {
+        SENSOR, ACTUATOR, VIRTUAL_SENSOR, VIRTUAL_ACTUATOR
+    }
+
     private String resourceId;
     private String robotClass;
     private String taskId;
     private int dataSize;
     private boolean conflict;
+    private ResourceType resourceType;
+    private List<String> requiredResources;
+
+    public void setRequiredResources(List<String> requiredResources) {
+        this.requiredResources = requiredResources;
+    }
+
+    public List<String> getRequiredResources() {
+        return requiredResources;
+    }
+
+    public ResourceType getResourceType() {
+        return resourceType;
+    }
+
+    public void setResourceType(ResourceType resourceType) {
+        this.resourceType = resourceType;
+    }
 
     public String getResourceId() {
         return resourceId;
