@@ -1,5 +1,6 @@
 package com.dbmanager.datastructure.resource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Resource {
@@ -14,6 +15,10 @@ public class Resource {
     private boolean conflict;
     private ResourceType resourceType;
     private List<String> requiredResources;
+
+    public Resource() {
+        requiredResources = new ArrayList<>();
+    }
 
     public void setRequiredResources(List<String> requiredResources) {
         this.requiredResources = requiredResources;
