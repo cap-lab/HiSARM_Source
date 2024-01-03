@@ -84,6 +84,11 @@ public class VariableInfoMaker {
             public void visitActionStatement(StatementWrapper wrapper, ActionStatement statement,
                     int index) {
                 try {
+                    if (robot.getActionTypeList().stream()
+                            .filter(a -> a.getAction().getName().equals(statement.getActionName()))
+                            .findAny().isEmpty()) {
+                        return;
+                    }
                     ActionTypeWrapper action = robot.getActionType(statement.getActionName());
                     for (int i = 0; i < statement.getInputList().size(); i++) {
                         IdentifierSet inputSet = statement.getInputList().get(i);

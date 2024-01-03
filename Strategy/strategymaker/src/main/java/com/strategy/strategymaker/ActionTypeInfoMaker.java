@@ -7,8 +7,7 @@ import java.util.Set;
 import com.dbmanager.commonlibraries.DBService;
 import com.scriptparser.parserdatastructure.entity.statement.ActionStatement;
 import com.scriptparser.parserdatastructure.enumeration.StatementType;
-import com.scriptparser.parserdatastructure.wrapper.CatchEventWrapper;
-import com.scriptparser.parserdatastructure.wrapper.GroupWrapper;
+import com.scriptparser.parserdatastructure.util.ModeTransitionVisitor;
 import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
 import com.scriptparser.parserdatastructure.wrapper.ModeWrapper;
 import com.scriptparser.parserdatastructure.wrapper.ParallelServiceWrapper;
@@ -25,109 +24,101 @@ public class ActionTypeInfoMaker {
             List<RobotImplWrapper> robotList) {
         for (RobotImplWrapper robot : robotList) {
             try {
-                robot.setActionTypeList(new ArrayList<>(makeActionTypeList(mission, robot)));
+                ModeTransitionVisitor collector = new ActionTypeCollector(robot);
+                mission.getTransition(robot.getTeam()).traverseTransition(new String(),
+                        robot.getTeam(), new ArrayList<String>(),
+                        new ArrayList<String>(robot.getGroupMap().keySet()), collector, null);
+                robot.setActionTypeList(
+                        new ArrayList<>(((ActionTypeCollector) collector).getActionTypeSet()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private static Set<ActionTypeWrapper> makeActionTypeList(MissionWrapper mission,
-            RobotImplWrapper robot) throws Exception {
-        Set<ActionTypeWrapper> actionTypeSet = new HashSet<>();
-        String team = robot.getTeam();
-        actionTypeSet.addAll(traverseTransition(mission.getTransition(team), robot));
-        return actionTypeSet;
-    }
+    static class ActionTypeCollector implements ModeTransitionVisitor {
+        private Set<ActionTypeWrapper> actionTypeSet = new HashSet<>();
+        private RobotImplWrapper robot;
 
-    private static Set<ActionTypeWrapper> traverseTransition(TransitionWrapper transition,
-            RobotImplWrapper robot) throws Exception {
-        Set<ModeWrapper> modeSet = new HashSet<>();
-        modeSet.add(transition.getDefaultMode().getMode());
-        for (List<CatchEventWrapper> ceList : transition.getTransitionMap().values()) {
-            for (CatchEventWrapper ce : ceList) {
-                if (ce.getMode().getMode().getMode().getName().equals("FINISH")
-                        || ce.getMode().getMode().getMode().getName().equals("PREVIOUS_MODE")) {
-                    continue;
+        public ActionTypeCollector(RobotImplWrapper robot) {
+            this.robot = robot;
+        }
+
+        public Set<ActionTypeWrapper> getActionTypeSet() {
+            return actionTypeSet;
+        }
+
+        @Override
+        public void visitMode(ModeWrapper mode, String modeId, String currentGroup,
+                String newGroupPrefix) {
+            try {
+                actionTypeSet.addAll(makeActionTypeSet(mode, robot));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        private boolean alreadyGetAction(String actionName) {
+            if (getActionType(actionName) == null) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        private ActionTypeWrapper getActionType(String actionName) {
+            for (ActionTypeWrapper action : actionTypeStore) {
+                if (action.getAction().getName().equals(actionName)) {
+                    return action;
                 }
-                modeSet.add(ce.getMode().getMode());
+            }
+            return null;
+
+        }
+
+        private void getVariableType(ActionTypeWrapper actionType, List<String> variableNameList,
+                List<VariableTypeWrapper> store) {
+            for (String variableName : variableNameList) {
+                VariableTypeWrapper variableType = new VariableTypeWrapper();
+                variableType.setVariableType(DBService.getVariable(variableName));
+                store.add(variableType);
             }
         }
 
-        Set<ActionTypeWrapper> actionTypeSet = new HashSet<>();
-        for (ModeWrapper mode : modeSet) {
-            actionTypeSet.addAll(visitMode(mode, robot));
-        }
-        return actionTypeSet;
-    }
-
-    private static boolean alreadyGetAction(String actionName) {
-        if (getActionType(actionName) == null) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    private static ActionTypeWrapper getActionType(String actionName) {
-        for (ActionTypeWrapper action : actionTypeStore) {
-            if (action.getAction().getName().equals(actionName)) {
-                return action;
-            }
-        }
-        return null;
-
-    }
-
-    private static void getVariableType(ActionTypeWrapper actionType, List<String> variableNameList,
-            List<VariableTypeWrapper> store) {
-        for (String variableName : variableNameList) {
-            VariableTypeWrapper variableType = new VariableTypeWrapper();
-            variableType.setVariableType(DBService.getVariable(variableName));
-            store.add(variableType);
-        }
-    }
-
-    private static Set<ActionTypeWrapper> makeActionTypeSet(ModeWrapper mode,
-            RobotImplWrapper robot) throws Exception {
-        Set<ActionTypeWrapper> actionTypeSet = new HashSet<>();
-        for (ParallelServiceWrapper service : mode.getServiceList()) {
-            for (StatementWrapper statement : service.getService().getStatementList()) {
-                if (statement.getStatement().getStatementType().equals(StatementType.ACTION)) {
-                    ActionStatement action = (ActionStatement) statement.getStatement();
-                    ActionTypeWrapper actionType = new ActionTypeWrapper();
-                    if (alreadyGetAction(action.getActionName())) {
-                        actionType = getActionType(action.getActionName());
-                    } else if (DBService.isExistentAction(action.getActionName())) {
-                        actionType.setAction(DBService.getAction(action.getActionName()));
-                        actionType.setActionId(actionTypeStore.size());
-                        getVariableType(actionType, actionType.getAction().getInputList(),
-                                actionType.getVariableInputList());
-                        getVariableType(actionType, actionType.getAction().getOutputList(),
-                                actionType.getVariableOutputList());
-                        if (actionType.getAction().getGroupAction() != null) {
-                            getVariableType(actionType,
-                                    actionType.getAction().getGroupAction().getSharedDataList(),
-                                    actionType.getVariableSharedList());
+        private Set<ActionTypeWrapper> makeActionTypeSet(ModeWrapper mode, RobotImplWrapper robot)
+                throws Exception {
+            Set<ActionTypeWrapper> actionTypeSet = new HashSet<>();
+            for (ParallelServiceWrapper service : mode.getServiceList()) {
+                for (StatementWrapper statement : service.getService().getStatementList()) {
+                    if (statement.getStatement().getStatementType().equals(StatementType.ACTION)) {
+                        ActionStatement action = (ActionStatement) statement.getStatement();
+                        ActionTypeWrapper actionType = new ActionTypeWrapper();
+                        if (alreadyGetAction(action.getActionName())) {
+                            actionType = getActionType(action.getActionName());
+                        } else if (DBService.isExistentAction(action.getActionName())) {
+                            actionType.setAction(DBService.getAction(action.getActionName()));
+                            actionType.setActionId(actionTypeStore.size());
+                            getVariableType(actionType, actionType.getAction().getInputList(),
+                                    actionType.getVariableInputList());
+                            getVariableType(actionType, actionType.getAction().getOutputList(),
+                                    actionType.getVariableOutputList());
+                            if (actionType.getAction().getGroupAction() != null) {
+                                getVariableType(actionType,
+                                        actionType.getAction().getGroupAction().getSharedDataList(),
+                                        actionType.getVariableSharedList());
+                            }
+                        } else {
+                            throw new Exception("no action in DB :" + action.getActionName());
                         }
-                    } else {
-                        throw new Exception("no action in DB :" + action.getActionName());
+                        actionTypeSet.add(actionType);
+                        actionTypeStore.add(actionType);
                     }
-                    actionTypeSet.add(actionType);
-                    actionTypeStore.add(actionType);
                 }
             }
+            return actionTypeSet;
         }
-        return actionTypeSet;
-    }
 
-    private static Set<ActionTypeWrapper> visitMode(ModeWrapper mode, RobotImplWrapper robot)
-            throws Exception {
-        Set<ActionTypeWrapper> actionTypeSet = makeActionTypeSet(mode, robot);
-        for (GroupWrapper group : mode.getGroupList()) {
-            actionTypeSet.addAll(
-                    traverseTransition(group.getModeTransition().getModeTransition(), robot));
-        }
-        return actionTypeSet;
+        @Override
+        public void visitTransition(TransitionWrapper arg0, String arg1, String arg2) {}
     }
 }
