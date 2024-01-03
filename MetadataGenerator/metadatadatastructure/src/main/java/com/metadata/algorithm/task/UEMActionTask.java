@@ -1,6 +1,7 @@
 package com.metadata.algorithm.task;
 
 import java.math.BigInteger;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import com.dbmanager.datastructure.task.ChannelPort;
@@ -35,8 +36,8 @@ public class UEMActionTask extends UEMTask {
     private int groupActionIndex = -1;
 
     public UEMActionTask(String robotTask, String modeId, String serviceId,
-            ActionImplWrapper actionImpl, ActionStatement actionStatement) {
-        super(robotTask);
+            ActionImplWrapper actionImpl, ActionStatement actionStatement, Path taskServer) {
+        super(robotTask, taskServer);
         this.scope = makeScope(modeId, serviceId);
         setName(robotTask, scope + "_" + actionImpl.getActionImpl().getActionImplId());
         this.actionImpl = actionImpl;
@@ -53,8 +54,8 @@ public class UEMActionTask extends UEMTask {
         try {
             setRunCondition(runCondition(task.getRunCondition()));
             setFile(task.getCICFile());
-            setCflags(task.getCompileFlags());
-            setLdflags(task.getLinkFlags());
+            setCflags(getCflags() + " " + task.getCompileFlags());
+            setLdflags(getLdflags() + " " + task.getLinkFlags());
             setHasSubGraph(convertYesNoString(task.isHasSubGraph()));
             setSubGraphProperty(AlgorithmConstant.DATAFLOW);
             setIsHardwareDependent(YesNoType.NO);

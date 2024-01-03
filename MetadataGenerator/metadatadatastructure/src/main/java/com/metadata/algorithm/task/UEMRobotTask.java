@@ -9,6 +9,7 @@ import com.metadata.algorithm.library.UEMGroupAction;
 import com.metadata.algorithm.library.UEMGroupingLibrary;
 import com.metadata.algorithm.library.UEMLeaderLibrary;
 import com.metadata.algorithm.library.UEMSharedData;
+import com.metadata.algorithm.library.UEMSimHandler;
 import com.metadata.constant.AlgorithmConstant;
 import com.scriptparser.parserdatastructure.entity.statement.ActionStatement;
 import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
@@ -29,6 +30,7 @@ public class UEMRobotTask extends UEMTask {
     private UEMGroupAction groupActionTask;
     private UEMGroupingTask groupingTask;
     private UEMGroupingLibrary groupingLibrary;
+    private UEMSimHandler simHandler;
 
     public UEMRobotTask(String name, RobotImplWrapper robot) {
         super(name);
@@ -208,4 +210,13 @@ public class UEMRobotTask extends UEMTask {
     public void setGroupingLibrary(UEMGroupingLibrary groupingLibrary) {
         this.groupingLibrary = groupingLibrary;
     }
+
+    public UEMSimHandler getSimHandler() {
+        return simHandler;
+    }
+
+    public void setSimHandler(UEMSimHandler simHandler) {
+        this.simHandler = simHandler;
+    }
+
 }

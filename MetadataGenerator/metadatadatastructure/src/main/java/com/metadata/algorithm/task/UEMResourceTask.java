@@ -1,5 +1,6 @@
 package com.metadata.algorithm.task;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import com.dbmanager.datastructure.task.ExtraSetting;
@@ -9,6 +10,7 @@ import com.dbmanager.datastructure.task.Task;
 import com.metadata.algorithm.UEMModeTask;
 import com.metadata.algorithm.UEMMulticastPort;
 import com.metadata.algorithm.UEMTaskGraph;
+import com.metadata.algorithm.library.UEMLibraryPort;
 import com.metadata.constant.AlgorithmConstant;
 import com.strategy.strategydatastructure.wrapper.ResourceWrapper;
 import hopes.cic.xml.PortDirectionType;
@@ -17,11 +19,12 @@ import hopes.cic.xml.YesNoType;
 public class UEMResourceTask extends UEMTask {
     private List<UEMTaskGraph> subTaskGraphs = new ArrayList<>();
     private ResourceWrapper resource;
+    private UEMLibraryPort simPort;
 
-    public UEMResourceTask(String robotName, ResourceWrapper resource, Task task) {
-        super(robotName);
+    public UEMResourceTask(String robotName, ResourceWrapper resource, Task task, Path taskServer) {
+        super(robotName, taskServer);
         this.resource = resource;
-        setName(robotName + "_" + resource.getResource().getResourceId());
+        setName(robotName, resource.getResource().getResourceId());
         setParentTask(robotName);
         setTaskInfo(task, robotName);
     }
@@ -30,8 +33,8 @@ public class UEMResourceTask extends UEMTask {
         try {
             setRunCondition(runCondition(task.getRunCondition()));
             setFile(task.getCICFile());
-            setCflags(task.getCompileFlags());
-            setLdflags(task.getLinkFlags());
+            setCflags(getCflags() + " " + task.getCompileFlags());
+            setLdflags(getLdflags() + " " + task.getLinkFlags());
             setHasSubGraph(convertYesNoString(task.isHasSubGraph()));
             setSubGraphProperty(AlgorithmConstant.DATAFLOW);
             setIsHardwareDependent(YesNoType.NO);
@@ -40,6 +43,9 @@ public class UEMResourceTask extends UEMTask {
             setResourcePorts(task, robotName);
             setMode(task);
             setExtraSetting(task);
+            if (task.getSimulationPort() != null) {
+                setSimPort();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -99,5 +105,20 @@ public class UEMResourceTask extends UEMTask {
 
     public ResourceWrapper getResource() {
         return resource;
+    }
+
+    public UEMLibraryPort getSimPort() {
+        return simPort;
+    }
+
+    public void setSimPort(UEMLibraryPort simPort) {
+        this.simPort = simPort;
+    }
+
+    private void setSimPort() {
+        simPort = new UEMLibraryPort();
+        simPort.setName(AlgorithmConstant.SIMULATION);
+        simPort.setType(AlgorithmConstant.SIMULATION);
+        getLibraryMasterPort().add(simPort);
     }
 }
