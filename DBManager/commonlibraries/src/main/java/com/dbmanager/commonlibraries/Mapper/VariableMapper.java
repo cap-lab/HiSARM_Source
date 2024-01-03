@@ -39,11 +39,13 @@ public class VariableMapper {
     private static Candidate makeCandidate(PrimitiveType type, Document document) {
         Candidate candidate = null;
         switch (type) {
+            case INT8:
             case INT16:
             case INT32:
             case INT64:
                 candidate = makeIntegerCandidate(document);
                 break;
+            case DOUBLE:
             case FLOAT:
                 candidate = makeFloatCandidate(document);
                 break;
