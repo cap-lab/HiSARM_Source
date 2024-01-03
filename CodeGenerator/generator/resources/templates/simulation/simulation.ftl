@@ -1,0 +1,7 @@
+#ifndef SEMO_SIMULATION_HEADER
+#define SEMO_SIMULATION_HEADER
+
+#define SEMO_SIMULATOR_IP "${ip}"
+#define SEMO_SIMULATOR_PORT ${port?c}
+
+#endif
