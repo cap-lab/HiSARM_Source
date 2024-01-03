@@ -11,7 +11,10 @@ public class AdditionalInfo {
     private String taskServerPrefix;
     private String jarDirectory;
     private String translatorDirectory;
+    private String environment;
+    private List<EnvironmentInfo> environmentInfo;
     private List<DatabaseInfo> dbInfo;
+    private List<String> simulationClientList;
     private List<String> robotList;
     private List<ControlStrategyInfo> strategyList;
     private List<CustomVariableInfo> variableList;
@@ -127,5 +130,29 @@ public class AdditionalInfo {
 
     public void setLeaderSelectionAlgorithm(String leaderSelectionAlgorithm) {
         this.leaderSelectionAlgorithm = leaderSelectionAlgorithm;
+    }
+
+    public String getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(String environment) {
+        this.environment = environment;
+    }
+
+    public List<EnvironmentInfo> getEnvironmentInfo() {
+        return environmentInfo;
+    }
+
+    public void setEnvironmentInfo(List<EnvironmentInfo> environmentInfo) {
+        this.environmentInfo = environmentInfo;
+    }
+
+    public List<String> getSimulationClientList() {
+        return simulationClientList;
+    }
+
+    public void setSimulationClientList(List<String> simulationClientList) {
+        this.simulationClientList = simulationClientList;
     }
 }

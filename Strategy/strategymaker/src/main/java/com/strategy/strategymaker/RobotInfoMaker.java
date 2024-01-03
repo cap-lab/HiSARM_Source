@@ -9,6 +9,7 @@ import java.util.Set;
 import com.dbmanager.commonlibraries.DBService;
 import com.dbmanager.datastructure.architecture.Architecture;
 import com.dbmanager.datastructure.robot.RobotImpl;
+import com.dbmanager.datastructure.simulationdevice.SimulationDevice;
 import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
 import com.scriptparser.parserdatastructure.wrapper.RobotWrapper;
 import com.scriptparser.parserdatastructure.wrapper.TeamWrapper;
@@ -22,8 +23,55 @@ public class RobotInfoMaker {
 
     public static List<RobotImplWrapper> makeRobotImplList(MissionWrapper mission,
             AdditionalInfo additionalInfo) {
-        return allocateRealRobot(makeRobotMap(mission),
-                makeRobotImplList(additionalInfo.getRobotList()));
+        if (additionalInfo.getEnvironment().equals("simulation")) {
+            return allocateSimulationRobot(mission, additionalInfo);
+        } else {
+            return allocateRealRobot(makeRobotMap(mission),
+                    makeRobotImplList(additionalInfo.getRobotList()));
+        }
+    }
+
+    private static List<RobotImplWrapper> allocateSimulationRobot(MissionWrapper mission,
+            AdditionalInfo additionalInfo) {
+        List<RobotImplWrapper> robotImplList = new ArrayList<>();
+        int numOfRobot = 0;
+        for (TeamWrapper team : mission.getTeamList()) {
+            for (RobotWrapper robot : team.getRobotList()) {
+                numOfRobot += robot.getRobot().getCount();
+            }
+        }
+        int teamIndex = 0;
+        int numOfDevice = additionalInfo.getSimulationClientList().size();
+        int numOfRobotPerDevice = numOfRobot / numOfDevice;
+        int robotIndex = 0;
+        int clientIndex = 0;
+        for (TeamWrapper team : mission.getTeamList()) {
+            for (RobotWrapper robot : team.getRobotList()) {
+                for (int i = 0; i < robot.getRobot().getCount(); i++) {
+                    String clientId = additionalInfo.getSimulationClientList().get(clientIndex);
+                    SimulationDevice device = DBService.getSimulationDevice(clientId);
+                    RobotImpl robotImpl = new RobotImpl();
+                    robotImpl.setRobotId(robot.getRobot().getType() + "_" + robotIndex);
+                    robotImpl.setRobotClass(robot.getRobot().getType());
+                    robotImpl.setCommunicationInfoMap(device.getCommunicationInfoMap());
+                    RobotImplWrapper robotImplWrapper = new RobotImplWrapper();
+                    robotImplWrapper.setRobot(robotImpl);
+                    robotImplWrapper.setRobotIndex(robotIndex);
+                    robotImplWrapper
+                            .setRobotType(getSimRobotType(robot.getRobot().getType(), device));
+                    robotImplWrapper.addTeam(team.getTeam().getName(), teamIndex);
+                    robotImplList.add(robotImplWrapper);
+                    robotIndex++;
+                    if (robotIndex % numOfRobotPerDevice == 0) {
+                        clientIndex++;
+                        clientIndex = clientIndex % numOfDevice;
+                    }
+                }
+            }
+            teamIndex++;
+        }
+
+        return robotImplList;
     }
 
     private static Architecture getArchitecture(String architectureName) {
@@ -43,7 +91,27 @@ public class RobotInfoMaker {
         }
     }
 
-    private static RobotTypeWrapper getRobotType(String type) {
+    private static RobotTypeWrapper getSimRobotType(String type, SimulationDevice device) {
+        for (RobotTypeWrapper t : robotTypeList) {
+            if (t.getRobotType().getRobotClass().equals(type)
+                    && t.getDeviceList().get(0).getDeviceName().equals(device.getDeviceId())) {
+                return t;
+            }
+        }
+        RobotTypeWrapper newType = new RobotTypeWrapper();
+        newType.setRobotType(DBService.getRobot(type));
+        if (containArchitecture(device.getDeviceId())) {
+            newType.getDeviceList().add(getArchitecture(device.getDeviceId()));
+        } else {
+            Architecture newArchitecture = DBService.getArchitecture(device.getArchitecture());
+            newArchitecture.setDeviceName(device.getDeviceId());
+            newType.getDeviceList().add(newArchitecture);
+            architectureStore.add(newArchitecture);
+        }
+        return newType;
+    }
+
+    private static RobotTypeWrapper getRobotType(String type, String robotId) {
         for (RobotTypeWrapper t : robotTypeList) {
             if (t.getRobotType().getRobotClass().equals(type)) {
                 return t;
@@ -56,6 +124,7 @@ public class RobotInfoMaker {
                 newType.getDeviceList().add(getArchitecture(architectureName));
             } else {
                 Architecture architecture = DBService.getArchitecture(architectureName);
+                architecture.setDeviceName(architectureName + "_" + robotId);
                 newType.getDeviceList().add(architecture);
                 architectureStore.add(architecture);
             }
@@ -75,7 +144,6 @@ public class RobotInfoMaker {
                     RobotImplWrapper robotImpl = new RobotImplWrapper();
                     robotImpl.setRobotIndex(robotIndex);
                     robotImpl.addTeam(teamName, teamIndex);
-                    robotImpl.setRobotType(getRobotType(robot.getRobot().getType()));
                     for (int index = 0; index < robotCandidateList.size(); index++) {
                         if (robotCandidateList.get(index).getRobotClass()
                                 .equals(robot.getRobot().getType())) {
@@ -84,6 +152,8 @@ public class RobotInfoMaker {
                             break;
                         }
                     }
+                    robotImpl.setRobotType(getRobotType(robot.getRobot().getType(),
+                            robotImpl.getRobot().getRobotId()));
                     robotImplList.add(robotImpl);
                     robotIndex = robotIndex + 1;
                 }
