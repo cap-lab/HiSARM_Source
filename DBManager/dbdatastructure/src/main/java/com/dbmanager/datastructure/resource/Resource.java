@@ -5,7 +5,27 @@ import java.util.List;
 
 public class Resource {
     public enum ResourceType {
-        SENSOR, ACTUATOR, VIRTUAL_SENSOR, VIRTUAL_ACTUATOR
+        SENSOR("sensor"), ACTUATOR("actuator"), VIRTUAL_SENSOR("virtual sensor"), VIRTUAL_ACTUATOR(
+                "virtual actuator");
+
+        private String value;
+
+        ResourceType(String value) {
+            this.value = value;
+        }
+
+        public static ResourceType getResourceType(String value) {
+            for (ResourceType resourceType : ResourceType.values()) {
+                if (resourceType.getValue().equals(value)) {
+                    return resourceType;
+                }
+            }
+            return null;
+        }
+
+        public String getValue() {
+            return value;
+        }
     }
 
     private String resourceId;
