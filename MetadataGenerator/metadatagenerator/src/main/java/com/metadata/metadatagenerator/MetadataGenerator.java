@@ -50,7 +50,7 @@ public class MetadataGenerator {
         architecture.generateArchitectureXML(projectDir, projectName);
 
         MappingGenerator mapping = new MappingGenerator();
-        mapping.generate(robotList, algorithm.getAlgorithm());
+        mapping.generate(robotList, algorithm.getAlgorithm(), additionalInfo);
         mapping.generateMappingXML(projectDir, projectName);
 
         return robotList;

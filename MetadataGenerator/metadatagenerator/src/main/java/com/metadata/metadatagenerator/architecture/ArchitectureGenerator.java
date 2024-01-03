@@ -37,6 +37,41 @@ public class ArchitectureGenerator {
 
     public List<UEMRobot> generate(MissionWrapper mission, AdditionalInfo additionalInfo,
             UEMAlgorithm algorithm) {
+        if (additionalInfo.getEnvironment().equals("simulation")) {
+            return makeArchitectureForSimulation(mission, algorithm);
+        } else {
+            return makeArchitectureForRealRobot(mission, algorithm);
+        }
+    }
+
+    private List<UEMRobot> makeArchitectureForSimulation(MissionWrapper mission,
+            UEMAlgorithm algorithm) {
+        try {
+            List<UEMRobot> robotList = new ArrayList<>();
+            for (UEMRobotTask robotTask : algorithm.getRobotTaskList()) {
+                UEMRobot robot = new UEMRobot();
+                robotList.add(robot);
+                robot.setRobotTask(robotTask);
+            }
+            makeTarget(robotList.get(0));
+            List<String> elementList = new ArrayList<>();
+            for (UEMRobot robot : robotList) {
+                makeElementType(robot, elementList);
+            }
+            List<UEMArchitectureDevice> deviceList = new ArrayList<>();
+            for (UEMRobot robot : robotList) {
+                makeDeviceList(robot, deviceList);
+            }
+            makeInterDeviceConnection(algorithm, robotList, deviceList);
+            return robotList;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private List<UEMRobot> makeArchitectureForRealRobot(MissionWrapper mission,
+            UEMAlgorithm algorithm) {
         try {
             List<UEMRobot> robotList = new ArrayList<>();
             for (UEMRobotTask robotTask : algorithm.getRobotTaskList()) {
@@ -44,7 +79,7 @@ public class ArchitectureGenerator {
                 robotList.add(robot);
                 robot.setRobotTask(robotTask);
                 makeTarget(robot);
-                makeElementType(robot);
+                makeElementType(robot, null);
                 makeEachRobotArchitecture(robot);
                 makeIntraRobotConnection(robot);
             }
@@ -63,8 +98,15 @@ public class ArchitectureGenerator {
         }
     }
 
-    private void makeElementType(UEMRobot robot) {
+    private void makeElementType(UEMRobot robot, List<String> deviceList) {
         for (Architecture device : robot.getRobotTask().getRobot().getRobotType().getDeviceList()) {
+            if (deviceList != null) {
+                if (!deviceList.contains(device.getDeviceName())) {
+                    deviceList.add(device.getDeviceName());
+                } else {
+                    continue;
+                }
+            }
             makeProcessorElement(device);
             makeMemoryElement(device);
         }
@@ -99,7 +141,14 @@ public class ArchitectureGenerator {
         }
     }
 
-    private void setDeviceAttribute(UEMArchitectureDevice device, String namePrefix,
+    private void setDeviceAttribute(UEMArchitectureDevice device, Architecture deviceInfo) {
+        device.setPlatform(deviceInfo.getSWPlatform().getValue());
+        device.setArchitecture(deviceInfo.getCPU().getValue());
+        device.setName(deviceInfo.getDeviceName());
+        device.setDeviceName(deviceInfo.getDeviceName());
+    }
+
+    private void setRealRobotDeviceAttribute(UEMArchitectureDevice device, String namePrefix,
             Architecture deviceInfo) {
         device.setPlatform(deviceInfo.getSWPlatform().getValue());
         device.setArchitecture(deviceInfo.getCPU().getValue());
@@ -149,12 +198,34 @@ public class ArchitectureGenerator {
         RobotImplWrapper robotImpl = robot.getRobotTask().getRobot();
         for (Architecture robotArchitecture : robotImpl.getRobotType().getDeviceList()) {
             UEMArchitectureDevice architectureDevice = new UEMArchitectureDevice();
-            setDeviceAttribute(architectureDevice, robotImpl.getRobot().getRobotId(),
+            setRealRobotDeviceAttribute(architectureDevice, robotImpl.getRobot().getRobotId(),
                     robotArchitecture);
             setDeviceElement(architectureDevice, robotArchitecture);
             setModuleList(architectureDevice, robotArchitecture);
             setDeviceEnvironmentVariable(architectureDevice, robotArchitecture);
             architecture.getDevices().getDevice().add(architectureDevice);
+            robot.getDeviceList().add(architectureDevice);
+        }
+    }
+
+    private void makeDeviceList(UEMRobot robot, List<UEMArchitectureDevice> deviceList) {
+        RobotImplWrapper robotImpl = robot.getRobotTask().getRobot();
+        for (Architecture robotArchitecture : robotImpl.getRobotType().getDeviceList()) {
+            UEMArchitectureDevice architectureDevice = null;
+            if (deviceList.stream()
+                    .anyMatch(d -> d.getName().equals(robotArchitecture.getDeviceName()))) {
+                architectureDevice = deviceList.stream()
+                        .filter(d -> d.getName().equals(robotArchitecture.getDeviceName()))
+                        .findFirst().get();
+            } else {
+                architectureDevice = new UEMArchitectureDevice();
+                deviceList.add(architectureDevice);
+                setDeviceAttribute(architectureDevice, robotArchitecture);
+                setDeviceElement(architectureDevice, robotArchitecture);
+                setModuleList(architectureDevice, robotArchitecture);
+                setDeviceEnvironmentVariable(architectureDevice, robotArchitecture);
+                architecture.getDevices().getDevice().add(architectureDevice);
+            }
             robot.getDeviceList().add(architectureDevice);
         }
     }
@@ -256,13 +327,13 @@ public class ArchitectureGenerator {
             IPBasedAddress address = (IPBasedAddress) src.getRobot().getRobot()
                     .getCommunicationInfoMap().get(ConnectionType.ETHERNET_WIFI);
             for (UEMRobotTask dst : algorithm.getRobotConnectionMap().get(src)) {
-                if (visitedList.contains(dst.getName() + src.getName())) {
-                    continue;
-                } else {
-                    visitedList.add(src.getName() + dst.getName());
-                }
                 UEMArchitectureDevice dstDevice =
                         findRobotPrimaryArchitecture(robotList, dst.getName());
+                if (visitedList.contains(srcDevice.getName() + dstDevice.getName())) {
+                    continue;
+                } else {
+                    visitedList.add(srcDevice.getName() + dstDevice.getName());
+                }
                 setDeviceConnection(ConnectionType.ETHERNET_WIFI, srcDevice, address, true, index);
                 setDeviceConnection(ConnectionType.ETHERNET_WIFI, dstDevice, address, false, index);
                 setConnection(srcDevice.getName(), UEMTCPConnection.makeName(true),
@@ -270,6 +341,14 @@ public class ArchitectureGenerator {
                         UEMTCPConnection.makeName(false) + String.valueOf(index));
                 index++;
             }
+        }
+    }
+
+    private void makeInterDeviceConnection(UEMAlgorithm algorithm, List<UEMRobot> robotList,
+            List<UEMArchitectureDevice> deviceList) throws Exception {
+        makeChannelConnection(algorithm, robotList);
+        for (UEMArchitectureDevice device : deviceList) {
+            device.addUDPConnection(new UEMUDPConnection());
         }
     }
 

@@ -20,6 +20,7 @@ import com.metadata.mapping.UEMMappingDevice;
 import com.metadata.mapping.UEMMappingProcessor;
 import com.metadata.mapping.UEMMappingTask;
 import com.metadata.metadatagenerator.constant.MetadataConstant;
+import com.strategy.strategydatastructure.additionalinfo.AdditionalInfo;
 import hopes.cic.exception.CICXMLException;
 import hopes.cic.xml.HardwarePlatformType;
 import hopes.cic.xml.MulticastGroupType;
@@ -28,6 +29,7 @@ import hopes.cic.xml.handler.CICMappingXMLHandler;
 
 public class MappingGenerator {
     private UEMMapping mapping = new UEMMapping();
+    private boolean isSimulation = false;
 
     private List<UEMMappingTask> makeSubGraphTask(List<UEMTaskGraph> taskGraphList, UEMRobot robot)
             throws Exception {
@@ -42,7 +44,11 @@ public class MappingGenerator {
         return taskList;
     }
 
-    public void generate(List<UEMRobot> robotList, UEMAlgorithm algorithm) {
+    public void generate(List<UEMRobot> robotList, UEMAlgorithm algorithm,
+            AdditionalInfo additionalInfo) {
+        if (additionalInfo.getEnvironment().equals("simulation")) {
+            isSimulation = true;
+        }
         try {
             for (UEMRobot robot : robotList) {
                 for (UEMActionTask actionTask : robot.getRobotTask().getActionTaskList()) {
@@ -87,15 +93,19 @@ public class MappingGenerator {
         mapping.setName(task.getName());
         UEMMappingDevice mappingDevice = new UEMMappingDevice();
         UEMArchitectureDevice device = null;
-        if (task.getIsHardwareDependent().equals(YesNoType.NO)) {
-            device = robot.getDevice(robot.getRobotTask().getRobot().getRobotType().getRobotType()
-                    .getPrimaryArchitecture());
+        if (isSimulation) {
+            device = robot.getDeviceList().get(0);
         } else {
-            for (UEMArchitectureDevice d : robot.getDeviceList()) {
-                HardwarePlatformType hwInfo = task.getHardwareDependency().getHardware().get(0);
-                if (hwInfo.getPlatform().equals(d.getPlatform())) {
-                    device = d;
-                    break;
+            if (task.getIsHardwareDependent().equals(YesNoType.NO)) {
+                device = robot.getDevice(robot.getRobotTask().getRobot().getRobotType()
+                        .getRobotType().getPrimaryArchitecture());
+            } else {
+                for (UEMArchitectureDevice d : robot.getDeviceList()) {
+                    HardwarePlatformType hwInfo = task.getHardwareDependency().getHardware().get(0);
+                    if (hwInfo.getPlatform().equals(d.getPlatform())) {
+                        device = d;
+                        break;
+                    }
                 }
             }
         }

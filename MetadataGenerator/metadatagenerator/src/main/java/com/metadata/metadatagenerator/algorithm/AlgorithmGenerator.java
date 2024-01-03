@@ -24,6 +24,7 @@ import com.metadata.algorithm.library.UEMLibrary;
 import com.metadata.algorithm.library.UEMLibraryConnection;
 import com.metadata.algorithm.library.UEMLibraryPort;
 import com.metadata.algorithm.library.UEMSharedData;
+import com.metadata.algorithm.library.UEMSimHandler;
 import com.metadata.algorithm.task.UEMActionTask;
 import com.metadata.algorithm.task.UEMControlTask;
 import com.metadata.algorithm.task.UEMGroupingTask;
@@ -55,6 +56,7 @@ import com.scriptparser.parserdatastructure.wrapper.StatementWrapper;
 import com.scriptparser.parserdatastructure.wrapper.TransitionModeWrapper;
 import com.scriptparser.parserdatastructure.wrapper.TransitionWrapper;
 import com.strategy.strategydatastructure.additionalinfo.AdditionalInfo;
+import com.strategy.strategydatastructure.enumeration.AdditionalTaskType;
 import com.strategy.strategydatastructure.wrapper.ActionImplWrapper;
 import com.strategy.strategydatastructure.wrapper.ActionTypeWrapper;
 import com.strategy.strategydatastructure.wrapper.ControlStrategyWrapper;
@@ -103,6 +105,7 @@ public class AlgorithmGenerator {
 
     private class RobotInerGraphMaker implements ModeTransitionVisitor, VariableVisitor {
         private UEMRobotTask robot;
+        private int robotNum;
         private List<ControlStrategyWrapper> controlStrategyList;
         private Path taskServerPrefix;
         private boolean isActionTask;
@@ -207,7 +210,7 @@ public class AlgorithmGenerator {
                         for (ActionImplWrapper actionImpl : controlStrategy.getActionList()) {
                             UEMActionTask actionTask = new UEMActionTask(robot.getName(), modeId,
                                     statement.getService().getService().getName(), actionImpl,
-                                    action);
+                                    action, taskServerPrefix);
                             if (actionImpl.getTask().isHasSubGraph()) {
                                 makeSubGraphOfAction(actionTask, taskServerPrefix);
                             }
@@ -244,11 +247,11 @@ public class AlgorithmGenerator {
                         if (algorithm.getMulticastGroup(counterTeamName) == null) {
                             VariableTypeWrapper variable = robot.getRobot().getVariableType(service,
                                     comm.getOutput().getId());
-                            algorithm
-                                    .addMulticastGroup(
-                                            counterTeamName + "_" + robot.getRobot().getTeam() + "_"
-                                                    + comm.getMessage().getId(),
-                                            variable.getSize());
+                            String groupId = counterTeamName + "_" + robot.getRobot().getTeam()
+                                    + "_" + comm.getMessage().getId();
+                            int size = variable.getSize()
+                                    + AlgorithmConstant.MULTICAST_PACKET_HEADER_SIZE;
+                            algorithm.addMulticastGroup(groupId, size, robotNum);
                         }
                     } else if (statement.getStatement().getStatementType()
                             .equals(StatementType.SEND)) {
@@ -262,11 +265,11 @@ public class AlgorithmGenerator {
                         if (algorithm.getMulticastGroup(counterTeamName) == null) {
                             VariableTypeWrapper variable = robot.getRobot().getVariableType(service,
                                     comm.getMessage().getId());
-                            algorithm
-                                    .addMulticastGroup(
-                                            robot.getRobot().getTeam() + "_" + counterTeamName + "_"
-                                                    + comm.getMessage().getId(),
-                                            variable.getSize());
+                            String groupId = robot.getRobot().getTeam() + "_" + counterTeamName
+                                    + "_" + comm.getMessage().getId();
+                            int size = variable.getSize()
+                                    + AlgorithmConstant.MULTICAST_PACKET_HEADER_SIZE;
+                            algorithm.addMulticastGroup(groupId, size, robotNum);
                         }
                     }
                 } catch (Exception e) {
@@ -286,7 +289,9 @@ public class AlgorithmGenerator {
                 }
                 robot.getListenTask().addThrow(statement, groupId, robot);
                 robot.getReportTask().addThrow(statement, groupId, robot);
-                algorithm.addMulticastGroup(groupId + "_" + AlgorithmConstant.EVENT, 4);
+                int size = 4 + AlgorithmConstant.MULTICAST_PACKET_HEADER_SIZE;
+                algorithm.addMulticastGroup(groupId + "_" + AlgorithmConstant.EVENT, size,
+                        robotNum);
             }
 
             @Override
@@ -297,13 +302,14 @@ public class AlgorithmGenerator {
 
         public RobotInerGraphMaker(UEMRobotTask robot,
                 List<ControlStrategyWrapper> controlStrategyList, Path taskServerPrefix,
-                boolean isActionTask) throws Exception {
+                boolean isActionTask, int robotNum) throws Exception {
             transitionArgumentMap.put(robot.getRobot().getTeam(), new HashMap<>());
             variableStack.add(new ArrayList<>());
             this.robot = robot;
             this.controlStrategyList = controlStrategyList;
             this.taskServerPrefix = taskServerPrefix;
             this.isActionTask = isActionTask;
+            this.robotNum = robotNum;
         }
 
         @Override
@@ -374,12 +380,16 @@ public class AlgorithmGenerator {
     private void makeRobotInerGraph(MissionWrapper mission, UEMRobotTask robot,
             AdditionalInfo additionalInfo, Path targetDir, int robotNum) throws Exception {
         makeActionTask(mission, robot, robot.getRobot().getControlStrategyList(),
-                Paths.get(additionalInfo.getTaskServerPrefix()));
-        makeResourceTask(robot, Paths.get(additionalInfo.getTaskServerPrefix()));
+                Paths.get(additionalInfo.getTaskServerPrefix()), robotNum);
+
+        if (additionalInfo.getEnvironment().equals(AlgorithmConstant.SIMULATION)) {
+            makeSimulationHandlerTask(robot, additionalInfo);
+        }
+        makeResourceTask(robot, additionalInfo);
         makeGroupingTask(mission, robot, Paths.get(additionalInfo.getTaskServerPrefix()));
         makeLibraryTask(robot);
         makeGroupActionTask(robot);
-        makeLeaderTask(robot);
+        makeLeaderTask(robot, Paths.get(additionalInfo.getTaskServerPrefix()));
         makeCommunicationTask(mission, robot, robotNum);
         makeControlTask(mission, robot);
     }
@@ -463,20 +473,32 @@ public class AlgorithmGenerator {
     }
 
     private void makeActionTask(MissionWrapper mission, UEMRobotTask robot,
-            List<ControlStrategyWrapper> controlStrategyList, Path taskServerPrefix)
+            List<ControlStrategyWrapper> controlStrategyList, Path taskServerPrefix, int robotNum)
             throws Exception {
         String team = robot.getRobot().getTeam();
         TransitionWrapper transition = mission.getTransition(team);
         RobotInerGraphMaker maker =
-                new RobotInerGraphMaker(robot, controlStrategyList, taskServerPrefix, true);
+                new RobotInerGraphMaker(robot, controlStrategyList, taskServerPrefix, true,
+                        robotNum);
         transition.traverseTransition(new String(), team, new ArrayList<String>(),
                 new ArrayList<>(robot.getRobot().getGroupMap().keySet()), maker, maker);
     }
 
-    private void makeResourceTask(UEMRobotTask robot, Path taskServerPrefix) {
+    private void makeSimulationHandlerTask(UEMRobotTask robot, AdditionalInfo additionalInfo) {
+        UEMSimHandler simHandler =
+                new UEMSimHandler(robot.getName(), Paths.get(additionalInfo.getTaskServerPrefix()));
+        simHandler.setSimInfo(additionalInfo.getEnvironmentInfo().get(0).getIp(),
+                additionalInfo.getEnvironmentInfo().get(0).getPort());
+        robot.setSimHandler(simHandler);
+        algorithm.addLibrary(simHandler);
+    }
+
+    private void makeResourceTask(UEMRobotTask robot, AdditionalInfo additionalInfo)
+            throws Exception {
+        Path taskServerPrefix = Paths.get(additionalInfo.getTaskServerPrefix());
         for (ResourceWrapper resource : robot.getRobot().getResourceList()) {
-            UEMResourceTask resourceTask =
-                    new UEMResourceTask(robot.getName(), resource, resource.getTask());
+            UEMResourceTask resourceTask = new UEMResourceTask(robot.getName(), resource,
+                    resource.getTask(), Paths.get(additionalInfo.getTaskServerPrefix()));
             if (resource.getTask().isHasSubGraph() == true) {
                 resourceTask.getSubTaskGraphs()
                         .addAll(recursiveExplore(resourceTask, robot, taskServerPrefix));
@@ -489,11 +511,18 @@ public class AlgorithmGenerator {
                             .addAll(taskGraph.getLibraryConnectionList());
                 }
             }
+            if (resourceTask.getSimPort() != null) {
+                UEMLibraryConnection connection = new UEMLibraryConnection();
+                connection.setConnection(resourceTask, resourceTask.getSimPort(),
+                        robot.getSimHandler());
+                algorithm.getAlgorithm().getLibraryConnections().getTaskLibraryConnection()
+                        .add(connection);
+            }
             robot.getResourceTaskList().add(resourceTask);
             algorithm.addTask(resourceTask);
-            algorithm.addInnerMulticastGroup(
+            algorithm.addMulticastGroup(
                     robot.getName() + "_" + resource.getResource().getResourceId(),
-                    resource.getResource().getDataSize());
+                    resource.getResource().getDataSize(), 1);
         }
     }
 
@@ -527,9 +556,10 @@ public class AlgorithmGenerator {
 
     private void makeGroupingTask(MissionWrapper mission, UEMRobotTask robot, Path taskServerPrefix)
             throws Exception {
-        GroupingAlgorithmWrapper groupingAlgorithm = robot.getRobot().getGroupingAlgorithm();
-        UEMGroupingTask groupingTask = new UEMGroupingTask(robot);
-        if (groupingAlgorithm.getRunTimeTask().isHasSubGraph() == true) {
+        GroupingAlgorithmWrapper groupingAlgorithm = (GroupingAlgorithmWrapper) robot.getRobot()
+                .getAdditionalTask(AdditionalTaskType.GROUP_SELECTION);
+        UEMGroupingTask groupingTask = new UEMGroupingTask(robot, taskServerPrefix);
+        if (groupingAlgorithm.getTask().isHasSubGraph() == true) {
             groupingTask.getSubTaskGraphs()
                     .addAll(recursiveExplore(groupingTask, robot, taskServerPrefix));
             for (UEMTaskGraph taskGraph : groupingTask.getSubTaskGraphs()) {
@@ -612,9 +642,9 @@ public class AlgorithmGenerator {
         }
     }
 
-    private void makeLeaderTask(UEMRobotTask robot) throws Exception {
-        UEMLeaderTask leader = new UEMLeaderTask(robot);
-        UEMLeaderLibrary leaderLibrary = new UEMLeaderLibrary(robot, leader);
+    private void makeLeaderTask(UEMRobotTask robot, Path taskServerPrefix) throws Exception {
+        UEMLeaderTask leader = new UEMLeaderTask(robot, taskServerPrefix);
+        UEMLeaderLibrary leaderLibrary = new UEMLeaderLibrary(robot);
         UEMLibraryConnection connection = new UEMLibraryConnection();
         connection.setConnection(leader, leader.getLeaderPort(), leaderLibrary);
         robot.setLeaderTask(leader);
@@ -645,7 +675,7 @@ public class AlgorithmGenerator {
         }
     }
 
-    private void makeSharedDataLibraryConnectionForCommunication(UEMRobotTask robot) {
+    private void makeSharedDataLibraryConnectionForCommunication(UEMRobotTask robot, int robotNum) {
         for (UEMSharedData library : robot.getSharedDataTaskList()) {
             robot.getListenTask().addSharedData(library);
             UEMLibraryConnection listenConnection = new UEMLibraryConnection();
@@ -661,11 +691,14 @@ public class AlgorithmGenerator {
             reportConnection.setMasterTask(robot.getReportTask().getName());
             algorithm.getAlgorithm().getLibraryConnections().getTaskLibraryConnection()
                     .add(reportConnection);
-            algorithm.addMulticastGroup(library.getGroup(), library.getVariableType().getSize());
+            String groupId = library.getGroup();
+            int size = AlgorithmConstant.MULTICAST_PACKET_HEADER_SIZE
+                    + library.getVariableType().getSize();
+            algorithm.addMulticastGroup(groupId, size, robotNum);
         }
     }
 
-    private void makeLeaderLibraryConnectionForCommunication(UEMRobotTask robot) {
+    private void makeLeaderLibraryConnectionForCommunication(UEMRobotTask robot, int robotNum) {
         UEMLeaderLibrary leaderLibrary = robot.getLeaderLibraryTask();
         if (leaderLibrary != null) {
             robot.getListenTask().addLeaderPort(leaderLibrary);
@@ -683,23 +716,27 @@ public class AlgorithmGenerator {
             algorithm.getAlgorithm().getLibraryConnections().getTaskLibraryConnection()
                     .add(reportConnection);
             robot.getListenTask().getLeaderPortMap().keySet().forEach(port -> {
-                algorithm.addMulticastGroup(port.getGroup(), PrimitiveType.INT32.getSize());
+                algorithm.addMulticastGroup(port.getGroup(), leaderLibrary.getSelectionInfoSize(),
+                        robotNum);
             });
             robot.getListenTask().getLeaderPortMap().values().forEach(port -> {
-                algorithm.addMulticastGroup(port.getGroup(), PrimitiveType.INT32.getSize());
+                algorithm.addMulticastGroup(port.getGroup(), leaderLibrary.getHeartbeatSize(),
+                        robotNum);
             });
         }
     }
 
-    private void makeGroupActionPortForCommunication(UEMRobotTask robot) {
+    private void makeGroupActionPortForCommunication(UEMRobotTask robot, int robotNum) {
         boolean groupActionExist = false;
         for (UEMActionTask actionTask : robot.getActionTaskList()) {
             if (actionTask.getActionImpl().getActionType().isGroupAction()) {
                 groupActionExist = true;
                 robot.getListenTask().addGroupActionPort(actionTask);
                 robot.getReportTask().addGroupActionPort(actionTask);
+                int size = PrimitiveType.INT32.getSize()
+                        + AlgorithmConstant.MULTICAST_PACKET_HEADER_SIZE;
                 algorithm.addMulticastGroup(actionTask.getActionName(),
-                        PrimitiveType.INT32.getSize());
+                        size, robotNum);
             }
         }
         if (groupActionExist == true) {
@@ -737,7 +774,7 @@ public class AlgorithmGenerator {
                     .add(reportConnection);
             robot.getListenTask().getGroupingPortList().forEach(port -> {
                 algorithm.addMulticastGroup(port.getGroup(),
-                        groupingLibrary.getPacketSize(robotNum));
+                        groupingLibrary.getPacketSize(), robotNum);
             });
         }
     }
@@ -748,12 +785,12 @@ public class AlgorithmGenerator {
         algorithm.addTask(robot.getReportTask());
         String team = robot.getRobot().getTeam();
         TransitionWrapper transition = mission.getTransition(team);
-        RobotInerGraphMaker maker = new RobotInerGraphMaker(robot, null, null, false);
+        RobotInerGraphMaker maker = new RobotInerGraphMaker(robot, null, null, false, robotNum);
         transition.traverseTransition(new String(), team, null,
                 new ArrayList<>(robot.getRobot().getGroupMap().keySet()), maker, maker);
-        makeSharedDataLibraryConnectionForCommunication(robot);
-        makeLeaderLibraryConnectionForCommunication(robot);
-        makeGroupActionPortForCommunication(robot);
+        makeSharedDataLibraryConnectionForCommunication(robot, robotNum);
+        makeLeaderLibraryConnectionForCommunication(robot, robotNum);
+        makeGroupActionPortForCommunication(robot, robotNum);
         makeGroupingPortForCommunication(robot, robotNum);
     }
 
