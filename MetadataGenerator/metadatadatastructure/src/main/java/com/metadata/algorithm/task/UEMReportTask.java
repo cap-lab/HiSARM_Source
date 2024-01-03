@@ -20,7 +20,10 @@ public class UEMReportTask extends UEMCommTask {
 
     public UEMReportTask(String robotId, String name) {
         super(robotId, name);
-        setMode(50);
+        setMode(500);
+        setFile(AlgorithmConstant.SEMO + AlgorithmConstant.REPORT_TASK_SUFFIX);
+        getExtraHeader().add(robotId + AlgorithmConstant.REPORT_HEADER_SUFFIX);
+        getExtraSource().add(robotId + AlgorithmConstant.REPORT_SOURCE_SUFFIX);
     }
 
     public void addSend(StatementWrapper send, UEMRobotTask robot, ServiceWrapper service,
@@ -144,16 +147,16 @@ public class UEMReportTask extends UEMCommTask {
         this.leaderPort.setLibrary(leaderLib);
         getLibraryMasterPort().add(this.leaderPort);
         leaderLib.getGroupList().forEach(group -> {
-            String robotIdPortName = makePortName(group,
-                    makePortName(AlgorithmConstant.LEADER, AlgorithmConstant.ROBOT_ID));
-            if (!existMulticastPort(robotIdPortName)) {
-                UEMMulticastPort robotIdPort = new UEMMulticastPort();
-                robotIdPort.setName(robotIdPortName);
-                robotIdPort.setGroup(
-                        group + "_" + AlgorithmConstant.LEADER + "_" + AlgorithmConstant.ROBOT_ID);
-                robotIdPort.setDirection(PortDirectionType.OUTPUT);
-                robotIdPort.setMessage(group);
-                getMulticastPort().add(robotIdPort);
+            String selectionInfoPortName = makePortName(group,
+                    makePortName(AlgorithmConstant.LEADER, AlgorithmConstant.SELECTION_INFO));
+            if (!existMulticastPort(selectionInfoPortName)) {
+                UEMMulticastPort selectionInfoPort = new UEMMulticastPort();
+                selectionInfoPort.setName(selectionInfoPortName);
+                selectionInfoPort.setGroup(group + "_" + AlgorithmConstant.LEADER + "_"
+                        + AlgorithmConstant.SELECTION_INFO);
+                selectionInfoPort.setDirection(PortDirectionType.OUTPUT);
+                selectionInfoPort.setMessage(group);
+                getMulticastPort().add(selectionInfoPort);
                 String heartbeatPortName = makePortName(group,
                         makePortName(AlgorithmConstant.LEADER, AlgorithmConstant.HEARTBEAT));
                 UEMMulticastPort heartbeatPort = new UEMMulticastPort();
@@ -163,7 +166,7 @@ public class UEMReportTask extends UEMCommTask {
                 heartbeatPort.setDirection(PortDirectionType.OUTPUT);
                 heartbeatPort.setMessage(group);
                 getMulticastPort().add(heartbeatPort);
-                getLeaderPortMap().put(robotIdPort, heartbeatPort);
+                getLeaderPortMap().put(selectionInfoPort, heartbeatPort);
             }
         });
     }

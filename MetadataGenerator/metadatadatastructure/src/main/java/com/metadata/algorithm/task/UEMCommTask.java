@@ -52,17 +52,18 @@ public class UEMCommTask extends UEMTask {
         setParentTask(robotId);
         setTaskType(AlgorithmConstant.COMPUTATION_TASK);
         setRunCondition(RunConditionType.TIME_DRIVEN);
-        setFile(getName() + AlgorithmConstant.TASK_FILE_EXTENSION);
         setCommRelatedFile(robotId);
         setHasSubGraph(AlgorithmConstant.NO);
     }
 
     private void setCommRelatedFile(String robotId) {
-        getExtraSource().add(AlgorithmConstant.COMMON_COMMUNICATION_SOURCE);
-        getExtraSource().add(robotId + AlgorithmConstant.ROBOT_VARIABLE_SOURCE_SUFFIX);
-        getExtraHeader().add(AlgorithmConstant.COMMON_COMMUNICATION_HEADER);
-        getExtraHeader().add(AlgorithmConstant.COMMON_PORT_HEADER);
-        getExtraHeader().add(robotId + AlgorithmConstant.ROBOT_VARIABLE_HEADER_SUFFIX);
+        getExtraHeader()
+                .add(AlgorithmConstant.SEMO + AlgorithmConstant.COMMUNICATION_HEADER_SUFFIX);
+        getExtraSource()
+                .add(AlgorithmConstant.SEMO + AlgorithmConstant.COMMUNICATION_SOURCE_SUFFIX);
+        getExtraHeader().add(AlgorithmConstant.SEMO + AlgorithmConstant.PORT_HEADER_SUFFIX);
+        getExtraHeader().add(robotId + AlgorithmConstant.VARIABLE_HEADER_SUFFIX);
+        getExtraSource().add(robotId + AlgorithmConstant.VARIABLE_SOURCE_SUFFIX);
         setExtraCommonCode(robotId);
     }
 

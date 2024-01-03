@@ -4,6 +4,8 @@ import hopes.cic.xml.CICMappingType;
 import hopes.cic.xml.MappingMulticastType;
 
 public class UEMMapping extends CICMappingType {
+    private int multicastCount = 0;
+
     public UEMMappingMulticast getMulticast(String groupName) {
         for (MappingMulticastType multicast : getMulticast()) {
             if (multicast.getGroupName().equals(groupName)) {
@@ -19,7 +21,8 @@ public class UEMMapping extends CICMappingType {
             multicast.setGroupName(groupName);
             getMulticast().add(multicast);
             if (isExport == true) {
-                multicast.setUDP();
+                // multicast.setUDP(multicastCount);
+                multicastCount++;
             }
         }
     }

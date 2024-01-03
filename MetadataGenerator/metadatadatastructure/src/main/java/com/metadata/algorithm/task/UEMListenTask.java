@@ -20,7 +20,10 @@ public class UEMListenTask extends UEMCommTask {
 
     public UEMListenTask(String robotId, String name) {
         super(robotId, name);
-        setMode(20);
+        setMode(200);
+        setFile(AlgorithmConstant.SEMO + AlgorithmConstant.LISTEN_TASK_SUFFIX);
+        getExtraHeader().add(robotId + AlgorithmConstant.LISTEN_HEADER_SUFFIX);
+        getExtraSource().add(robotId + AlgorithmConstant.LISTEN_SOURCE_SUFFIX);
     }
 
     public void addReceive(StatementWrapper receive, UEMRobotTask robot, ServiceWrapper service,
@@ -144,6 +147,13 @@ public class UEMListenTask extends UEMCommTask {
             inPort.setGroup(portName);
             inPort.setDirection(PortDirectionType.INPUT);
             getMulticastPort().add(inPort);
+
+            UEMMulticastPort outMulticastPort = new UEMMulticastPort();
+            outMulticastPort.setName(portName + "_out");
+            outMulticastPort.setGroup(portName);
+            outMulticastPort.setDirection(PortDirectionType.OUTPUT);
+            getMulticastPort().add(outMulticastPort);
+
             UEMLibraryPort outPort = new UEMLibraryPort();
             outPort.setName(portName);
             outPort.setType(portName);
@@ -161,16 +171,23 @@ public class UEMListenTask extends UEMCommTask {
         this.leaderPort.setLibrary(leaderLib);
         getLibraryMasterPort().add(this.leaderPort);
         leaderLib.getGroupList().forEach(group -> {
-            String robotIdPortName = makePortName(group,
-                    makePortName(AlgorithmConstant.LEADER, AlgorithmConstant.ROBOT_ID));
-            if (!existMulticastPort(robotIdPortName)) {
-                UEMMulticastPort robotIdPort = new UEMMulticastPort();
-                robotIdPort.setName(robotIdPortName);
-                robotIdPort.setGroup(
-                        group + "_" + AlgorithmConstant.LEADER + "_" + AlgorithmConstant.ROBOT_ID);
-                robotIdPort.setDirection(PortDirectionType.INPUT);
-                robotIdPort.setMessage(group);
-                getMulticastPort().add(robotIdPort);
+            String selectionInfoPortName = makePortName(group,
+                    makePortName(AlgorithmConstant.LEADER, AlgorithmConstant.SELECTION_INFO));
+            if (!existMulticastPort(selectionInfoPortName)) {
+                UEMMulticastPort selectionInfoPort = new UEMMulticastPort();
+                selectionInfoPort.setName(selectionInfoPortName);
+                selectionInfoPort.setGroup(group + "_" + AlgorithmConstant.LEADER + "_"
+                        + AlgorithmConstant.SELECTION_INFO);
+                selectionInfoPort.setDirection(PortDirectionType.INPUT);
+                selectionInfoPort.setMessage(group);
+                getMulticastPort().add(selectionInfoPort);
+                UEMMulticastPort selectionInfoOutPort = new UEMMulticastPort();
+                selectionInfoOutPort.setName(selectionInfoPortName + "_out");
+                selectionInfoOutPort.setGroup(group + "_" + AlgorithmConstant.LEADER + "_"
+                        + AlgorithmConstant.SELECTION_INFO);
+                selectionInfoOutPort.setDirection(PortDirectionType.OUTPUT);
+                selectionInfoOutPort.setMessage(group);
+                getMulticastPort().add(selectionInfoOutPort);
                 String heartbeatPortName = makePortName(group,
                         makePortName(AlgorithmConstant.LEADER, AlgorithmConstant.HEARTBEAT));
                 UEMMulticastPort heartbeatPort = new UEMMulticastPort();
@@ -180,7 +197,14 @@ public class UEMListenTask extends UEMCommTask {
                 heartbeatPort.setDirection(PortDirectionType.INPUT);
                 heartbeatPort.setMessage(group);
                 getMulticastPort().add(heartbeatPort);
-                getLeaderPortMap().put(robotIdPort, heartbeatPort);
+                UEMMulticastPort heartbeatOutPort = new UEMMulticastPort();
+                heartbeatOutPort.setName(heartbeatPortName + "_out");
+                heartbeatOutPort.setGroup(
+                        group + "_" + AlgorithmConstant.LEADER + "_" + AlgorithmConstant.HEARTBEAT);
+                heartbeatOutPort.setDirection(PortDirectionType.OUTPUT);
+                heartbeatOutPort.setMessage(group);
+                getMulticastPort().add(heartbeatOutPort);
+                getLeaderPortMap().put(selectionInfoPort, heartbeatPort);
             }
         });
     }
@@ -201,6 +225,12 @@ public class UEMListenTask extends UEMCommTask {
             groupActionPort.setDirection(PortDirectionType.INPUT);
             getGroupActionPortList().add(groupActionPort);
             getMulticastPort().add(groupActionPort);
+            UEMMulticastPort groupActionOutPort = new UEMMulticastPort();
+            groupActionOutPort.setGroup(action.getActionName());
+            groupActionOutPort.setName(action.getActionName() + "_out");
+            groupActionOutPort.setMessage(String.valueOf(action.getGroupActionIndex()));
+            groupActionOutPort.setDirection(PortDirectionType.OUTPUT);
+            getMulticastPort().add(groupActionOutPort);
         }
     }
 
@@ -219,6 +249,11 @@ public class UEMListenTask extends UEMCommTask {
                 sharedDataPort.setDirection(PortDirectionType.INPUT);
                 getMulticastPort().add(sharedDataPort);
                 getGroupingPortList().add(sharedDataPort);
+                UEMMulticastPort sharedDataOutPort = new UEMMulticastPort();
+                sharedDataOutPort.setName(sharedDataPortName + "_out");
+                sharedDataOutPort.setGroup(sharedDataPortName);
+                sharedDataOutPort.setDirection(PortDirectionType.OUTPUT);
+                getMulticastPort().add(sharedDataOutPort);
             }
         });
     }

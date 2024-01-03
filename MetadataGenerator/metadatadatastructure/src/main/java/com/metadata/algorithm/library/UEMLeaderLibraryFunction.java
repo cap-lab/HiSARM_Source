@@ -13,70 +13,75 @@ public class UEMLeaderLibraryFunction extends UEMLibraryFunction {
         return libraryFunction;
     }
 
-    public static UEMLibraryFunction makeAvailFuncForLeaderFromLeaderOfRobotId() {
-        return makeAvailFuncForLeader(AlgorithmConstant.LEADER, "robot_id");
-    }
-
-    public static UEMLibraryFunction makeAvailFuncForLeaderFromLeaderOfHeartBeat() {
-        return makeAvailFuncForLeader(AlgorithmConstant.LEADER, "heartbeat");
-    }
-
-    public static UEMLibraryFunction makeAvailFuncForLeaderFromReportOfRobotId() {
-        return makeAvailFuncForLeader(AlgorithmConstant.REPORT, "robot_id");
+    public static UEMLibraryFunction makeAvailFuncForLeaderFromReportOfSelectionInfo() {
+        return makeAvailFuncForLeader(AlgorithmConstant.REPORT, "selection_info");
     }
 
     public static UEMLibraryFunction makeAvailFuncForLeaderFromReportOfHeartBeat() {
         return makeAvailFuncForLeader(AlgorithmConstant.REPORT, "heartbeat");
     }
 
-    private static UEMLibraryFunction makeGetFuncForLeader(String caller, String variable) {
+    public static UEMLibraryFunction makeGetFuncForLeaderFromLeaderOfSelectionInfo() {
         UEMLibraryFunction libraryFunction =
-                makeGetFunction(variable, caller, PrimitiveType.INT32.getValue());
-        libraryFunction.setReturnSize(BigInteger.valueOf(PrimitiveType.INT32.getSize()));
+                makeGetFunction("selection_info", AlgorithmConstant.LEADER, "void");
         libraryFunction.getArgument()
                 .add(makeArgument(PrimitiveType.INT32.getValue(), "group_id", YesNoType.NO));
+        libraryFunction.getArgument().add(makeArgument("semo_int32*", "robot_num", YesNoType.YES));
+        libraryFunction.getArgument().add(makeArgument("semo_int32*", "robot_list", YesNoType.YES));
+        libraryFunction.getArgument().add(makeArgument("semo_int8*", "shared_data", YesNoType.YES));
         return libraryFunction;
     }
 
-    public static UEMLibraryFunction makeGetFuncForLeaderFromLeaderOfRobotId() {
-        return makeGetFuncForLeader(AlgorithmConstant.LEADER, "robot_id");
-    }
-
-    public static UEMLibraryFunction makeGetFuncForLeaderFromLeaderOfHeartBeat() {
-        return makeGetFuncForLeader(AlgorithmConstant.LEADER, "heartbeat");
-    }
-
-    public static UEMLibraryFunction makeGetFuncForLeaderFromReportOfRobotId() {
-        return makeGetFuncForLeader(AlgorithmConstant.REPORT, "robot_id");
+    public static UEMLibraryFunction makeGetFuncForLeaderFromReportOfSelectionInfo() {
+        UEMLibraryFunction libraryFunction =
+                makeGetFunction("selection_info", AlgorithmConstant.REPORT, "void");
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "group_id", YesNoType.NO));
+        libraryFunction.getArgument().add(makeArgument("semo_int8*", "shared_data", YesNoType.YES));
+        return libraryFunction;
     }
 
     public static UEMLibraryFunction makeGetFuncForLeaderFromReportOfHeartBeat() {
-        return makeGetFuncForLeader(AlgorithmConstant.REPORT, "heartbeat");
-    }
-
-    private static UEMLibraryFunction makeSetFuncForLeader(String caller, String variable) {
-        UEMLibraryFunction libraryFunction = makeSetFunction(variable, caller, "void");
+        UEMLibraryFunction libraryFunction =
+                makeGetFunction("heartbeat", AlgorithmConstant.REPORT, "void");
         libraryFunction.getArgument()
                 .add(makeArgument(PrimitiveType.INT32.getValue(), "group_id", YesNoType.NO));
-        libraryFunction.getArgument()
-                .add(makeArgument(PrimitiveType.INT32.getValue(), "robot_id", YesNoType.NO));
+        libraryFunction.getArgument().add(makeArgument("semo_int32*", "leader_id", YesNoType.YES));
         return libraryFunction;
     }
 
-    public static UEMLibraryFunction makeSetFuncForLeaderFromLeaderOfRobotId() {
-        return makeSetFuncForLeader(AlgorithmConstant.LEADER, "robot_id");
+    public static UEMLibraryFunction makeSetFuncForLeaderFromLeaderOfSelectionInfo() {
+        UEMLibraryFunction libraryFunction =
+                makeSetFunction("selection_info", AlgorithmConstant.LEADER, "void");
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "group_id", YesNoType.NO));
+        libraryFunction.getArgument()
+                .add(makeArgument("semo_int8*", "shared_data", YesNoType.YES));
+        return libraryFunction;
     }
 
-    public static UEMLibraryFunction makeSetFuncForLeaderFromLeaderOfHeartBeat() {
-        return makeSetFuncForLeader(AlgorithmConstant.LEADER, "heartbeat");
-    }
-
-    public static UEMLibraryFunction makeSetFuncForLeaderFromListenOfRobotId() {
-        return makeSetFuncForLeader(AlgorithmConstant.LISTEN, "robot_id");
+    public static UEMLibraryFunction makeSetFuncForLeaderFromListenOfSelectionInfo() {
+        UEMLibraryFunction libraryFunction =
+                makeSetFunction("selection_info", AlgorithmConstant.LISTEN, "void");
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "group_id", YesNoType.NO));
+        libraryFunction.getArgument().add(makeArgument("semo_int32", "robot_id", YesNoType.NO));
+        libraryFunction.getArgument()
+                .add(makeArgument("semo_int64", "updated_time", YesNoType.YES));
+        libraryFunction.getArgument().add(makeArgument("semo_int8*", "shared_data", YesNoType.YES));
+        return libraryFunction;
     }
 
     public static UEMLibraryFunction makeSetFuncForLeaderFromListenOfHeartBeat() {
-        return makeSetFuncForLeader(AlgorithmConstant.LISTEN, "heartbeat");
+        UEMLibraryFunction libraryFunction =
+                makeSetFunction("heartbeat", AlgorithmConstant.LISTEN, "void");
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "group_id", YesNoType.NO));
+        libraryFunction.getArgument().add(makeArgument("semo_int32", "robot_id", YesNoType.NO));
+        libraryFunction.getArgument()
+                .add(makeArgument("semo_int64", "heartbeat_time", YesNoType.YES));
+        libraryFunction.getArgument().add(makeArgument("semo_int32", "leader_id", YesNoType.YES));
+        return libraryFunction;
     }
 
     public static UEMLibraryFunction makeSetLeaderSelectionState() {
@@ -115,21 +120,51 @@ public class UEMLeaderLibraryFunction extends UEMLibraryFunction {
         return libraryFunction;
     }
 
-    public static UEMLibraryFunction makeGetLastTime() {
+    public static UEMLibraryFunction makeGetAvailRobot() {
+        UEMLibraryFunction libraryFunction = makeGetFunction("avail_robot", null, "void");
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "group_id", YesNoType.NO));
+        libraryFunction.getArgument().add(makeArgument("semo_int32*", "robot_num", YesNoType.YES));
+        libraryFunction.getArgument().add(makeArgument("semo_int32*", "robot_list", YesNoType.YES));
+        return libraryFunction;
+    }
+
+    public static UEMLibraryFunction makeGetNewRobotAddedFuncFromLeader() {
         UEMLibraryFunction libraryFunction =
-                makeGetFunction("last_time", null, PrimitiveType.INT64.getValue());
-        libraryFunction.setReturnSize(BigInteger.valueOf(PrimitiveType.INT64.getSize()));
+                makeGetFunction("new_robot_added", AlgorithmConstant.LEADER, "semo_int8");
         libraryFunction.getArgument()
                 .add(makeArgument(PrimitiveType.INT32.getValue(), "group_id", YesNoType.NO));
         return libraryFunction;
     }
 
-    public static UEMLibraryFunction makeSetLastTime() {
-        UEMLibraryFunction libraryFunction = makeSetFunction("last_time", null, "void");
+    public static UEMLibraryFunction makeGetDuplicatedFuncFromLeader() {
+        UEMLibraryFunction libraryFunction =
+                makeGetFunction("duplicated", AlgorithmConstant.LEADER, "semo_int8");
         libraryFunction.getArgument()
                 .add(makeArgument(PrimitiveType.INT32.getValue(), "group_id", YesNoType.NO));
+        return libraryFunction;
+    }
+
+    public static UEMLibraryFunction makeRemoveMalfunctionedRobotFunc() {
+        UEMLibraryFunction libraryFunction = new UEMLibraryFunction();
+        libraryFunction.setName("remove_malfunctioned_robot");
+        libraryFunction.setReturnType("semo_int8");
         libraryFunction.getArgument()
-                .add(makeArgument(PrimitiveType.INT64.getValue(), "time", YesNoType.NO));
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "group_id", YesNoType.NO));
+        return libraryFunction;
+    }
+
+    public static UEMLibraryFunction makeGetGroupNumFromLeader() {
+        UEMLibraryFunction libraryFunction =
+                makeGetFunction("group_num", AlgorithmConstant.LEADER, "semo_int32");
+        return libraryFunction;
+    }
+
+    public static UEMLibraryFunction makeGetGroupIdFromLeader() {
+        UEMLibraryFunction libraryFunction =
+                makeGetFunction("group_id", AlgorithmConstant.LEADER, "semo_int32");
+        libraryFunction.getArgument()
+                .add(makeArgument(PrimitiveType.INT32.getValue(), "index", YesNoType.NO));
         return libraryFunction;
     }
 }

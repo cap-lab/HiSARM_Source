@@ -1,5 +1,6 @@
 package com.metadata.algorithm.task;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import com.dbmanager.datastructure.task.ExtraSetting;
@@ -23,13 +24,14 @@ public class UEMGroupingTask extends UEMTask {
     private UEMChannelPort resultPort;
     private UEMLibraryPort groupPort;
 
-    public UEMGroupingTask(UEMRobotTask robotTask) throws Exception {
-        super(robotTask.getName());
+    public UEMGroupingTask(UEMRobotTask robotTask, Path taskServer) throws Exception {
+        super(robotTask.getName(), taskServer);
         groupingTask = robotTask.getRobot().getAdditionalTask(AdditionalTaskType.GROUP_SELECTION)
                 .getTask();
         setParentTask(robotTask.getName());
         setName(robotTask.getName(), groupingTask.getTaskId());
-        getExtraHeader().add(AlgorithmConstant.COMMON_GROUP_HEADER);
+        getExtraHeader().add(AlgorithmConstant.SEMO + AlgorithmConstant.GROUP_HEADER_SUFFIX);
+        getExtraSource().add(AlgorithmConstant.SEMO + AlgorithmConstant.GROUP_SOURCE_SUFFIX);
         setTaskInfo(groupingTask, robotTask.getName());
         addDefaultPort();
     }

@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import com.dbmanager.datastructure.variable.PrimitiveType;
 import com.metadata.constant.AlgorithmConstant;
 import com.scriptparser.parserdatastructure.util.KeyValue;
 import com.scriptparser.parserdatastructure.wrapper.GroupWrapper;
 import com.scriptparser.parserdatastructure.wrapper.ModeWrapper;
+import com.strategy.strategydatastructure.enumeration.AdditionalTaskType;
 import com.strategy.strategydatastructure.wrapper.GroupingAlgorithmWrapper;
 import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 import hopes.cic.xml.YesNoType;
@@ -16,32 +16,38 @@ import hopes.cic.xml.YesNoType;
 public class UEMGroupingLibrary extends UEMLibrary {
     private Map<String, KeyValue<String, List<GroupWrapper>>> groupMap = new HashMap<>();
     private int sharedDataSize;
-    private int robotInfoSize = 8;
 
     public UEMGroupingLibrary(RobotImplWrapper robot, GroupingAlgorithmWrapper groupingAlgorithm) {
         super(robot.getRobot().getRobotId());
-        setName(robot.getRobot().getRobotId(), AlgorithmConstant.GROUPING);
-        setDefaultFunction();
-        setCflags("");
-        setLdflags("");
-        setFile(robot.getRobot().getRobotId() + "_" + AlgorithmConstant.GROUPING
-                + AlgorithmConstant.LIBRARY_FILE_EXTENSION);
-        setHeader(robot.getRobot().getRobotId() + "_" + AlgorithmConstant.GROUPING
-                + AlgorithmConstant.LIBRARY_HEADER_EXTENSION);
-        setIsHardwareDependent(YesNoType.NO);
-        setLanguage(AlgorithmConstant.LANGUAGE_CPP);
-        setSharedDataSize(robot.getGroupingAlgorithm().getGroupingAlgorithm().getSharedDataSize());
-        getExtraHeader().add(AlgorithmConstant.COMMON_GROUP_HEADER);
-        getExtraHeader()
-                .add(robot.getRobot().getRobotId() + AlgorithmConstant.ROBOT_GROUP_HEADER_SUFFIX);
-        getExtraHeader()
-                .add(robot.getRobot().getRobotId() + AlgorithmConstant.ROBOT_MODE_HEADER_SUFFIX);
-        getExtraHeader().add(AlgorithmConstant.MUTEX_HEADER);
-        sharedDataSize = groupingAlgorithm.getGroupingAlgorithm().getSharedDataSize();
+        try {
+            setName(robot.getRobot().getRobotId(), AlgorithmConstant.GROUPING);
+            setDefaultFunction();
+            setCflags("");
+            setLdflags("");
+            setFile(robot.getRobot().getRobotId() + "_" + AlgorithmConstant.GROUPING
+                    + AlgorithmConstant.LIBRARY_FILE_EXTENSION);
+            setHeader(robot.getRobot().getRobotId() + "_" + AlgorithmConstant.GROUPING
+                    + AlgorithmConstant.LIBRARY_HEADER_EXTENSION);
+            setIsHardwareDependent(YesNoType.NO);
+            setLanguage(AlgorithmConstant.LANGUAGE_CPP);
+            GroupingAlgorithmWrapper groupingAlgorithmWrapper;
+            groupingAlgorithmWrapper = (GroupingAlgorithmWrapper) robot
+                    .getAdditionalTask(AdditionalTaskType.GROUP_SELECTION);
+            setSharedDataSize(groupingAlgorithmWrapper.getGroupingAlgorithm().getSharedDataSize());
+            getExtraHeader().add(AlgorithmConstant.SEMO + AlgorithmConstant.GROUP_HEADER_SUFFIX);
+            getExtraHeader()
+                    .add(robot.getRobot().getRobotId() + AlgorithmConstant.GROUP_HEADER_SUFFIX);
+            getExtraHeader()
+                    .add(robot.getRobot().getRobotId() + AlgorithmConstant.MODE_HEADER_SUFFIX);
+            getExtraHeader().add(AlgorithmConstant.MUTEX_HEADER);
+            sharedDataSize = groupingAlgorithm.getGroupingAlgorithm().getSharedDataSize();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public int getPacketSize(int robotNum) {
-        return sharedDataSize * robotNum + robotInfoSize * robotNum + PrimitiveType.INT32.getSize();
+    public int getPacketSize() {
+        return AlgorithmConstant.GROUPING_PACKET_HEADER_SIZE + sharedDataSize;
     }
 
     private void setDefaultFunction() {

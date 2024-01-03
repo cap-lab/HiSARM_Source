@@ -22,7 +22,7 @@ public class UEMGroupAction extends UEMLibrary {
                 + AlgorithmConstant.LIBRARY_HEADER_EXTENSION);
         setIsHardwareDependent(YesNoType.NO);
         setLanguage(AlgorithmConstant.LANGUAGE_C);
-        getExtraHeader().add(AlgorithmConstant.COMMON_LEADER_HEADER);
+        getExtraHeader().add(AlgorithmConstant.SEMO + AlgorithmConstant.LEADER_HEADER_SUFFIX);
         getExtraHeader().add(AlgorithmConstant.MUTEX_HEADER);
         setFunctionList();
     }

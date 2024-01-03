@@ -9,11 +9,16 @@ public class UEMLibrary extends LibraryType {
     public UEMLibrary(String robotId) {
         setHasInternalStates(YesNoType.YES);
         setLanguage(AlgorithmConstant.LANGUAGE_C);
-        getExtraHeader().add(AlgorithmConstant.COMMON_HEADER);
-        getExtraHeader().add(AlgorithmConstant.LOGGER_HEADER);
-        getExtraHeader().add(robotId + AlgorithmConstant.ROBOT_COMMON_HEADER_SUFFIX);
-        getExtraSource().add(robotId + AlgorithmConstant.ROBOT_VARIABLE_SOURCE_SUFFIX);
-        getExtraHeader().add(robotId + AlgorithmConstant.ROBOT_VARIABLE_HEADER_SUFFIX);
+        getExtraHeader().add(AlgorithmConstant.SEMO + AlgorithmConstant.COMMON_HEADER_SUFFIX);
+        getExtraHeader().add(AlgorithmConstant.SEMO + AlgorithmConstant.LOGGER_HEADER_SUFFIX);
+        getExtraHeader().add(AlgorithmConstant.SEMO + AlgorithmConstant.VARIABLE_HEADER_SUFFIX);
+        getExtraSource().add(AlgorithmConstant.SEMO + AlgorithmConstant.VARIABLE_SOURCE_SUFFIX);
+        getExtraHeader().add(robotId + AlgorithmConstant.COMMON_HEADER_SUFFIX);
+        getExtraSource().add(robotId + AlgorithmConstant.VARIABLE_SOURCE_SUFFIX);
+        getExtraHeader().add(robotId + AlgorithmConstant.VARIABLE_HEADER_SUFFIX);
+        getExtraHeader().add("UFTimer.h");
+        setCflags("");
+        setLdflags("");
     }
 
     public static String makeName(String parentName, String scope, String libraryName) {

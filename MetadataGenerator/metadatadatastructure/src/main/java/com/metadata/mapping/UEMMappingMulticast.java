@@ -11,9 +11,10 @@ public class UEMMappingMulticast extends MappingMulticastType {
         setConnectionType(new MappingMulticastConnectionType());
     }
 
-    public void setUDP() {
+    public void setUDP(int multicastCount) {
         getConnectionType().setUDP(new MappingMulticastUDPType());
-        getConnectionType().getUDP().setIp(MappingConstant.BROADCAST_IP);
+        getConnectionType().getUDP()
+                .setIp(MappingConstant.MULTICAST_IP_SUFFIX + String.valueOf(multicastCount));
         getConnectionType().getUDP()
                 .setPort(BigInteger.valueOf(MappingConstant.DEFAULT_MULTICAST_PORT));
 

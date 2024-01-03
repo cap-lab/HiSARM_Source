@@ -1,48 +1,51 @@
 package com.metadata.algorithm.library;
 
 import com.metadata.constant.AlgorithmConstant;
-import com.strategy.strategydatastructure.wrapper.VariableTypeWrapper;
 import hopes.cic.xml.YesNoType;
 
 public class UEMSharedDataLibraryFunction extends UEMLibraryFunction {
-    public static UEMLibraryFunction makeAvailFuncFromReport(VariableTypeWrapper variableType) {
-        return makeAvailFunction(variableType.getVariableType().getName(),
-                AlgorithmConstant.REPORT);
+    public static UEMLibraryFunction makeAvailFuncFromReport() {
+        return makeAvailFunction(AlgorithmConstant.SHARED_DATA, AlgorithmConstant.REPORT);
     }
 
-    public static UEMLibraryFunction makeAvailFuncFromAction(VariableTypeWrapper variableType) {
-        return makeAvailFunction(variableType.getVariableType().getName(),
-                AlgorithmConstant.ACTION);
+    public static UEMLibraryFunction makeGetFuncFromAction() {
+        UEMLibraryFunction libraryFunction =
+                makeGetFunction(AlgorithmConstant.SHARED_DATA, AlgorithmConstant.ACTION, "void");
+        libraryFunction.getArgument().add(makeArgument("semo_int32*", "robot_num", YesNoType.YES));
+        libraryFunction.getArgument().add(makeArgument("semo_int32*", "robot_list", YesNoType.YES));
+        libraryFunction.getArgument().add(makeArgument("void*", "buffer", YesNoType.YES));
+        return libraryFunction;
     }
 
-    public static UEMLibraryFunction makeGetFuncFromAction(VariableTypeWrapper variableType) {
+    public static UEMLibraryFunction makeGetSpecificFuncFromAction() {
         UEMLibraryFunction libraryFunction = makeGetFunction(
-                variableType.getVariableType().getName(), AlgorithmConstant.ACTION, "void");
+                "specific_" + AlgorithmConstant.SHARED_DATA, AlgorithmConstant.ACTION, "semo_int8");
+        libraryFunction.getArgument().add(makeArgument("semo_int32", "robot_id", YesNoType.NO));
         libraryFunction.getArgument().add(makeArgument("void*", "buffer", YesNoType.YES));
         return libraryFunction;
     }
 
-    public static UEMLibraryFunction makeGetFuncFromReport(VariableTypeWrapper variableType) {
+    public static UEMLibraryFunction makeGetFuncFromReport() {
         UEMLibraryFunction libraryFunction = makeGetFunction(
-                variableType.getVariableType().getName(), AlgorithmConstant.REPORT, "void");
-        libraryFunction.getArgument().add(makeArgument("void*", "buffer", YesNoType.YES));
+                AlgorithmConstant.SHARED_DATA, AlgorithmConstant.REPORT, "void");
+        libraryFunction.getArgument().add(makeArgument("semo_int8*", "buffer", YesNoType.YES));
         return libraryFunction;
     }
 
-    public static UEMLibraryFunction makeSetFuncFromAction(VariableTypeWrapper variableType) {
+    public static UEMLibraryFunction makeSetFuncFromAction() {
         UEMLibraryFunction libraryFunction = makeSetFunction(
-                variableType.getVariableType().getName(), AlgorithmConstant.ACTION, "void");
+                AlgorithmConstant.SHARED_DATA, AlgorithmConstant.ACTION, "void");
         libraryFunction.getArgument().add(makeArgument("void*", "buffer", YesNoType.YES));
         return libraryFunction;
     }
 
-    public static UEMLibraryFunction makeSetFuncFromListen(VariableTypeWrapper variableType) {
+    public static UEMLibraryFunction makeSetFuncFromListen() {
         UEMLibraryFunction libraryFunction = makeSetFunction(
-                variableType.getVariableType().getName(), AlgorithmConstant.LISTEN, "void");
-        libraryFunction.getArgument().add(makeArgument("void*", "buffer", YesNoType.YES));
+                AlgorithmConstant.SHARED_DATA, AlgorithmConstant.LISTEN, "void");
+        libraryFunction.getArgument().add(makeArgument("semo_int32", "robot_id", YesNoType.NO));
+        libraryFunction.getArgument()
+                .add(makeArgument("semo_int64", "updated_time", YesNoType.YES));
+        libraryFunction.getArgument().add(makeArgument("semo_int8*", "buffer", YesNoType.YES));
         return libraryFunction;
     }
-
-
-
 }

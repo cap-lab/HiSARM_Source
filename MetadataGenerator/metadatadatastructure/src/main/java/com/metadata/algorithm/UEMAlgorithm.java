@@ -68,17 +68,10 @@ public class UEMAlgorithm {
         return null;
     }
 
-    public void addMulticastGroup(String groupId, int size) {
+    public void addMulticastGroup(String groupId, int size, int count) {
         if (getMulticastGroup(groupId) == null) {
             algorithm.getMulticastGroups().getMulticastGroup().add(new UEMMulticastGroup(groupId,
-                    size + AlgorithmConstant.MULTICAST_PACKET_SIZE, true));
-        }
-    }
-
-    public void addInnerMulticastGroup(String groupId, int size) {
-        if (getMulticastGroup(groupId) == null) {
-            algorithm.getMulticastGroups().getMulticastGroup()
-                    .add(new UEMMulticastGroup(groupId, size, false));
+                    size, count, true));
         }
     }
 

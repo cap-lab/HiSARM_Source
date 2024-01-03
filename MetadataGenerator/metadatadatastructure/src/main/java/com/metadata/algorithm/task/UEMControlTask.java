@@ -25,8 +25,6 @@ public class UEMControlTask extends UEMTask {
     public UEMControlTask(UEMRobotTask robot) {
         super(robot.getName());
         setName(robot.getName(), AlgorithmConstant.CONTROL);
-        setCflags("");
-        setLdflags("");
         setExtraCommonCode(robot.getName());
         setFile(AlgorithmConstant.CONTROL + AlgorithmConstant.TASK_FILE_EXTENSION);
         setHasSubGraph(AlgorithmConstant.NO);
@@ -40,41 +38,54 @@ public class UEMControlTask extends UEMTask {
     }
 
     private void setExtraFile(String robotId) {
-        getExtraHeader().add(AlgorithmConstant.COMMON_COMMUNICATION_HEADER);
-        getExtraSource().add(AlgorithmConstant.COMMON_COMMUNICATION_SOURCE);
-        getExtraHeader().add(AlgorithmConstant.COMMON_LEADER_HEADER);
-        getExtraHeader().add(AlgorithmConstant.COMMON_PORT_HEADER);
-        getExtraHeader().add(AlgorithmConstant.COMMON_VARIABLE_HEADER);
-        getExtraSource().add(AlgorithmConstant.COMMON_VARIABLE_SOURCE);
+        getExtraSource().add(AlgorithmConstant.SEMO + AlgorithmConstant.ACTION_SOURCE_SUFFIX);
+        getExtraSource().add(AlgorithmConstant.SEMO + AlgorithmConstant.EVENT_SOURCE_SUFFIX);
+        getExtraSource().add(AlgorithmConstant.SEMO + AlgorithmConstant.MODE_SOURCE_SUFFIX);
+        getExtraSource().add(AlgorithmConstant.SEMO + AlgorithmConstant.SERVICE_SOURCE_SUFFIX);
+        getExtraSource().add(AlgorithmConstant.SEMO + AlgorithmConstant.TIMER_SOURCE_SUFFIX);
+        getExtraSource().add(AlgorithmConstant.SEMO + AlgorithmConstant.TRANSITION_SOURCE_SUFFIX);
 
-        getExtraHeader().add(robotId + AlgorithmConstant.ROBOT_COMMON_HEADER_SUFFIX);
-        getExtraSource().add(robotId + AlgorithmConstant.ROBOT_VARIABLE_SOURCE_SUFFIX);
-        getExtraHeader().add(robotId + AlgorithmConstant.ROBOT_VARIABLE_HEADER_SUFFIX);
-        getExtraSource().add(robotId + AlgorithmConstant.ROBOT_PORT_SOURCE_SUFFIX);
-        getExtraHeader().add(robotId + AlgorithmConstant.ROBOT_PORT_HEADER_SUFFIX);
-        getExtraSource().add(robotId + AlgorithmConstant.ROBOT_EVENT_SOURCE_SUFFIX);
-        getExtraHeader().add(robotId + AlgorithmConstant.ROBOT_EVENT_HEADER_SUFFIX);
-        getExtraSource().add(robotId + AlgorithmConstant.ROBOT_RESOURCE_SOURCE_SUFFIX);
-        getExtraHeader().add(robotId + AlgorithmConstant.ROBOT_RESOURCE_HEADER_SUFFIX);
-        getExtraSource().add(robotId + AlgorithmConstant.ROBOT_ACTION_SOURCE_SUFFIX);
-        getExtraHeader().add(robotId + AlgorithmConstant.ROBOT_ACTION_HEADER_SUFFIX);
-        getExtraSource().add(robotId + AlgorithmConstant.ROBOT_MODE_SOURCE_SUFFIX);
-        getExtraHeader().add(robotId + AlgorithmConstant.ROBOT_MODE_HEADER_SUFFIX);
-        getExtraSource().add(robotId + AlgorithmConstant.ROBOT_SERVICE_SOURCE_SUFFIX);
-        getExtraHeader().add(robotId + AlgorithmConstant.ROBOT_SERVICE_HEADER_SUFFIX);
-        getExtraSource().add(robotId + AlgorithmConstant.ROBOT_TIMER_SOURCE_SUFFIX);
-        getExtraHeader().add(robotId + AlgorithmConstant.ROBOT_TIMER_HEADER_SUFFIX);
-        getExtraSource().add(robotId + AlgorithmConstant.ROBOT_TRANSITION_SOURCE_SUFFIX);
-        getExtraHeader().add(robotId + AlgorithmConstant.ROBOT_TRANSITION_HEADER_SUFFIX);
-        getExtraHeader().add(robotId + AlgorithmConstant.ROBOT_TEAM_HEADER_SUFFIX);
+        getExtraSource().add(AlgorithmConstant.SEMO + AlgorithmConstant.GROUP_SOURCE_SUFFIX);
+
+        getExtraSource().add(AlgorithmConstant.SEMO + AlgorithmConstant.LEADER_SOURCE_SUFFIX);
+
+        getExtraHeader().add(robotId + AlgorithmConstant.COMMON_HEADER_SUFFIX);
+        getExtraSource().add(robotId + AlgorithmConstant.VARIABLE_SOURCE_SUFFIX);
+        getExtraHeader().add(robotId + AlgorithmConstant.VARIABLE_HEADER_SUFFIX);
+        getExtraSource().add(robotId + AlgorithmConstant.PORT_SOURCE_SUFFIX);
+        getExtraHeader().add(robotId + AlgorithmConstant.PORT_HEADER_SUFFIX);
+        getExtraSource().add(robotId + AlgorithmConstant.EVENT_SOURCE_SUFFIX);
+        getExtraHeader().add(robotId + AlgorithmConstant.EVENT_HEADER_SUFFIX);
+        getExtraSource().add(robotId + AlgorithmConstant.RESOURCE_SOURCE_SUFFIX);
+        getExtraHeader().add(robotId + AlgorithmConstant.RESOURCE_HEADER_SUFFIX);
+        getExtraSource().add(robotId + AlgorithmConstant.ACTION_SOURCE_SUFFIX);
+        getExtraHeader().add(robotId + AlgorithmConstant.ACTION_HEADER_SUFFIX);
+        getExtraSource().add(robotId + AlgorithmConstant.MODE_SOURCE_SUFFIX);
+        getExtraHeader().add(robotId + AlgorithmConstant.MODE_HEADER_SUFFIX);
+        getExtraSource().add(robotId + AlgorithmConstant.SERVICE_SOURCE_SUFFIX);
+        getExtraHeader().add(robotId + AlgorithmConstant.SERVICE_HEADER_SUFFIX);
+        getExtraSource().add(robotId + AlgorithmConstant.TIMER_SOURCE_SUFFIX);
+        getExtraHeader().add(robotId + AlgorithmConstant.TIMER_HEADER_SUFFIX);
+        getExtraSource().add(robotId + AlgorithmConstant.TRANSITION_SOURCE_SUFFIX);
+        getExtraHeader().add(robotId + AlgorithmConstant.TRANSITION_HEADER_SUFFIX);
+        getExtraHeader().add(robotId + AlgorithmConstant.TEAM_HEADER_SUFFIX);
+
+        getExtraHeader().add(robotId + AlgorithmConstant.GROUP_HEADER_SUFFIX);
+        getExtraSource().add(robotId + AlgorithmConstant.GROUP_SOURCE_SUFFIX);
+
+        getExtraHeader().add(robotId + AlgorithmConstant.LEADER_HEADER_SUFFIX);
+        getExtraSource().add(robotId + AlgorithmConstant.LEADER_SOURCE_SUFFIX);
+
+        getExtraHeader().add(robotId + AlgorithmConstant.LEADER_DATA_HEADER_SUFFIX);
+        getExtraSource().add(robotId + AlgorithmConstant.LEADER_DATA_SOURCE_SUFFIX);
     }
 
     private void setMode() {
         UEMModeTask mode = new UEMModeTask();
         mode.setName(getName());
-        mode.setDeadline(20);
+        mode.setDeadline(100);
         mode.setDeadlineUnit(TimeMetricType.MS.value());
-        mode.setPeriod(20);
+        mode.setPeriod(100);
         mode.setPeriodUnit(TimeMetricType.MS.value());
         setMode(mode);
     }

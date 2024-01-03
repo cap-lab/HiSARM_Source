@@ -1,6 +1,7 @@
 package com.metadata.algorithm.task;
 
 import java.math.BigInteger;
+import java.nio.file.Path;
 import com.dbmanager.datastructure.task.Task;
 import com.metadata.algorithm.UEMChannelPort;
 import com.metadata.algorithm.UEMModeTask;
@@ -18,8 +19,8 @@ public class UEMLeaderTask extends UEMTask {
     private UEMLibraryPort leaderPort;
     private UEMChannelPort controlTaskPort;
 
-    public UEMLeaderTask(UEMRobotTask robotTask) throws Exception {
-        super(robotTask.getName());
+    public UEMLeaderTask(UEMRobotTask robotTask, Path taskServer) throws Exception {
+        super(robotTask.getName(), taskServer);
         leaderTask = robotTask.getRobot().getAdditionalTask(AdditionalTaskType.LEADER_SELECTION)
                 .getTask();
         setFile(leaderTask.getCICFile());
@@ -30,7 +31,8 @@ public class UEMLeaderTask extends UEMTask {
         setLanguage(leaderTask.getLanguage());
         setIsHardwareDependent(YesNoType.NO);
         setTaskType(AlgorithmConstant.COMPUTATION_TASK);
-        getExtraHeader().add(AlgorithmConstant.COMMON_LEADER_HEADER);
+        getExtraHeader().add(AlgorithmConstant.SEMO + AlgorithmConstant.LEADER_HEADER_SUFFIX);
+        getExtraHeader().add(AlgorithmConstant.SEMO + AlgorithmConstant.GROUP_HEADER_SUFFIX);
         setPort();
         setLibraryPort();
         setMode();

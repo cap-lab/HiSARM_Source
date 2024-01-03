@@ -12,6 +12,7 @@ public class UEMSharedData extends UEMLibrary {
     public UEMSharedData(UEMRobotTask robot) {
         super(robot.getName());
         getExtraHeader().add(AlgorithmConstant.MUTEX_HEADER);
+        makeLIbraryFunctions();
     }
 
     public static String makeGroup(String groupScope, String actionName, int argIndex) {
@@ -35,17 +36,15 @@ public class UEMSharedData extends UEMLibrary {
 
     public void setVariableType(VariableTypeWrapper variableType) {
         this.variableType = variableType;
-        getFunction().add(UEMSharedDataLibraryFunction.makeAvailFuncFromReport(variableType));
-        getFunction().add(UEMSharedDataLibraryFunction.makeAvailFuncFromAction(variableType));
-        getFunction().add(UEMSharedDataLibraryFunction.makeGetFuncFromAction(variableType));
-        getFunction().add(UEMSharedDataLibraryFunction.makeGetFuncFromReport(variableType));
-        getFunction().add(UEMSharedDataLibraryFunction.makeSetFuncFromListen(variableType));
-        getFunction().add(UEMSharedDataLibraryFunction.makeSetFuncFromAction(variableType));
-
     }
 
     public void makeLIbraryFunctions() {
-
+        getFunction().add(UEMSharedDataLibraryFunction.makeAvailFuncFromReport());
+        getFunction().add(UEMSharedDataLibraryFunction.makeGetFuncFromAction());
+        getFunction().add(UEMSharedDataLibraryFunction.makeGetSpecificFuncFromAction());
+        getFunction().add(UEMSharedDataLibraryFunction.makeGetFuncFromReport());
+        getFunction().add(UEMSharedDataLibraryFunction.makeSetFuncFromListen());
+        getFunction().add(UEMSharedDataLibraryFunction.makeSetFuncFromAction());
     }
 
     public String getGroup() {
