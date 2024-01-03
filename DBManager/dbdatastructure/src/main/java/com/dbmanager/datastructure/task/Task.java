@@ -19,6 +19,7 @@ public class Task {
     private String RunCondition;
     private ChannelPort groupPort;
     private LibraryPort leaderPort;
+    private LibraryPort simulationPort;
     private List<ExtraSetting> extraSettings = new ArrayList<>();
     private Set<ChannelPort> channelPortSet = new HashSet<>();
     private Set<ResourcePort> resourcePortSet = new HashSet<>();
@@ -173,4 +174,14 @@ public class Task {
             this.leaderPort = leaderPort;
         }
     }
+
+    public LibraryPort getSimulationPort() {
+        return simulationPort;
+    }
+
+    public void setSimulationPort(LibraryPort simulationPort) {
+        this.simulationPort = simulationPort;
+    }
+
+
 }

@@ -97,6 +97,17 @@ public class TaskMapper {
         return leaderPort;
     }
 
+    private static LibraryPort makeSimulationPort(List<Document> documentList) {
+        LibraryPort simulationPort = null;
+        if (documentList.stream().filter(
+                doc -> doc.getString("type").equals(CommunicationType.SIMULATION.getValue()))
+                .findFirst().isPresent()) {
+            simulationPort = new LibraryPort();
+            simulationPort.setName(CommunicationType.SIMULATION.getValue());
+        }
+        return simulationPort;
+    }
+
     private static Set<FileItem> makeTaskFileSet(List<Document> documentList) {
         Set<FileItem> taskfiles = new HashSet<FileItem>();
         documentList.forEach(doc -> {
@@ -165,6 +176,8 @@ public class TaskMapper {
                     makeLibraryPortSet((List<Document>) document.get("Communication")));
             task.setGroupPort(makeGroupPort((List<Document>) document.get("Communication")));
             task.setLeaderPort(makeLeaderPort((List<Document>) document.get("Communication")));
+            task.setSimulationPort(
+                    makeSimulationPort((List<Document>) document.get("Communication")));
             task.setPortMapSet(makePortMapSet((List<Document>) document.get("PortMap")));
             task.setTaskFiles(makeTaskFileSet((List<Document>) document.get("File")));
         } catch (Exception e) {

@@ -11,6 +11,7 @@ import com.dbmanager.commonlibraries.Mapper.LeaderSelectionAlgorithmMapper;
 import com.dbmanager.commonlibraries.Mapper.ResourceMapper;
 import com.dbmanager.commonlibraries.Mapper.RobotImplMapper;
 import com.dbmanager.commonlibraries.Mapper.RobotMapper;
+import com.dbmanager.commonlibraries.Mapper.SimulationDeviceMapper;
 import com.dbmanager.commonlibraries.Mapper.TaskMapper;
 import com.dbmanager.commonlibraries.Mapper.VariableMapper;
 import com.dbmanager.datastructure.action.Action;
@@ -22,6 +23,7 @@ import com.dbmanager.datastructure.leaderselectionalgorithm.LeaderSelectionAlgor
 import com.dbmanager.datastructure.resource.Resource;
 import com.dbmanager.datastructure.robot.Robot;
 import com.dbmanager.datastructure.robot.RobotImpl;
+import com.dbmanager.datastructure.simulationdevice.SimulationDevice;
 import com.dbmanager.datastructure.task.Task;
 import com.dbmanager.datastructure.variable.Variable;
 import com.dbmanager.datastructure.variable.VariableDirection;
@@ -143,6 +145,10 @@ public class DBService {
     public static LeaderSelectionAlgorithm getLeaderSelectionAlgorithm(String leaderSelectionId) {
         return LeaderSelectionAlgorithmMapper.mapToLeaderSelectionAlgorithm(
                 dbDao.getLeaderSelectionAlgorithm(leaderSelectionId));
+    }
+
+    public static SimulationDevice getSimulationDevice(String deviceId) {
+        return SimulationDeviceMapper.mapToSimulationDevice(dbDao.getSimulationDevice(deviceId));
     }
 
     public static void close() {

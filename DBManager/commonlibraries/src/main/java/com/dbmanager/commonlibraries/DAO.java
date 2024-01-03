@@ -43,6 +43,7 @@ public class DAO {
 	private MongoCollection<Document> variableImplCollection;
 	private MongoCollection<Document> groupingCollection;
 	private MongoCollection<Document> leaderCollection;
+	private MongoCollection<Document> simulationDeviceCollection;
 
 	private DAO() {}
 
@@ -62,6 +63,7 @@ public class DAO {
 		variableImplCollection = mDB.getCollection(DBCollections.Collection_VariableImpl);
 		groupingCollection = mDB.getCollection(DBCollections.Collection_Grouping_Algorithm);
 		leaderCollection = mDB.getCollection(DBCollections.Collection_Leader_Selection_Algorithm);
+		simulationDeviceCollection = mDB.getCollection(DBCollections.Collection_Simulation_Device);
 	}
 
 	private static class DBHolder {
@@ -267,6 +269,16 @@ public class DAO {
 		try {
 			Bson queryFilter = Filters.eq("LeaderSelectionId", leaderSelectionId);
 			return leaderCollection.find(queryFilter).first();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public Document getSimulationDevice(String deviceId) {
+		try {
+			Bson queryFilter = Filters.eq("DeviceId", deviceId);
+			return simulationDeviceCollection.find(queryFilter).first();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
