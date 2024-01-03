@@ -72,6 +72,11 @@ public class ModeWrapper {
         for (GroupWrapper group : this.groupList) {
             String newGroupId = makeGroupId(newGroupPrefix, group.getGroup().getName());
             String newId = makeGroupId(id, group.getGroup().getName());
+            if (groupList != null) {
+                if (!groupList.contains(newGroupId)) {
+                    continue;
+                }
+            }
             group.getModeTransition().traverseModeTransition(newId, newGroupId, this, id,
                     visitedList, groupList, visitor, variableVisitor);
         }
