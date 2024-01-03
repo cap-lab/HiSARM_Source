@@ -25,20 +25,127 @@ public class ControlTaskCodeGenerator {
 
     public void generateControlTaskCode(Path targetDir, List<CodeRobotWrapper> robotList) {
         try {
+            copyCodeRelatedControlTask(targetDir);
             for (CodeRobotWrapper robot : robotList) {
-                generateEventCode(targetDir, robot);
-                generatePortCode(targetDir, robot);
-                generateResourceCode(targetDir, robot);
-                generateActionCode(targetDir, robot);
-                generateTimerCode(targetDir, robot);
-                generateServiceCode(targetDir, robot);
-                generateModeCode(targetDir, robot);
-                generateTransitionCode(targetDir, robot);
-                copyCodeRelatedControlTask(targetDir);
+                generateCodeRelatedControlTask(targetDir, robot);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void copyCodeRelatedControlTask(Path targetDir) throws Exception {
+        copyEventCode(targetDir);
+        copyResourceCode(targetDir);
+        copyActionCode(targetDir);
+        copyTimerCode(targetDir);
+        copyServiceCode(targetDir);
+        copyModeCode(targetDir);
+        copyTransitionCode(targetDir);
+        copyControlTaskCode(targetDir);
+    }
+
+    private void copyEventCode(Path targetDir) throws Exception {
+        LocalFileCopier.copyFile(CodeGeneratorConstant.EVENT_HEADER_PATH,
+                Paths.get(targetDir.toString(), CodeGeneratorConstant.EVENT_HEADER));
+        LocalFileCopier.copyFile(CodeGeneratorConstant.EVENT_SOURCE_PATH,
+                Paths.get(targetDir.toString(), CodeGeneratorConstant.EVENT_SOURCE));
+    }
+
+    private void copyResourceCode(Path targetDir) throws Exception {
+        LocalFileCopier.copyFile(CodeGeneratorConstant.RESOURCE_HEADER_PATH,
+                Paths.get(targetDir.toString(), CodeGeneratorConstant.RESOURCE_HEADER));
+    }
+
+    private void copyActionCode(Path targetDir) throws Exception {
+        LocalFileCopier.copyFile(CodeGeneratorConstant.ACTION_HEADER_PATH,
+                Paths.get(targetDir.toString(), CodeGeneratorConstant.ACTION_HEADER));
+        LocalFileCopier.copyFile(CodeGeneratorConstant.ACTION_SOURCE_PATH,
+                Paths.get(targetDir.toString(), CodeGeneratorConstant.ACTION_SOURCE));
+    }
+
+    private void copyTimerCode(Path targetDir) throws Exception {
+        LocalFileCopier.copyFile(CodeGeneratorConstant.TIMER_HEADER_PATH,
+                Paths.get(targetDir.toString(), CodeGeneratorConstant.TIMER_HEADER));
+        LocalFileCopier.copyFile(CodeGeneratorConstant.TIMER_SOURCE_PATH,
+                Paths.get(targetDir.toString(), CodeGeneratorConstant.TIMER_SOURCE));
+    }
+
+    private void copyServiceCode(Path targetDir) throws Exception {
+        LocalFileCopier.copyFile(CodeGeneratorConstant.SERVICE_HEADER_PATH,
+                Paths.get(targetDir.toString(), CodeGeneratorConstant.SERVICE_HEADER));
+        LocalFileCopier.copyFile(CodeGeneratorConstant.SERVICE_SOURCE_PATH,
+                Paths.get(targetDir.toString(), CodeGeneratorConstant.SERVICE_SOURCE));
+    }
+
+    private void copyModeCode(Path targetDir) throws Exception {
+        LocalFileCopier.copyFile(CodeGeneratorConstant.MODE_HEADER_PATH,
+                Paths.get(targetDir.toString(), CodeGeneratorConstant.MODE_HEADER));
+        LocalFileCopier.copyFile(CodeGeneratorConstant.MODE_SOURCE_PATH,
+                Paths.get(targetDir.toString(), CodeGeneratorConstant.MODE_SOURCE));
+    }
+
+    private void copyTransitionCode(Path targetDir) throws Exception {
+        LocalFileCopier.copyFile(CodeGeneratorConstant.TRANSITION_HEADER_PATH,
+                Paths.get(targetDir.toString(), CodeGeneratorConstant.TRANSITION_HEADER));
+        LocalFileCopier.copyFile(CodeGeneratorConstant.TRANSITION_SOURCE_PATH,
+                Paths.get(targetDir.toString(), CodeGeneratorConstant.TRANSITION_SOURCE));
+    }
+
+    private void copyControlTaskCode(Path targetDir) throws Exception {
+        LocalFileCopier.copyFile(CodeGeneratorConstant.CONTROL_TASK_CODE_PATH,
+                Paths.get(targetDir.toString(), CodeGeneratorConstant.CONTROL_TASK_CIC));
+    }
+
+    private void generateCodeRelatedControlTask(Path targetDir, CodeRobotWrapper robot)
+            throws Exception {
+        generateGroupCode(targetDir, robot);
+        generateLeaderCode(targetDir, robot);
+        generateEventCode(targetDir, robot);
+        generatePortCode(targetDir, robot);
+        generateResourceCode(targetDir, robot);
+        generateActionCode(targetDir, robot);
+        generateTimerCode(targetDir, robot);
+        generateServiceCode(targetDir, robot);
+        generateModeCode(targetDir, robot);
+        generateTransitionCode(targetDir, robot);
+
+    }
+
+    private void generateGroupCode(Path targetDir, CodeRobotWrapper robot) throws Exception {
+        Map<String, Object> rootHash = new HashMap<>();
+
+        rootHash.put(ControlTaskConstant.ROBOT_ID, robot.getRobotName());
+        rootHash.put(ControlTaskConstant.TEAM,
+                robot.getRobot().getRobotTask().getRobot().getTeam());
+        rootHash.put(ControlTaskConstant.GROUP_MAP,
+                robot.getRobot().getRobotTask().getRobot().getGroupMap());
+
+        FTLHandler.getInstance().generateCode(CodeGeneratorConstant.GROUP_HEADER_TEMPLATE,
+                Paths.get(targetDir.toString(),
+                        robot.getRobotName() + CodeGeneratorConstant.GROUP_HEADER_SUFFIX),
+                rootHash);
+        FTLHandler.getInstance().generateCode(CodeGeneratorConstant.GROUP_SOURCE_TEMPLATE,
+                Paths.get(targetDir.toString(),
+                        robot.getRobotName() + CodeGeneratorConstant.GROUP_SOURCE_SUFFIX),
+                rootHash);
+    }
+
+    private void generateLeaderCode(Path targetDir, CodeRobotWrapper robot) throws Exception {
+        Map<String, Object> rootHash = new HashMap<>();
+
+        rootHash.put(ControlTaskConstant.ROBOT_ID, robot.getRobotName());
+        rootHash.put(ControlTaskConstant.INITIAL_TEAM,
+                robot.getRobot().getRobotTask().getRobot().getTeam());
+
+        FTLHandler.getInstance().generateCode(CodeGeneratorConstant.LEADER_HEADER_TEMPLATE,
+                Paths.get(targetDir.toString(),
+                        robot.getRobotName() + CodeGeneratorConstant.LEADER_HEADER_SUFFIX),
+                rootHash);
+        FTLHandler.getInstance().generateCode(CodeGeneratorConstant.LEADER_SOURCE_TEMPLATE,
+                Paths.get(targetDir.toString(),
+                        robot.getRobotName() + CodeGeneratorConstant.LEADER_SOURCE_SUFFIX),
+                rootHash);
     }
 
     private void generateEventCode(Path targetDir, CodeRobotWrapper robot) {
@@ -253,12 +360,4 @@ public class ControlTaskCodeGenerator {
                 rootHash);
     }
 
-    private void copyCodeRelatedControlTask(Path targetDir) {
-        try {
-            LocalFileCopier.copyFile(CodeGeneratorConstant.CONTROL_TASK_CODE,
-                    Paths.get(targetDir.toString(), CodeGeneratorConstant.CONTROL_TASK_CIC));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

@@ -50,7 +50,7 @@ public class CodeGenerator {
         Map<String, Integer> taskIdMap = new HashMap<>();
         for (UEMRobot robot : robotList) {
             String robotName = robot.getRobotName();
-            if (!taskIdMap.containsKey(taskIdMap)) {
+            if (!taskIdMap.containsKey(robotName)) {
                 taskIdMap.put(robotName, 0);
             }
         }
@@ -67,15 +67,28 @@ public class CodeGenerator {
         }
     }
 
+    private void setNewTaskId(UEMAlgorithm algorithm) {
+        int taskId = 0;
+        for (TaskType task : algorithm.getAlgorithm().getTasks().getTask()) {
+            UEMTask t = (UEMTask) task;
+            t.setId(taskId);
+            taskId++;
+        }
+    }
+
     public void codeGenerate(Path targetDir, MissionWrapper mission, AdditionalInfo additionalInfo,
             UEMAlgorithm algorithm, List<UEMRobot> robotList) {
-        setNewTaskId(algorithm, robotList);
+        if (additionalInfo.getEnvironment().equals("simulation")) {
+            setNewTaskId(algorithm);
+        } else {
+            setNewTaskId(algorithm, robotList);
+        }
         List<CodeRobotWrapper> codeRobotList = makeDataStructure(mission, robotList);
         CommonCodeGenerator commonCodeGenerator = new CommonCodeGenerator();
-        commonCodeGenerator.generate(targetDir, codeRobotList, mission, additionalInfo);
+        commonCodeGenerator.generate(targetDir, codeRobotList, mission);
         AdditionalCodeGenerator additionalTaskCodeGenerator = new AdditionalCodeGenerator();
         additionalTaskCodeGenerator.generateAdditionalCode(targetDir, additionalInfo,
-                codeRobotList);
+                codeRobotList, mission);
         CommunicationCodeGenerator communicationCodeGenerator = new CommunicationCodeGenerator();
         communicationCodeGenerator.generateCommunicationCode(targetDir, robotList);
         SharedDataCodeGenerator sharedDataCodeGenerator = new SharedDataCodeGenerator();

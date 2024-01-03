@@ -15,21 +15,20 @@ public class SharedDataCodeGenerator {
     public void generate(Path targetDir, List<CodeRobotWrapper> robotList) {
         for (CodeRobotWrapper robot : robotList) {
             for (UEMLibrary library : robot.getRobot().getRobotTask().getSharedDataTaskList()) {
-                makeSharedDataTaskCode(targetDir, (UEMSharedData) library, robot);
+                makeSharedDataTaskCode(targetDir, (UEMSharedData) library, robot, robotList);
             }
         }
     }
 
     private void makeSharedDataTaskCode(Path targetDir, UEMSharedData library,
-            CodeRobotWrapper robot) {
+            CodeRobotWrapper robot, List<CodeRobotWrapper> robotList) {
         Map<String, Object> rootHash = new HashMap<>();
 
         rootHash.put(SharedDataTaskConstant.ROBOT_ID, robot.getRobotName());
         rootHash.put(SharedDataTaskConstant.LIB_NAME, library.getName());
         rootHash.put(SharedDataTaskConstant.VARIABLE_TYPE, library.getVariableType());
+        rootHash.put(SharedDataTaskConstant.MAX_ROBOT_NUM, robotList.size());
 
-        FTLHandler.getInstance().generateCode(CodeGeneratorConstant.SHARED_DATA_HEADER_TEMPLATE,
-                Paths.get(targetDir.toString(), library.getHeader()), rootHash);
         FTLHandler.getInstance().generateCode(CodeGeneratorConstant.SHARED_DATA_SOURCE_TEMPLATE,
                 Paths.get(targetDir.toString(), library.getFile()), rootHash);
     }
