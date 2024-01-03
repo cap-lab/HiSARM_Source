@@ -2,7 +2,8 @@ package com.dbmanager.datastructure.leaderselectionalgorithm;
 
 public class LeaderSelectionAlgorithm {
     private String leaderSelectionId;
-    private String TaskId;
+    private String taskId;
+    private int sharedDataSize;
 
     public String getLeaderSelectionId() {
         return leaderSelectionId;
@@ -13,11 +14,19 @@ public class LeaderSelectionAlgorithm {
     }
 
     public String getTaskId() {
-        return TaskId;
+        return taskId;
     }
 
     public void setTaskId(String taskId) {
-        TaskId = taskId;
+        this.taskId = taskId;
+    }
+
+    public int getSharedDataSize() {
+        return sharedDataSize;
+    }
+
+    public void setSharedDataSize(int sharedDataSize) {
+        this.sharedDataSize = sharedDataSize;
     }
 
 }

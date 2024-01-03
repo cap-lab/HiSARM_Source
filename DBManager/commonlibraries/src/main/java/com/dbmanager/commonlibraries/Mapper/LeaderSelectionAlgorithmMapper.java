@@ -12,6 +12,7 @@ public class LeaderSelectionAlgorithmMapper {
         try {
             leaderSelectionAlgorithm.setLeaderSelectionId(document.getString("LeaderSelectionId"));
             leaderSelectionAlgorithm.setTaskId(document.getString("TaskId"));
+            leaderSelectionAlgorithm.setSharedDataSize(document.getInteger("SharedDataSize"));
         } catch (Exception e) {
             e.printStackTrace();
         }
