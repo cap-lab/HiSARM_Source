@@ -16,9 +16,14 @@ import com.scriptparser.parserdatastructure.wrapper.TransitionWrapper;
 
 public class RobotModeMapper {
     private class ModeListMaker implements ModeTransitionVisitor {
+        CodeRobotWrapper codeRobot;
         List<CodeModeWrapper> modeList = new ArrayList<CodeModeWrapper>();
         Map<String, CodeTransitionWrapper> transitionMap = new HashMap<>();
         Map<String, CodeModeWrapper> modeMap = new HashMap<>();
+
+        public void setCodeRobot(CodeRobotWrapper codeRobot) {
+            this.codeRobot = codeRobot;
+        }
 
         @Override
         public void visitMode(ModeWrapper mode, String modeId, String groupId,
@@ -87,6 +92,7 @@ public class RobotModeMapper {
                 codeRobot.setRobot(robot);
                 CodeTransitionWrapper codeTransition = new CodeTransitionWrapper();
                 ModeListMaker maker = new ModeListMaker();
+                maker.setCodeRobot(codeRobot);
                 codeTransition.setTransition(transition);
                 codeTransition.setGroupId(robot.getRobotTask().getRobot().getTeam());
                 codeTransition.setTransitionId(robot.getRobotTask().getRobot().getTeam());

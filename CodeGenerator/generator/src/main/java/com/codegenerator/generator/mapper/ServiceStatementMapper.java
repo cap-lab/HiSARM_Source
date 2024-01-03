@@ -236,6 +236,7 @@ public class ServiceStatementMapper {
                 codeStatement.getVariableList().addAll(sharedVariableList);
                 codeStatement.setActionList(
                         makeActionImplList(actionTaskList, inputVariableList, outputVariableList));
+                codeStatement.setService(service);
                 statementList.add(codeStatement);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -308,6 +309,7 @@ public class ServiceStatementMapper {
                 codeStatement.getVariableList().add(codeTeamVariable);
                 codeStatement.getComm().setTeam(codeTeamVariable);
                 codeStatement.getComm().setMessage(codeVariable);
+                codeStatement.setService(service);
                 for (UEMCommPort p : portList) {
                     CodePortWrapper codePort = new CodePortWrapper();
                     codePort.setPort(p);
@@ -406,6 +408,7 @@ public class ServiceStatementMapper {
                         CodeStatementWrapper.makeStatementId(service.getServiceId(), statementId));
                 codeStatement.setVariableList(maker.conditionVariableList);
                 codeStatement.setCondition(codeCondition);
+                codeStatement.setService(service);
                 statementList.add(codeStatement);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -441,6 +444,7 @@ public class ServiceStatementMapper {
             codeStatement.setStatementId(
                     CodeStatementWrapper.makeStatementId(service.getServiceId(), statementId));
             codeStatement.setTh(codeThrow);
+            codeStatement.setService(service);
             statementList.add(codeStatement);
         }
 
@@ -450,6 +454,7 @@ public class ServiceStatementMapper {
             codeStatement.setStatement(wrapper);
             codeStatement.setStatementId(
                     CodeStatementWrapper.makeStatementId(service.getServiceId(), index));
+            codeStatement.setService(service);
             statementList.add(codeStatement);
         }
 
