@@ -24,7 +24,6 @@ public class RobotImplWrapper {
     private List<ControlStrategyWrapper> controlStrategyList = new ArrayList<>();
     private List<ActionTypeWrapper> actionTypeList = new ArrayList<>();
     private List<ResourceWrapper> resourceList = new ArrayList<>();
-    private GroupingAlgorithmWrapper groupingAlgorithm;
     private Map<KeyValue<ServiceWrapper, String>, VariableTypeWrapper> variableMap =
             new HashMap<>();
     private Map<PrimitiveType, VariableTypeWrapper> primitiveVariableMap = new HashMap<>();

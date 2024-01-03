@@ -19,10 +19,7 @@ public class GroupAllocator {
         try {
             GroupingAlgorithmWrapper groupingAlgorithm = new GroupingAlgorithmWrapper();
             groupingAlgorithm.setGroupingAlgorithm(
-                    DBService.getGroupingAlgorithm(additionalInfo.getGroupingAlgorithm()));
-            groupingAlgorithm.setRunTimeTask(
-                    DBService.getTask(groupingAlgorithm.getGroupingAlgorithm().getRunTimeTask()));
-            robotList.forEach(r -> r.setGroupingAlgorithm(groupingAlgorithm));
+                            DBService.getGroupingAlgorithm(additionalInfo.getGroupingAlgorithm()));
 
             Path compileTimeAllocator = Paths.get(additionalInfo.getTaskServerPrefix(),
                     groupingAlgorithm.getGroupingAlgorithm().getCompileTimeFile());
