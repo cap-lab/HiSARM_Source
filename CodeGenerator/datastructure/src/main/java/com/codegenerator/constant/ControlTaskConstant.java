@@ -34,4 +34,11 @@ public class ControlTaskConstant {
 
     // TRANSITION
     public static final String TRANSITION_LIST = "transitionList";
+
+    // GROUP
+    public static final String TEAM = "team";
+    public static final String GROUP_MAP = "groupMap";
+
+    // LEADER
+    public static final String INITIAL_TEAM = "initialTeam";
 }
