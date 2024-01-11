@@ -11,6 +11,7 @@ import lombok.Setter;
 @Setter
 public class CodeStatementWrapper {
     private StatementWrapper statement;
+    private CodeServiceWrapper service;
     private String statementId;
     private List<CodeVariableWrapper> variableList = new ArrayList<CodeVariableWrapper>();
     private List<CodeActionWrapper> actionList = new ArrayList<>();
