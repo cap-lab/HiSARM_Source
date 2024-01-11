@@ -3,6 +3,8 @@
 #include "semo_simulation.h"
 #include "RemoteAPIClient.h"
 
+extern bool started;
+
 class RemoteAPIClientWrapper {
 private:
     //static std::mutex instance_mtx;   // Mutex for thread-safety during object creation
@@ -11,8 +13,7 @@ private:
     RemoteAPIClient client;
     std::mutex client_mtx;  // Mutex for thread-safety during client.call()
 
-    bool started = false;
-    std::mutex started_mtx;
+    //bool started = false;
 
     RemoteAPIClientWrapper() : client(SEMO_SIMULATOR_IP, SEMO_SIMULATOR_PORT, -1, -1) {}
 
@@ -38,11 +39,10 @@ public:
     }
 
     void start() {
-        std::lock_guard<std::mutex> lock(started_mtx);
+        client.step(false);
         if (started == false){
-            json _args(json_array_arg);
             started = true;
-            client.step(false);
+            json _args(json_array_arg);
             this->call("sim.startSimulation", _args);
         }
     }
