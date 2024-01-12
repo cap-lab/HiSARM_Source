@@ -38,9 +38,8 @@ public class AdditionalCodeGenerator {
         }
 
         if (additionalInfo.getEnvironment().equals("simulation")) {
-            generateSimulationCode(targetDir, additionalInfo);
             for (CodeRobotWrapper robot : robotList) {
-                copySimulationFile(targetDir, robot);
+                generateSimulationCode(targetDir, robot, additionalInfo);
             }
         }
     } catch (Exception e) {
@@ -139,28 +138,18 @@ private void copyGroupCode(Path targetDir) throws Exception {
     }
 
 
-    private void generateSimulationCode(Path targetDir, AdditionalInfo additionalInfo) {
+    private void generateSimulationCode(Path targetDir, CodeRobotWrapper robot,
+            AdditionalInfo additionalInfo) {
         Map<String, Object> rootHash = new HashMap<>();
 
+        rootHash.put(SimulationTaskConstant.ROBOT_ID, robot.getRobotName());
         rootHash.put(SimulationTaskConstant.IP, additionalInfo.getEnvironmentInfo().get(0).getIp());
         rootHash.put(SimulationTaskConstant.PORT,
                 additionalInfo.getEnvironmentInfo().get(0).getPort());
 
         FTLHandler.getInstance().generateCode(CodeGeneratorConstant.SIMULATION_HEADER_TEMPLATE,
-                Paths.get(targetDir.toString(), CodeGeneratorConstant.SIMULATION_HEADER), rootHash);
-    }
-
-    private void copySimulationFile(Path targetDir, CodeRobotWrapper robot) {
-        try {
-            LocalFileCopier.copyFile(CodeGeneratorConstant.SIMULATION_TASK_CICL, Paths.get(
-                    targetDir.toString(),
-                    robot.getRobotName() + "_" + CodeGeneratorConstant.SIMULATION_TASK_CICL_NAME));
-            LocalFileCopier.copyFile(CodeGeneratorConstant.SIMULATION_CLIENT_HEADER, Paths.get(
-                    targetDir.toString(), CodeGeneratorConstant.SIMULATION_CLIENT_HEADER_NAME));
-            LocalFileCopier.copyFile(CodeGeneratorConstant.SIMULATION_CLIENT_SOURCE_PATH, Paths.get(
-                    targetDir.toString(), CodeGeneratorConstant.SIMULATION_CLIENT_SOURCE_NAME));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+                Paths.get(targetDir.toString(),
+                        robot.getRobotName() + CodeGeneratorConstant.SIMULATION_HEADER_SUFFIX),
+                rootHash);
     }
 }
