@@ -14,7 +14,7 @@ public class AdditionalInfo {
     private String environment;
     private List<EnvironmentInfo> environmentInfo;
     private List<DatabaseInfo> dbInfo;
-    private List<String> simulationClientList;
+    private SimulationClient simulationClient;
     private List<String> robotList;
     private List<ControlStrategyInfo> strategyList;
     private List<CustomVariableInfo> variableList;
@@ -148,11 +148,11 @@ public class AdditionalInfo {
         this.environmentInfo = environmentInfo;
     }
 
-    public List<String> getSimulationClientList() {
-        return simulationClientList;
+    public SimulationClient getSimulationClient() {
+        return simulationClient;
     }
 
-    public void setSimulationClientList(List<String> simulationClientList) {
-        this.simulationClientList = simulationClientList;
+    public void setSimulationClient(SimulationClient simulationClient) {
+        this.simulationClient = simulationClient;
     }
 }

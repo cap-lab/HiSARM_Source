@@ -14,6 +14,9 @@ import com.scriptparser.parserdatastructure.wrapper.MissionWrapper;
 import com.scriptparser.parserdatastructure.wrapper.RobotWrapper;
 import com.scriptparser.parserdatastructure.wrapper.TeamWrapper;
 import com.strategy.strategydatastructure.additionalinfo.AdditionalInfo;
+import com.strategy.strategydatastructure.additionalinfo.ClientInfo;
+import com.strategy.strategydatastructure.additionalinfo.SimulationRobot;
+import com.strategy.strategydatastructure.constant.AdditionalInfoConstant;
 import com.strategy.strategydatastructure.wrapper.RobotImplWrapper;
 import com.strategy.strategydatastructure.wrapper.RobotTypeWrapper;
 
@@ -31,7 +34,8 @@ public class RobotInfoMaker {
         }
     }
 
-    private static List<RobotImplWrapper> allocateSimulationRobot(MissionWrapper mission,
+    private static List<RobotImplWrapper> allocateSimulationMethodEvenlyDistribute(
+            MissionWrapper mission,
             AdditionalInfo additionalInfo) {
         List<RobotImplWrapper> robotImplList = new ArrayList<>();
         int numOfRobot = 0;
@@ -41,14 +45,15 @@ public class RobotInfoMaker {
             }
         }
         int teamIndex = 0;
-        int numOfDevice = additionalInfo.getSimulationClientList().size();
+        int numOfDevice = additionalInfo.getSimulationClient().getClientList().size();
         int numOfRobotPerDevice = numOfRobot / numOfDevice;
         int robotIndex = 0;
         int clientIndex = 0;
         for (TeamWrapper team : mission.getTeamList()) {
             for (RobotWrapper robot : team.getRobotList()) {
                 for (int i = 0; i < robot.getRobot().getCount(); i++) {
-                    String clientId = additionalInfo.getSimulationClientList().get(clientIndex);
+                    String clientId = additionalInfo.getSimulationClient().getClientList()
+                            .get(clientIndex).getId();
                     SimulationDevice device = DBService.getSimulationDevice(clientId);
                     RobotImpl robotImpl = new RobotImpl();
                     robotImpl.setRobotId(robot.getRobot().getType() + "_" + robotIndex);
@@ -70,8 +75,53 @@ public class RobotInfoMaker {
             }
             teamIndex++;
         }
-
         return robotImplList;
+    }
+
+    private static List<RobotImplWrapper> allocateSimulationMethodDesignation(
+            MissionWrapper mission, AdditionalInfo additionalInfo) {
+        List<RobotImplWrapper> robotImplList = new ArrayList<>();
+        int robotIndex = 0;
+        int teamIndex = 0;
+        for (TeamWrapper team : mission.getTeamList()) {
+            for (RobotWrapper robot : team.getRobotList()) {
+                for (ClientInfo client : additionalInfo.getSimulationClient().getClientList()) {
+                    for (SimulationRobot robotType : client.getRobotList()) {
+                        if (robot.getRobot().getType().equals(robotType.getType())
+                                && robotType.getNum() > 0) {
+                            SimulationDevice device = DBService.getSimulationDevice(client.getId());
+                            RobotImpl robotImpl = new RobotImpl();
+                            robotImpl.setRobotId(robot.getRobot().getType() + "_" + robotIndex);
+                            robotImpl.setRobotClass(robot.getRobot().getType());
+                            robotImpl.setCommunicationInfoMap(device.getCommunicationInfoMap());
+                            RobotImplWrapper robotImplWrapper = new RobotImplWrapper();
+                            robotImplWrapper.setRobot(robotImpl);
+                            robotImplWrapper.setRobotType(
+                                    getSimRobotType(robot.getRobot().getType(), device));
+                            robotImplWrapper.addTeam(team.getTeam().getName(), teamIndex);
+                            robotImplList.add(robotImplWrapper);
+                            robotType.setNum(robotType.getNum() - 1);
+                        }
+                    }
+                }
+                robotIndex++;
+            }
+            teamIndex++;
+        }
+        return robotImplList;
+    }
+
+    private static List<RobotImplWrapper> allocateSimulationRobot(MissionWrapper mission,
+            AdditionalInfo additionalInfo) {
+        if (additionalInfo.getSimulationClient().getAllocationMethod()
+                .equals(AdditionalInfoConstant.SIMULATION_ALLOCATION_METHOD_DISTRIBUTE)) {
+            return allocateSimulationMethodEvenlyDistribute(mission, additionalInfo);
+        } else if (additionalInfo.getSimulationClient().getAllocationMethod()
+                .equals(AdditionalInfoConstant.SIMULATION_ALLOCATION_METHOD_DESIGNATION)) {
+            return allocateSimulationMethodDesignation(mission, additionalInfo);
+        } else {
+            return null;
+        }
     }
 
     private static Architecture getArchitecture(String architectureName) {
