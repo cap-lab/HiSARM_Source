@@ -25,7 +25,7 @@ public class UEMGroupingTask extends UEMTask {
     private UEMLibraryPort groupPort;
 
     public UEMGroupingTask(UEMRobotTask robotTask, Path taskServer) throws Exception {
-        super(robotTask.getName(), taskServer);
+        super(robotTask.getName());
         groupingTask = robotTask.getRobot().getAdditionalTask(AdditionalTaskType.GROUP_SELECTION)
                 .getTask();
         setParentTask(robotTask.getName());

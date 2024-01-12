@@ -22,7 +22,7 @@ public class UEMResourceTask extends UEMTask {
     private UEMLibraryPort simPort;
 
     public UEMResourceTask(String robotName, ResourceWrapper resource, Task task, Path taskServer) {
-        super(robotName, taskServer);
+        super(robotName);
         this.resource = resource;
         setName(robotName, resource.getResource().getResourceId());
         setParentTask(robotName);
@@ -44,7 +44,7 @@ public class UEMResourceTask extends UEMTask {
             setMode(task);
             setExtraSetting(task);
             if (task.getSimulationPort() != null) {
-                setSimPort();
+                setSimPort(robotName);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -115,10 +115,11 @@ public class UEMResourceTask extends UEMTask {
         this.simPort = simPort;
     }
 
-    private void setSimPort() {
-        simPort = new UEMLibraryPort();
-        simPort.setName(AlgorithmConstant.SIMULATION);
-        simPort.setType(AlgorithmConstant.SIMULATION);
-        getLibraryMasterPort().add(simPort);
+    private void setSimPort(String robotName) {
+        getExtraHeader().add(robotName + AlgorithmConstant.SIMULATION_HEADER_SUFFIX);
+        // simPort = new UEMLibraryPort();
+        // simPort.setName(AlgorithmConstant.SIMULATION);
+        // simPort.setType(AlgorithmConstant.SIMULATION);
+        // getLibraryMasterPort().add(simPort);
     }
 }

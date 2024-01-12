@@ -24,7 +24,6 @@ import com.metadata.algorithm.library.UEMLibrary;
 import com.metadata.algorithm.library.UEMLibraryConnection;
 import com.metadata.algorithm.library.UEMLibraryPort;
 import com.metadata.algorithm.library.UEMSharedData;
-import com.metadata.algorithm.library.UEMSimHandler;
 import com.metadata.algorithm.task.UEMActionTask;
 import com.metadata.algorithm.task.UEMControlTask;
 import com.metadata.algorithm.task.UEMGroupingTask;
@@ -382,9 +381,6 @@ public class AlgorithmGenerator {
         makeActionTask(mission, robot, robot.getRobot().getControlStrategyList(),
                 Paths.get(additionalInfo.getTaskServerPrefix()), robotNum);
 
-        if (additionalInfo.getEnvironment().equals(AlgorithmConstant.SIMULATION)) {
-            makeSimulationHandlerTask(robot, additionalInfo);
-        }
         makeResourceTask(robot, additionalInfo);
         makeGroupingTask(mission, robot, Paths.get(additionalInfo.getTaskServerPrefix()));
         makeLibraryTask(robot);
@@ -484,15 +480,6 @@ public class AlgorithmGenerator {
                 new ArrayList<>(robot.getRobot().getGroupMap().keySet()), maker, maker);
     }
 
-    private void makeSimulationHandlerTask(UEMRobotTask robot, AdditionalInfo additionalInfo) {
-        UEMSimHandler simHandler =
-                new UEMSimHandler(robot.getName(), Paths.get(additionalInfo.getTaskServerPrefix()));
-        simHandler.setSimInfo(additionalInfo.getEnvironmentInfo().get(0).getIp(),
-                additionalInfo.getEnvironmentInfo().get(0).getPort());
-        robot.setSimHandler(simHandler);
-        algorithm.addLibrary(simHandler);
-    }
-
     private void makeResourceTask(UEMRobotTask robot, AdditionalInfo additionalInfo)
             throws Exception {
         Path taskServerPrefix = Paths.get(additionalInfo.getTaskServerPrefix());
@@ -510,13 +497,6 @@ public class AlgorithmGenerator {
                     algorithm.getAlgorithm().getLibraryConnections().getTaskLibraryConnection()
                             .addAll(taskGraph.getLibraryConnectionList());
                 }
-            }
-            if (resourceTask.getSimPort() != null) {
-                UEMLibraryConnection connection = new UEMLibraryConnection();
-                connection.setConnection(resourceTask, resourceTask.getSimPort(),
-                        robot.getSimHandler());
-                algorithm.getAlgorithm().getLibraryConnections().getTaskLibraryConnection()
-                        .add(connection);
             }
             robot.getResourceTaskList().add(resourceTask);
             algorithm.addTask(resourceTask);

@@ -72,6 +72,7 @@ public class AlgorithmConstant {
     public static final String REPORT_TASK_SUFFIX = "_report.cic";
     public static final String LEADER_LIBRARY_SOURCE_SUFFIX = "_leader_lib.cicl";
     public static final String LEADER_LIBRARY_HEADER_SUFFIX = "_leader_lib.cicl.h";
+    public static final String SIMULATION_HEADER_SUFFIX = "_simulation.h";
     public static final String MUTEX_HEADER = "UCThreadMutex.h";
     public static final int MULTICAST_PACKET_HEADER_SIZE = 12;
     public static final int GROUPING_PACKET_HEADER_SIZE = 16;

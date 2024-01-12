@@ -1,8 +1,6 @@
 package com.metadata.algorithm.task;
 
 import java.math.BigInteger;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import com.metadata.algorithm.UEMModeTask;
@@ -35,20 +33,6 @@ public class UEMTask extends TaskType {
         getExtraHeader().add("UFTimer.h");
         setCflags("");
         setLdflags("");
-    }
-
-    public UEMTask(String robotName, Path taskServer) {
-        super();
-        setHasInternalStates(YesNoType.YES);
-        setFile(AlgorithmConstant.DEFAULT_FILE);
-        setLanguage(AlgorithmConstant.LANGUAGE_C);
-        getExtraHeader().add(AlgorithmConstant.SEMO + AlgorithmConstant.COMMON_HEADER_SUFFIX);
-        getExtraHeader().add(robotName + AlgorithmConstant.COMMON_HEADER_SUFFIX);
-        getExtraHeader().add(AlgorithmConstant.SEMO + AlgorithmConstant.LOGGER_HEADER_SUFFIX);
-        getExtraHeader().add(AlgorithmConstant.SEMO + AlgorithmConstant.VARIABLE_HEADER_SUFFIX);
-        getExtraSource().add(AlgorithmConstant.SEMO + AlgorithmConstant.VARIABLE_SOURCE_SUFFIX);
-        setCflags("");
-        setLdflags("-L" + Paths.get(taskServer.toString(), "lib").toString());
     }
 
     public void setId(int index) {

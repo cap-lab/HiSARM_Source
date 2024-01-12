@@ -20,7 +20,7 @@ public class UEMLeaderTask extends UEMTask {
     private UEMChannelPort controlTaskPort;
 
     public UEMLeaderTask(UEMRobotTask robotTask, Path taskServer) throws Exception {
-        super(robotTask.getName(), taskServer);
+        super(robotTask.getName());
         leaderTask = robotTask.getRobot().getAdditionalTask(AdditionalTaskType.LEADER_SELECTION)
                 .getTask();
         setFile(leaderTask.getCICFile());

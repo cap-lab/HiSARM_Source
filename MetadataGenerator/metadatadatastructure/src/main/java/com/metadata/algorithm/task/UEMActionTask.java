@@ -37,7 +37,7 @@ public class UEMActionTask extends UEMTask {
 
     public UEMActionTask(String robotTask, String modeId, String serviceId,
             ActionImplWrapper actionImpl, ActionStatement actionStatement, Path taskServer) {
-        super(robotTask, taskServer);
+        super(robotTask);
         this.scope = makeScope(modeId, serviceId);
         setName(robotTask, scope + "_" + actionImpl.getActionImpl().getActionImplId());
         this.actionImpl = actionImpl;
