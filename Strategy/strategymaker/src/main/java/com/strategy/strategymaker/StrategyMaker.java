@@ -23,19 +23,26 @@ public class StrategyMaker {
     }
 
     public StrategyWrapper strategyMake(MissionWrapper mission, String additionalInfoFile) {
-        StrategyWrapper strategy = new StrategyWrapper();
-        AdditionalInfo additionalInfo = parsingAdditionalInfo(additionalInfoFile);
-        strategy.setAdditionalInfo(additionalInfo);
-        DatabaseInfo dbInfo = additionalInfo.getDbInfo().get(0);
-        DBService.initializeDB(dbInfo.getIp(), dbInfo.getPort(), dbInfo.getUserName(),
-                dbInfo.getEncryptedPassword(), dbInfo.getPassword(), dbInfo.getDbName());
-        strategy.setRobotList(RobotInfoMaker.makeRobotImplList(mission, additionalInfo));
-        GroupAllocator.allocateGroup(mission, strategy.getRobotList(), additionalInfo);
-        ActionTypeInfoMaker.makeActionTypeList(mission, strategy.getRobotList());
-        ControlStrategyInfoMaker.makeControlStrategyList(additionalInfo, strategy.getRobotList());
-        ResourceInfoMaker.makeResourceInfoList(strategy.getRobotList());
-        VariableInfoMaker.makeVariableInfoList(mission, additionalInfo, strategy.getRobotList());
-        AdditionalTaskInfoMaker.makeAddtionalTaskInfo(strategy.getRobotList(), additionalInfo);
-        return strategy;
+        try {
+            StrategyWrapper strategy = new StrategyWrapper();
+            AdditionalInfo additionalInfo = parsingAdditionalInfo(additionalInfoFile);
+            strategy.setAdditionalInfo(additionalInfo);
+            DatabaseInfo dbInfo = additionalInfo.getDbInfo().get(0);
+            DBService.initializeDB(dbInfo.getIp(), dbInfo.getPort(), dbInfo.getUserName(),
+                    dbInfo.getEncryptedPassword(), dbInfo.getPassword(), dbInfo.getDbName());
+            strategy.setRobotList(RobotInfoMaker.makeRobotImplList(mission, additionalInfo));
+            GroupAllocator.allocateGroup(mission, strategy.getRobotList(), additionalInfo);
+            ActionTypeInfoMaker.makeActionTypeList(mission, strategy.getRobotList());
+            ControlStrategyInfoMaker.makeControlStrategyList(additionalInfo,
+                    strategy.getRobotList());
+            ResourceInfoMaker.makeResourceInfoList(strategy.getRobotList());
+            VariableInfoMaker.makeVariableInfoList(mission, additionalInfo,
+                    strategy.getRobotList());
+            AdditionalTaskInfoMaker.makeAddtionalTaskInfo(strategy.getRobotList(), additionalInfo);
+            return strategy;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

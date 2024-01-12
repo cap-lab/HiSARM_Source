@@ -26,11 +26,14 @@ public class RobotInfoMaker {
 
     public static List<RobotImplWrapper> makeRobotImplList(MissionWrapper mission,
             AdditionalInfo additionalInfo) {
-        if (additionalInfo.getEnvironment().equals("simulation")) {
+        if (additionalInfo.getEnvironment().equals(AdditionalInfoConstant.SIMULATION)) {
             return allocateSimulationRobot(mission, additionalInfo);
-        } else {
+        } else if (additionalInfo.getEnvironment().equals(AdditionalInfoConstant.DEPLOYMENT)) {
             return allocateRealRobot(makeRobotMap(mission),
                     makeRobotImplList(additionalInfo.getRobotList()));
+        } else {
+            throw new RuntimeException("Unknown environment type ("
+                    + additionalInfo.getEnvironment() + ") in AdditionalInfo");
         }
     }
 
