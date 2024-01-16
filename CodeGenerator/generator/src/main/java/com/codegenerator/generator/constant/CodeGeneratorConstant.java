@@ -81,7 +81,7 @@ public class CodeGeneratorConstant {
 	public static final String SIMULATION_CLIENT_SOURCE_NAME = "semo_simulation_client.cpp";
 	public static final String SIMULATION_HEADER_SUFFIX = "_simulation.h";
 
-	public static final Path PROJECT_DIRECTORY = Paths.get("generator");
+	public static final Path PROJECT_DIRECTORY = Paths.get("");
     public static final Path RESOURCE_DIRECTORY =
             Paths.get(PROJECT_DIRECTORY.toString(), "resources");
     public static final Path INCLUDE_DIRECTORY =
