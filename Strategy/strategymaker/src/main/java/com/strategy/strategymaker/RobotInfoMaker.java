@@ -86,12 +86,15 @@ public class RobotInfoMaker {
         List<RobotImplWrapper> robotImplList = new ArrayList<>();
         int robotIndex = 0;
         int teamIndex = 0;
+        boolean assign;
         for (TeamWrapper team : mission.getTeamList()) {
             for (RobotWrapper robot : team.getRobotList()) {
+                assign = false;
                 for (ClientInfo client : additionalInfo.getSimulationClient().getClientList()) {
-                    for (SimulationRobot robotType : client.getRobotList()) {
+                    for (SimulationRobot robotType : client.getRobotMappingInfo()) {
                         if (robot.getRobot().getType().equals(robotType.getType())
                                 && robotType.getNum() > 0) {
+                            assign = true;
                             SimulationDevice device = DBService.getSimulationDevice(client.getId());
                             RobotImpl robotImpl = new RobotImpl();
                             robotImpl.setRobotId(robot.getRobot().getType() + "_" + robotIndex);
@@ -106,6 +109,10 @@ public class RobotInfoMaker {
                             robotType.setNum(robotType.getNum() - 1);
                         }
                     }
+                }
+                if (!assign) {
+                    throw new RuntimeException(
+                            "Cannot find assign the robot " + robot.getRobot().getType());
                 }
                 robotIndex++;
             }

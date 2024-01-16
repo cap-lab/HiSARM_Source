@@ -4,7 +4,7 @@ import java.util.List;
 
 public class ClientInfo {
     private String id;
-    private List<SimulationRobot> robotList;
+    private List<SimulationRobot> robotMappingInfo;
 
     public String getId() {
         return id;
@@ -14,11 +14,11 @@ public class ClientInfo {
         this.id = id;
     }
 
-    public List<SimulationRobot> getRobotList() {
-        return robotList;
+    public List<SimulationRobot> getRobotMappingInfo() {
+        return robotMappingInfo;
     }
 
-    public void setRobotList(List<SimulationRobot> robotList) {
-        this.robotList = robotList;
+    public void setRobotMappingInfo(List<SimulationRobot> robotList) {
+        this.robotMappingInfo = robotList;
     }
 }
