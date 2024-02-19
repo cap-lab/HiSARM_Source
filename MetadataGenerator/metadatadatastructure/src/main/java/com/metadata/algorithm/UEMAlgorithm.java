@@ -68,10 +68,10 @@ public class UEMAlgorithm {
         return null;
     }
 
-    public void addMulticastGroup(String groupId, int size, int count) {
+    public void addMulticastGroup(String groupId, int size, int count, Boolean isExport) {
         if (getMulticastGroup(groupId) == null) {
             algorithm.getMulticastGroups().getMulticastGroup().add(new UEMMulticastGroup(groupId,
-                    size, count, true));
+                    size, count, isExport));
         }
     }
 

@@ -250,7 +250,7 @@ public class AlgorithmGenerator {
                                     + "_" + comm.getMessage().getId();
                             int size = variable.getSize()
                                     + AlgorithmConstant.MULTICAST_PACKET_HEADER_SIZE;
-                            algorithm.addMulticastGroup(groupId, size, robotNum);
+                            algorithm.addMulticastGroup(groupId, size, robotNum, true);
                         }
                     } else if (statement.getStatement().getStatementType()
                             .equals(StatementType.SEND)) {
@@ -268,7 +268,7 @@ public class AlgorithmGenerator {
                                     + "_" + comm.getMessage().getId();
                             int size = variable.getSize()
                                     + AlgorithmConstant.MULTICAST_PACKET_HEADER_SIZE;
-                            algorithm.addMulticastGroup(groupId, size, robotNum);
+                            algorithm.addMulticastGroup(groupId, size, robotNum, true);
                         }
                     }
                 } catch (Exception e) {
@@ -290,7 +290,7 @@ public class AlgorithmGenerator {
                 robot.getReportTask().addThrow(statement, groupId, robot);
                 int size = 4 + AlgorithmConstant.MULTICAST_PACKET_HEADER_SIZE;
                 algorithm.addMulticastGroup(groupId + "_" + AlgorithmConstant.EVENT, size,
-                        robotNum);
+                        robotNum, true);
             }
 
             @Override
@@ -502,7 +502,7 @@ public class AlgorithmGenerator {
             algorithm.addTask(resourceTask);
             algorithm.addMulticastGroup(
                     robot.getName() + "_" + resource.getResource().getResourceId(),
-                    resource.getResource().getDataSize(), 1);
+                    resource.getResource().getDataSize(), 1, false);
         }
     }
 
@@ -674,7 +674,7 @@ public class AlgorithmGenerator {
             String groupId = library.getGroup();
             int size = AlgorithmConstant.MULTICAST_PACKET_HEADER_SIZE
                     + library.getVariableType().getSize();
-            algorithm.addMulticastGroup(groupId, size, robotNum);
+            algorithm.addMulticastGroup(groupId, size, robotNum, true);
         }
     }
 
@@ -697,11 +697,11 @@ public class AlgorithmGenerator {
                     .add(reportConnection);
             robot.getListenTask().getLeaderPortMap().keySet().forEach(port -> {
                 algorithm.addMulticastGroup(port.getGroup(), leaderLibrary.getSelectionInfoSize(),
-                        robotNum);
+                        robotNum, true);
             });
             robot.getListenTask().getLeaderPortMap().values().forEach(port -> {
                 algorithm.addMulticastGroup(port.getGroup(), leaderLibrary.getHeartbeatSize(),
-                        robotNum);
+                        robotNum, true);
             });
         }
     }
@@ -716,7 +716,7 @@ public class AlgorithmGenerator {
                 int size = PrimitiveType.INT32.getSize()
                         + AlgorithmConstant.MULTICAST_PACKET_HEADER_SIZE;
                 algorithm.addMulticastGroup(actionTask.getActionName(),
-                        size, robotNum);
+                        size, robotNum, true);
             }
         }
         if (groupActionExist == true) {
@@ -754,7 +754,7 @@ public class AlgorithmGenerator {
                     .add(reportConnection);
             robot.getListenTask().getGroupingPortList().forEach(port -> {
                 algorithm.addMulticastGroup(port.getGroup(),
-                        groupingLibrary.getPacketSize(), robotNum);
+                        groupingLibrary.getPacketSize(), robotNum, true);
             });
         }
     }

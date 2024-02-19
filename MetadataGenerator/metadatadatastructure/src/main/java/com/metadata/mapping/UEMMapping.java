@@ -21,7 +21,7 @@ public class UEMMapping extends CICMappingType {
             multicast.setGroupName(groupName);
             getMulticast().add(multicast);
             if (isExport == true) {
-                // multicast.setUDP(multicastCount);
+                multicast.setUDP(multicastCount);
                 multicastCount++;
             }
         }
