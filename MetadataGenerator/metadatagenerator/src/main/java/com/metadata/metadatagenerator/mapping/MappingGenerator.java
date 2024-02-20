@@ -85,10 +85,16 @@ public class MappingGenerator {
                 UEMMulticastGroup multicastGroup = (UEMMulticastGroup) multicast;
                 Set<String> deviceSet = new HashSet<>();
                 for (UEMRobot robot : robotList) {
-                    if (robot.getRobotTask().getRobot().getGroupMap()
-                            .containsKey(multicastGroup.getGroupName())) {
-                        deviceSet.add(robot.getDeviceList().get(0).getName());
-                    }
+                    robot.getRobotTask().getListenTask().getMulticastPort().forEach(p -> {
+                        if (p.getGroup().equals(multicastGroup.getGroupName())) {
+                            deviceSet.add(robot.getDeviceList().get(0).getName());
+                        }
+                    });
+                    robot.getRobotTask().getReportTask().getMulticastPort().forEach(p -> {
+                        if (p.getGroup().equals(multicastGroup.getGroupName())) {
+                            deviceSet.add(robot.getDeviceList().get(0).getName());
+                        }
+                    });
                 }
 
                 mapping.addMulticast(multicast.getGroupName(),
