@@ -3,7 +3,9 @@ package com.metadata.metadatagenerator.mapping;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import com.metadata.UEMRobot;
 import com.metadata.algorithm.UEMAlgorithm;
 import com.metadata.algorithm.UEMMulticastGroup;
@@ -77,11 +79,20 @@ public class MappingGenerator {
                         .add(mappingTaskToDevice(robot.getRobotTask().getLeaderTask(), robot));
                 mapping.getTask()
                         .add(mappingTaskToDevice(robot.getRobotTask().getGroupingTask(), robot));
-                for (MulticastGroupType multicast : algorithm.getAlgorithm().getMulticastGroups()
-                        .getMulticastGroup()) {
-                    UEMMulticastGroup multicastGroup = (UEMMulticastGroup) multicast;
-                    mapping.addMulticast(multicast.getGroupName(), multicastGroup.isExport());
+            }
+            for (MulticastGroupType multicast : algorithm.getAlgorithm().getMulticastGroups()
+                    .getMulticastGroup()) {
+                UEMMulticastGroup multicastGroup = (UEMMulticastGroup) multicast;
+                Set<String> deviceSet = new HashSet<>();
+                for (UEMRobot robot : robotList) {
+                    if (robot.getRobotTask().getRobot().getGroupMap()
+                            .containsKey(multicastGroup.getGroupName())) {
+                        deviceSet.add(robot.getDeviceList().get(0).getName());
+                    }
                 }
+
+                mapping.addMulticast(multicast.getGroupName(),
+                        multicastGroup.isExport() && deviceSet.size() > 1);
             }
         } catch (Exception e) {
             e.printStackTrace();
