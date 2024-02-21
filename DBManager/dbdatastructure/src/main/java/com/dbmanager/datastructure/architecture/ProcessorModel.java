@@ -4,7 +4,7 @@ public enum ProcessorModel {
     I7("i7"), XEONPHI("xeonPhi"), CUDA_CPU("cuda_cpu"), CUDA_GPU_SM20("cuda_gpu_sm20"), ARM926EJ_S(
             "arm926ej-s"), ARM926EJ_S_DSP("arm926ej-s-dsp"), A7("A7"), A15(
                     "A15"), ATMEGA328P_16MHZ("atmega328p_16Mhz"), ATMEGA328P_8MHZ(
-                            "atmega328p_8Mhz"), ARM_CORETEX_M7("ARM_cortex-m7"), A78AE("A78AE");
+                            "atmega328p_8Mhz"), ARM_CORETEX_M7("ARM_cortex-m7"), A78AE("A78AE"), CARMEL("Carmel");
 
     private String value;
 
