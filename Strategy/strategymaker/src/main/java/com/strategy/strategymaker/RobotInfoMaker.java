@@ -89,32 +89,39 @@ public class RobotInfoMaker {
         boolean assign;
         for (TeamWrapper team : mission.getTeamList()) {
             for (RobotWrapper robot : team.getRobotList()) {
-                assign = false;
-                for (ClientInfo client : additionalInfo.getSimulationClient().getClientList()) {
-                    for (SimulationRobot robotType : client.getRobotMappingInfo()) {
-                        if (robot.getRobot().getType().equals(robotType.getType())
-                                && robotType.getNum() > 0) {
-                            assign = true;
-                            SimulationDevice device = DBService.getSimulationDevice(client.getId());
-                            RobotImpl robotImpl = new RobotImpl();
-                            robotImpl.setRobotId(robot.getRobot().getType() + "_" + robotIndex);
-                            robotImpl.setRobotClass(robot.getRobot().getType());
-                            robotImpl.setCommunicationInfoMap(device.getCommunicationInfoMap());
-                            RobotImplWrapper robotImplWrapper = new RobotImplWrapper();
-                            robotImplWrapper.setRobot(robotImpl);
-                            robotImplWrapper.setRobotType(
-                                    getSimRobotType(robot.getRobot().getType(), device));
-                            robotImplWrapper.addTeam(team.getTeam().getName(), teamIndex);
-                            robotImplList.add(robotImplWrapper);
-                            robotType.setNum(robotType.getNum() - 1);
+                for (int i = 0; i < robot.getRobot().getCount(); i++) {
+                    assign = false;
+                    for (ClientInfo client : additionalInfo.getSimulationClient().getClientList()) {
+                        for (SimulationRobot robotType : client.getRobotMappingInfo()) {
+                            if (robot.getRobot().getType().equals(robotType.getType())
+                                    && robotType.getNum() > 0) {
+                                assign = true;
+                                SimulationDevice device =
+                                        DBService.getSimulationDevice(client.getId());
+                                RobotImpl robotImpl = new RobotImpl();
+                                robotImpl.setRobotId(robot.getRobot().getType() + "_" + robotIndex);
+                                robotImpl.setRobotClass(robot.getRobot().getType());
+                                robotImpl.setCommunicationInfoMap(device.getCommunicationInfoMap());
+                                RobotImplWrapper robotImplWrapper = new RobotImplWrapper();
+                                robotImplWrapper.setRobot(robotImpl);
+                                robotImplWrapper.setRobotType(
+                                        getSimRobotType(robot.getRobot().getType(), device));
+                                robotImplWrapper.addTeam(team.getTeam().getName(), teamIndex);
+                                robotImplList.add(robotImplWrapper);
+                                robotType.setNum(robotType.getNum() - 1);
+                                break;
+                            }
+                        }
+                        if (assign) {
+                            break;
                         }
                     }
+                    if (!assign) {
+                        throw new RuntimeException(
+                                "Cannot find assign the robot " + robot.getRobot().getType());
+                    }
+                    robotIndex++;
                 }
-                if (!assign) {
-                    throw new RuntimeException(
-                            "Cannot find assign the robot " + robot.getRobot().getType());
-                }
-                robotIndex++;
             }
             teamIndex++;
         }
@@ -130,7 +137,9 @@ public class RobotInfoMaker {
                 .equals(AdditionalInfoConstant.SIMULATION_ALLOCATION_METHOD_DESIGNATION)) {
             return allocateSimulationMethodDesignation(mission, additionalInfo);
         } else {
-            return null;
+            throw new RuntimeException("Unknown allocation method ("
+                    + additionalInfo.getSimulationClient().getAllocationMethod()
+                    + ") in AdditionalInfo");
         }
     }
 

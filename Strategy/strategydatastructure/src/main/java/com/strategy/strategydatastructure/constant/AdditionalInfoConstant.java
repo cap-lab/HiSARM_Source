@@ -6,5 +6,5 @@ public class AdditionalInfoConstant {
     public static final String SIMULATION = "simulation";
     public static final String DEPLOYMENT = "deployment";
     public static final String SIMULATION_ALLOCATION_METHOD_DISTRIBUTE = "distribute";
-    public static final String SIMULATION_ALLOCATION_METHOD_DESIGNATION = "designation";
+    public static final String SIMULATION_ALLOCATION_METHOD_DESIGNATION = "designate";
 }
