@@ -77,9 +77,9 @@ public class ControlStrategyInfoMaker {
             String team, RobotImplWrapper robot, ActionTypeWrapper action) {
         for (ControlStrategyInfo controlStrategyInfo : additionalInfo.getStrategyList()) {
             if (controlStrategyInfo.getActionName().equals(action.getAction().getName())
-                    || controlStrategyInfo.getRobotClass()
+                    && controlStrategyInfo.getRobotClass()
                             .equals(robot.getRobotType().getRobotType().getRobotClass())
-                    || controlStrategyInfo.getTeamName().equals(team)) {
+                    && controlStrategyInfo.getTeamName().equals(team)) {
                 return controlStrategyInfo;
             }
         }
