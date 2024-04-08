@@ -104,6 +104,7 @@ public class RobotInfoMaker {
                                 robotImpl.setCommunicationInfoMap(device.getCommunicationInfoMap());
                                 RobotImplWrapper robotImplWrapper = new RobotImplWrapper();
                                 robotImplWrapper.setRobot(robotImpl);
+                                robotImplWrapper.setRobotIndex(robotIndex);
                                 robotImplWrapper.setRobotType(
                                         getSimRobotType(robot.getRobot().getType(), device));
                                 robotImplWrapper.addTeam(team.getTeam().getName(), teamIndex);
