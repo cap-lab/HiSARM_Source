@@ -109,6 +109,7 @@ public class RobotInfoMaker {
                                 robotImplWrapper.addTeam(team.getTeam().getName(), teamIndex);
                                 robotImplList.add(robotImplWrapper);
                                 robotType.setNum(robotType.getNum() - 1);
+                                robotIndex++;
                                 break;
                             }
                         }
@@ -120,7 +121,6 @@ public class RobotInfoMaker {
                         throw new RuntimeException(
                                 "Cannot find assign the robot " + robot.getRobot().getType());
                     }
-                    robotIndex++;
                 }
             }
             teamIndex++;
