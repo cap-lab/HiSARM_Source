@@ -28,6 +28,7 @@ TASK_INIT
 TASK_GO
 {
 	check_group_allocation_and_run_transition(&transition);
+	check_leader_selection_state(&leader);
 
 	execute_service(&service);
 	action_task_state_polling(&action);
