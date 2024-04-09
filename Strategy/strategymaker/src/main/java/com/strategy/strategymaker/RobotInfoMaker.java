@@ -194,7 +194,7 @@ public class RobotInfoMaker {
                 newType.getDeviceList().add(getArchitecture(architectureName));
             } else {
                 Architecture architecture = DBService.getArchitecture(architectureName);
-                architecture.setDeviceName(architectureName + "_" + robotId);
+                architecture.setDeviceName(architectureName);
                 newType.getDeviceList().add(architecture);
                 architectureStore.add(architecture);
             }
