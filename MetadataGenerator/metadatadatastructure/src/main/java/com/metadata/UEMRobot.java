@@ -34,13 +34,9 @@ public class UEMRobot {
         this.deviceList = deviceList;
     }
 
-    public String getDeviceName(String deviceName) {
-        return deviceName + "_" + getRobotName();
-    }
-
     public UEMArchitectureDevice getDevice(String deviceName) throws Exception {
         Optional<UEMArchitectureDevice> device = getDeviceList().stream()
-                .filter(d -> d.getDeviceName().equals(getDeviceName(deviceName))).findAny();
+                .filter(d -> d.getDeviceName().equals(deviceName)).findAny();
         if (device.isPresent()) {
             return device.get();
         } else {
