@@ -3,7 +3,6 @@ package com.metadata;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import com.metadata.algorithm.task.UEMRobotTask;
 import com.metadata.architecture.UEMArchitectureDevice;
 
@@ -35,9 +34,13 @@ public class UEMRobot {
         this.deviceList = deviceList;
     }
 
+    public String getDeviceName(String deviceName) {
+        return deviceName + "_" + getRobotName();
+    }
+
     public UEMArchitectureDevice getDevice(String deviceName) throws Exception {
         Optional<UEMArchitectureDevice> device = getDeviceList().stream()
-                .filter(d -> d.getDeviceName().equals(deviceName)).findAny();
+                .filter(d -> d.getDeviceName().equals(getDeviceName(deviceName))).findAny();
         if (device.isPresent()) {
             return device.get();
         } else {
