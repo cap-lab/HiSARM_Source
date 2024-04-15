@@ -191,7 +191,9 @@ public class VariableMapper {
                     for (int i = 0; i < variableList.size(); i++) {
                         CodeVariableWrapper variable = variableList.get(i);
                         CodeVariableWrapper param = transition.getParameterList().get(i);
-                        if (variable.getType() == param.getType()
+                        if (variable.getType() != null && param.getType() != null
+                                && variable.getType().getVariableType().getName()
+                                        .equals(param.getType().getVariableType().getName())
                                 && variable.isRealVariable() == param.isRealVariable()
                                 && param.getDefaultValue() == variable.getDefaultValue()) {
                             continue;
