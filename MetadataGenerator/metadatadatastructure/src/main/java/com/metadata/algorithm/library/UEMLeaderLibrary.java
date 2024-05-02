@@ -55,6 +55,7 @@ public class UEMLeaderLibrary extends UEMLibrary {
             getFunction().add(UEMLeaderLibraryFunction.makeGetDuplicatedFuncFromLeader());
             getFunction().add(UEMLeaderLibraryFunction.makeGetGroupNumFromLeader());
             getFunction().add(UEMLeaderLibraryFunction.makeGetGroupIdFromLeader());
+            getFunction().add(UEMLeaderLibraryFunction.makeGetAvailRobot());
         } catch (Exception e) {
             e.printStackTrace();
         }
