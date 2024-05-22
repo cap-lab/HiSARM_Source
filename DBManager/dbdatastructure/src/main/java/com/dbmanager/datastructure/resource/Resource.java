@@ -5,8 +5,8 @@ import java.util.List;
 
 public class Resource {
     public enum ResourceType {
-        SENSOR("sensor"), ACTUATOR("actuator"), VIRTUAL_SENSOR("virtual sensor"), VIRTUAL_ACTUATOR(
-                "virtual actuator");
+        SENSOR("sensor"), ACTUATOR("actuator"), PROXY_SENSOR("proxy sensor"), PROXY_ACTUATOR(
+                "proxy actuator");
 
         private String value;
 

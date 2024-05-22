@@ -17,8 +17,8 @@ public class ResourceMapper {
             resource.setConflict(document.getBoolean("Conflict"));
             resource.setResourceType(
                     Resource.ResourceType.getResourceType(document.getString("Type")));
-            if (resource.getResourceType().equals(Resource.ResourceType.VIRTUAL_ACTUATOR)
-                    || resource.getResourceType().equals(Resource.ResourceType.VIRTUAL_SENSOR)) {
+            if (resource.getResourceType().equals(Resource.ResourceType.PROXY_ACTUATOR)
+                    || resource.getResourceType().equals(Resource.ResourceType.PROXY_SENSOR)) {
                 resource.setRequiredResources(document.getList("RequiredResource", String.class));
             }
         } catch (Exception e) {
