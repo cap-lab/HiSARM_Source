@@ -1,6 +1,6 @@
 package com.dbmanager.commonlibraries;
 
-public class DBCollections {
+public class MongoDBCollections {
     public static final String Collection_GroupAction = "GroupAction";
     public static final String Collection_Action = "Action";
     public static final String Collection_ActionImpl = "ActionImpl";

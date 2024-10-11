@@ -30,12 +30,12 @@ import com.dbmanager.datastructure.variable.VariableDirection;
 
 public class DBService {
 
-    private static DAO dbDao;
+    private static HiSARMDAO dbDao;
 
     private DBService() {}
 
     static {
-        dbDao = DAO.getInstance();
+        dbDao = CouchDBDAO.getInstance();
     }
 
     public static void initializeDB(String ip, int port, String user, String epwd, String pwd,

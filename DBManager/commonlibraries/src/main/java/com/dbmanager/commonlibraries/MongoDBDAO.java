@@ -26,7 +26,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Projections;
 
-public class DAO {
+public class MongoDBDAO implements HiSARMDAO {
 	private MongoDatabase mDB;
 	private MongoClient mongoClient;
 	private Path PRIVATE_KEY = Paths.get(System.getProperty("user.home"), ".ssh", "id_rsa");
@@ -45,32 +45,34 @@ public class DAO {
 	private MongoCollection<Document> leaderCollection;
 	private MongoCollection<Document> simulationDeviceCollection;
 
-	private DAO() {}
+	private MongoDBDAO() {}
 
 	public void initializeDB(String ip, int port, String user, String epwd, String pwd,
 			String dbName) {
 		connectDB(ip, port, user, epwd, pwd, dbName);
 
-		strategyCollection = mDB.getCollection(DBCollections.Collection_Control_Strategy);
-		actionCollection = mDB.getCollection(DBCollections.Collection_Action);
-		actionImplCollection = mDB.getCollection(DBCollections.Collection_ActionImpl);
-		robotCollection = mDB.getCollection(DBCollections.Collection_Robot);
-		robotImplCollection = mDB.getCollection(DBCollections.Collection_RobotImpl);
-		resourceCollection = mDB.getCollection(DBCollections.Collection_Resource);
-		taskCollection = mDB.getCollection(DBCollections.Collection_Task);
-		architectureCollection = mDB.getCollection(DBCollections.Collection_Architecture);
-		variableCollection = mDB.getCollection(DBCollections.Collection_Variable);
-		variableImplCollection = mDB.getCollection(DBCollections.Collection_VariableImpl);
-		groupingCollection = mDB.getCollection(DBCollections.Collection_Grouping_Algorithm);
-		leaderCollection = mDB.getCollection(DBCollections.Collection_Leader_Selection_Algorithm);
-		simulationDeviceCollection = mDB.getCollection(DBCollections.Collection_Simulation_Device);
+		strategyCollection = mDB.getCollection(MongoDBCollections.Collection_Control_Strategy);
+		actionCollection = mDB.getCollection(MongoDBCollections.Collection_Action);
+		actionImplCollection = mDB.getCollection(MongoDBCollections.Collection_ActionImpl);
+		robotCollection = mDB.getCollection(MongoDBCollections.Collection_Robot);
+		robotImplCollection = mDB.getCollection(MongoDBCollections.Collection_RobotImpl);
+		resourceCollection = mDB.getCollection(MongoDBCollections.Collection_Resource);
+		taskCollection = mDB.getCollection(MongoDBCollections.Collection_Task);
+		architectureCollection = mDB.getCollection(MongoDBCollections.Collection_Architecture);
+		variableCollection = mDB.getCollection(MongoDBCollections.Collection_Variable);
+		variableImplCollection = mDB.getCollection(MongoDBCollections.Collection_VariableImpl);
+		groupingCollection = mDB.getCollection(MongoDBCollections.Collection_Grouping_Algorithm);
+		leaderCollection =
+				mDB.getCollection(MongoDBCollections.Collection_Leader_Selection_Algorithm);
+		simulationDeviceCollection =
+				mDB.getCollection(MongoDBCollections.Collection_Simulation_Device);
 	}
 
 	private static class DBHolder {
-		public static final DAO instance = new DAO();
+		public static final MongoDBDAO instance = new MongoDBDAO();
 	}
 
-	public static DAO getInstance() {
+	public static MongoDBDAO getInstance() {
 		return DBHolder.instance;
 	}
 
