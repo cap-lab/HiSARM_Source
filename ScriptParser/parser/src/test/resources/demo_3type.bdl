@@ -1,0 +1,162 @@
+{
+    Searcher: Burger burger
+    Assistant: Tank tank
+    Guard: Waffle waffle
+}
+
+Main.Searcher {
+    case(REMOTE_CONTROL):
+        catch(START): mode = SEARCH
+        catch(HIDE): mode = HIDE
+        catch(FINISH): mode = FINISH
+    case(SEARCH):
+        catch(RC): mode = REMOTE_CONTROL
+        catch(HIDE): mode = HIDE
+        catch(FINISH): mode = FINISH
+    case(HIDE):
+        catch(RC): mode = REMOTE_CONTROL
+        catch(START): mode = SEARCH
+    default: mode = REMOTE_CONTROL
+}
+
+Main.Assistant {
+    case(REMOTE_CONTROL):
+        catch(START): mode = FOLLOW
+        catch(HIDE): mode = COVER
+        catch(FINISH): mode = FINISH
+    case(FOLLOW):
+        catch(RC): mode = REMOTE_CONTROL
+        catch(HIDE): mode = COVER
+        catch(FINISH): mode = FINISH
+    case(COVER):
+        catch(RC): mode = REMOTE_CONTROL
+        catch(START): mode = FOLLOW
+    default: mode = REMOTE_CONTROL
+}
+
+Main.Guard {
+    case(REMOTE_CONTROL):
+        catch(START): mode = OBSERVE
+        catch(HIDE): mode = GUARD
+        catch(FINISH): mode = FINISH
+    case(OBSERVE):
+        catch(RC): mode = REMOTE_CONTROL
+        catch(HIDE): mode = GUARD
+        catch(FINISH): mode = FINISH
+    case(GUARD):
+        catch(RC): mode = REMOTE_CONTROL
+        catch(START): mode = OBSERVE
+    default: mode = REMOTE_CONTROL
+}
+
+Mode.REMOTE_CONTROL {
+    services:
+        RemoteControl
+        ReceiveCommandFromOperator
+}
+
+Mode.SEARCH {
+    services:
+        Search("RED")
+        ListenAlarmFrom("Guard")
+        ReceiveCommandFromOperator
+}
+
+Mode.HIDE {
+    services:
+        Hide
+        ReceiveCommandFromOperator
+}
+
+Mode.FOLLOW {
+    services:
+        Follow
+        ListenAlarmFrom("Guard")
+        ReceiveCommandFromOperator
+}
+
+Mode.COVER {
+    services:
+        Attack
+        ListenAlarmFrom("Guard")
+        ReceiveCommandFromOperator
+}
+
+Mode.OBSERVE {
+    services:
+        RemoteControl
+        ObserveAndShareWith("Searcher", "Assistant")
+        ReceiveCommandFromOperator
+}
+
+Mode.GUARD {
+    services:
+        RemoteControl
+        TurnOffAlarmOn("Searcher", "Assistant")
+        Attack
+        ReceiveCommandFromOperator
+}
+
+RemoteControl {
+    remoteControl()
+}
+
+ReceiveCommandFromOperator {
+    cmd = getModeTransferCommand()
+    if (cmd == "RC"){
+        throw RC 
+    } else if (cmd == "START") {
+        throw START 
+    } else if (cmd == "FINISH") {
+        throw FINISH 
+    } else if (cmd == "TURN") {
+        throw HIDE
+    }
+} repeat(200 MSEC)
+
+Search(target) {
+    isFound = search(target)
+    if (isFound == "TRUE") {
+        throw FINISH 
+    }
+} repeat(200 MSEC)
+
+Hide {
+    hide()
+} 
+
+Follow {
+    follow()
+} 
+
+Attack {
+    attack()
+} 
+
+ObserveAndShareWith(receiver1, receiver2) {
+    checkResult = checkEnemy()
+    if (checkResult == "TRUE") {
+        send(receiver1, checkResult)
+        send(receiver2, checkResult)
+        throw HIDE 
+    }
+} repeat(200 MSEC)
+
+TurnOffAlarmOn(receiver1, receiver2) {
+    checkResult = checkEnemy()
+    if (checkResult == "FALSE") {
+        send(receiver1, checkResult)
+        send(receiver2, checkResult)
+        throw START 
+    }
+} repeat(200 MSEC)
+
+ListenAlarmFrom(sender) {
+    isFound = receive(sender, checkResult)
+    if (isFound == "TRUE") {
+        throw HIDE 
+    }
+    if (isFound == "FALSE") {
+        throw RESTART 
+    }
+} 

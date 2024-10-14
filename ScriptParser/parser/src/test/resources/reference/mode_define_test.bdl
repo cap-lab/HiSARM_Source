@@ -1,0 +1,50 @@
+{ 
+    Master: T1 robot[10], T2 robot[20]
+}
+
+serviceA {
+    actiona()
+}
+
+serviceB {
+    actionb()
+}
+
+serviceC {
+    actionc()
+}
+
+serviceD {
+    actiond()
+}
+
+serviceE {
+    actione()
+}
+
+Mode.ABC {
+    group(A, min = 2, proper = 2, tagList={T1}):
+        A((10, 5))
+    group(B, proper = 50, tagList={CAMERA, FLY}):
+        A((10, 10))
+    group(C, tagList={(T1) or (T2)}):
+        A((10, 15))
+    services:
+        serviceA, priority = H, timeout = 1 HOUR
+        serviceB
+}
+
+Mode.DEF(point) {
+    services:
+        serviceC(point)
+}
+
+ModeTransition.A(point) {
+    default: mode = DEF(point)
+}
+
+Main.Master{
+    case(DEF):
+        catch(TIMEOUT_DEF): mode = finish
+    default: mode = ABC
+}

@@ -1,0 +1,26 @@
+{ 
+    Master: robot robot1[1]
+    Slave: Robot robot2, Slv robot3[5]
+    Slave2: Robot robot[3], slv robot4;
+}
+
+service {
+    action()
+}
+
+Mode.DEF {
+    services:
+        service
+}
+
+Main.Master{
+    default: mode = DEF
+}
+
+Main.Slave{
+    default: mode = DEF
+}
+
+Main.Slave2{
+    default: mode = DEF
+}

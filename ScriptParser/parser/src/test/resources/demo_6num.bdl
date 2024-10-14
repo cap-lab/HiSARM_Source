@@ -1,0 +1,79 @@
+{
+    Robot: Burger burger[6]
+}
+
+Main.Robot {
+    case(REMOTE_CONTROL):
+        catch(START): mode = SEARCH_GROUPING
+        catch(FINISH): mode = FINISH
+    case(SEARCH_GROUPING):
+        catch(RC): mode = REMOTE_CONTROL
+        catch(FINISH): mode = REMOTE_CONTROL
+    default: mode = REMOTE_CONTROL
+}
+
+
+Mode.REMOTE_CONTROL {
+    services:
+        RemoteControl
+        ReceiveCommandFromOperator
+}
+
+
+Mode.SEARCH_GROUPING {
+    group(groupA, min=1, proper=3):
+        ModeTransition.SEARCH("R1")
+    group(groupB, min=1):
+        ModeTransition.SEARCH("R2")
+    services:
+        ReceiveCommandFromOperator
+}
+
+ModeTransition.SEARCH(area) {
+    case(MOVE_TO_MISSION_AREA):
+        catch(ARRIVED): mode = MODE_SEARCH
+    default: mode = MOVE_TO_MISSION_AREA(area)
+}
+
+
+Mode.MOVE_TO_MISSION_AREA(area) {
+    services:
+        MoveTo(area)
+}
+
+Mode.MODE_SEARCH {
+    services:
+        Search("YELLOW")
+}
+
+RemoteControl {
+    remoteControl()
+}
+
+ReceiveCommandFromOperator {
+    cmd = getModeTransferCommand()
+    if (cmd == "RC"){
+        throw RC
+    } else if (cmd == "START") {
+        throw START
+    } else if (cmd == "FINISH") {
+        throw FINISH
+    }
+} repeat(200 MSEC)
+
+Search(target) {
+    isFound = search(target)
+    if (isFound == "TRUE") {
+        throw FINISH broadcast
+    }
+} repeat(200 MSEC)
+
+MoveTo(area) {
+    arrived = moveTo(area)
+    if (arrived == "ARRIVED") {
+        throw ARRIVED
+    }
+} repeat(200 MSEC)
+
+
+

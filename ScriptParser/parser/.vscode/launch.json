@@ -1,0 +1,142 @@
+{
+    "version": "2.2.4",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "demo_3type",
+            "args": "src/test/resources/demo_3type.bdl",
+            "request": "launch",
+            "mainClass": "com.scriptparser.parser.Main",
+            "projectName": "parser"
+        },
+        {
+            "type": "antlr-debug",
+            "request": "launch",
+            "name": "3 Type Test",
+            "input": "src/test/resources/demo_3type.bdl",
+            "grammar": "src/main/grammar/Script.g4",
+            "visualParseTree": true
+        },
+
+        {
+            "type": "java",
+            "name": "demo_6num",
+            "args": "src/test/resources/demo_6num.bdl",
+            "request": "launch",
+            "mainClass": "com.scriptparser.parser.Main",
+            "projectName": "parser"
+        },
+        {
+            "type": "antlr-debug",
+            "request": "launch",
+            "name": "6 Num Test",
+            "input": "src/test/resources/demo_6num.bdl",
+            "grammar": "src/main/grammar/Script.g4",
+            "visualParseTree": true
+        },
+
+        {
+            "type": "java",
+            "name": "single_team_basic_group",
+            "args": "src/test/resources/reference/single_team_basic_group.bdl",
+            "request": "launch",
+            "mainClass": "com.scriptparser.parser.Main",
+            "projectName": "parser"
+        },
+        {
+            "type": "antlr-debug",
+            "request": "launch",
+            "name": "single team basic group",
+            "input": "src/test/resources/reference/single_team_basic_group.bdl",
+            "grammar": "src/main/grammar/Script.g4",
+            "visualParseTree": true
+        },
+
+        {
+            "type": "java",
+            "name": "Launch Java Program",
+            "request": "launch",
+            "mainClass": "com.scriptparser.parser.Parser"
+        },
+        {
+            "type": "antlr-debug",
+            "request": "launch",
+            "name": "Simple Grammar Test",
+            "input": "src/test/resources/reference/simple_test.bdl",
+            "grammar": "src/main/grammar/Script.g4",
+            "visualParseTree": true
+        },
+        {
+            "type": "antlr-debug",
+            "request": "launch",
+            "name": "Team Composition Grammar Test",
+            "input": "src/test/resources/reference/team_composition_test.bdl",
+            "grammar": "src/main/grammar/Script.g4",
+            "visualParseTree": true
+        },
+        {
+            "type": "antlr-debug",
+            "request": "launch",
+            "name": "Mode Define Grammar Test",
+            "input": "src/test/resources/reference/mode_define_test.bdl",
+            "grammar": "src/main/grammar/Script.g4",
+            "visualParseTree": true
+        },
+        {
+            "type": "antlr-debug",
+            "request": "launch",
+            "name": "Single Robot Test",
+            "input": "src/test/resources/reference/single.bdl",
+            "grammar": "src/main/grammar/Script.g4",
+            "visualParseTree": true
+        },
+        {
+            "type": "antlr-debug",
+            "request": "launch",
+            "name": "Swarm Robot Test",
+            "input": "src/test/resources/reference/swarm.bdl",
+            "grammar": "src/main/grammar/Script.g4",
+            "visualParseTree": true
+        },
+        {
+            "type": "antlr-debug",
+            "request": "launch",
+            "name": "Cooperation Test",
+            "input": "src/test/resources/reference/cooperation.bdl",
+            "grammar": "src/main/grammar/Script.g4",
+            "visualParseTree": true
+        },
+        {
+            "type": "antlr-debug",
+            "request": "launch",
+            "name": "On The Move Test",
+            "input": "src/test/resources/reference/on_the_move.bdl",
+            "grammar": "src/main/grammar/Script.g4",
+            "visualParseTree": true
+        },
+        {
+            "type": "antlr-debug",
+            "request": "launch",
+            "name": "Indoor Test",
+            "input": "src/test/resources/reference/indoor.bdl",
+            "grammar": "src/main/grammar/Script.g4",
+            "visualParseTree": true
+        },
+        {
+            "type": "antlr-debug",
+            "request": "launch",
+            "name": "multi team basic group",
+            "input": "src/test/resources/reference/multi_team_basic_group.bdl",
+            "grammar": "src/main/grammar/Script.g4",
+            "visualParseTree": true
+        },
+        {
+            "type": "antlr-debug",
+            "request": "launch",
+            "name": "multi team group transition",
+            "input": "src/test/resources/reference/multi_team_group_transition.bdl",
+            "grammar": "src/main/grammar/Script.g4",
+            "visualParseTree": true
+        }
+    ]
+}

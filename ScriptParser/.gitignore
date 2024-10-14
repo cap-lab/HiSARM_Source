@@ -1,0 +1,4 @@
+parserdatastructure/target/*
+parser/target/*
+parser/src/main/grammar/.antlr/*
+parser/src/main/java/com/scriptparser/grammar/generated/*
