@@ -1,0 +1,14 @@
+projectName: demo_simple
+taskServerPrefix: /home/user/workspace/semo/SWComponentLib/
+jarDirectory: /home/user/workspace/semo/HOPES/JavaLibraries/
+translatorDirectory: /home/user/workspace/semo/HOPES/UEMTranslator/
+strategyList:
+robotList:
+   - Burger_1
+variableList:
+dbInfo:
+   - ip: 
+     port: 
+     dbName: 
+     userName: 
+     encryptedPassword: 

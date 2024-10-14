@@ -1,0 +1,19 @@
+projectName: multi_team_basic_group
+taskServerPrefix: /home/user/workspace/semo/SWComponentLib/
+jarDirectory: /home/user/workspace/semo/HOPES/JavaLibraries/
+translatorDirectory: /home/user/workspace/semo/HOPES/UEMTranslator/
+strategyList:
+robotList:
+   - FakeBot_0
+   - FakeBot_1
+   - FakeBot_2
+   - FakeBot_3
+   - FakeBot_4
+   - FakeBot_5
+variableList:
+dbInfo:
+   - ip:
+     port: 
+     dbName: 
+     userName: 
+     password: 
