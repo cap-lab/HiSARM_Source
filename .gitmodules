@@ -1,0 +1,4 @@
+[submodule "HOPES"]
+	path = HOPES
+	url = https://github.com/cap-lab/CodeGeneration.git
+	branch = 1.4.1_minor_fix
