@@ -1,0 +1,92 @@
+package com.metadata.constant;
+
+public class AlgorithmConstant {
+    public static final String PROCESS_NETWORK = "ProcessNetwork";
+    public static final String COMPUTATION_TASK = "Computational";
+    public static final String CONTROL_TASK = "Control";
+    public static final String YES = "Yes";
+    public static final String NO = "No";
+    public static final String TIME_DRIVEN = "time-driven";
+    public static final String CONTROL_DRIVEN = "control-driven";
+    public static final String DATA_DRIVEN = "data-driven";
+    public static final String DEFAULT = "Default";
+    public static final String DEFAULT_FILE = "task.xml";
+    public static final String LANGUAGE_C = "C";
+    public static final String LANGUAGE_CPP = "C++";
+    public static final String LISTEN = "listen";
+    public static final String REPORT = "report";
+    public static final String ACTION = "action";
+    public static final String CONTROL = "control";
+    public static final String LEADER = "leader";
+    public static final String LEADER_LIB = "leader_lib";
+    public static final String GROUP_ACTION = "group_action";
+    public static final String GROUP = "group";
+    public static final String GROUPING = "grouping";
+    public static final String SELECTION_INFO = "selection_info";
+    public static final String HEARTBEAT = "heartbeat";
+    public static final String SHARED_DATA = "shared_data";
+    public static final String EVENT = "event";
+    public static final String DATAFLOW = "Dataflow";
+    public static final String SIMULATION = "simulation";
+    public static final String SIMULATION_FILE = "semo_simulator";
+    public static final String SEMO = "semo";
+
+    public static final String LIBRARY_FILE_EXTENSION = ".cicl";
+    public static final String LIBRARY_HEADER_EXTENSION = ".cicl.h";
+    public static final String TASK_FILE_EXTENSION = ".cic";
+
+    public static final String COMMON_HEADER_SUFFIX = "_common.h";
+    public static final String LOGGER_HEADER_SUFFIX = "_logger.h";
+    public static final String COMMUNICATION_HEADER_SUFFIX = "_communication.h";
+    public static final String COMMUNICATION_SOURCE_SUFFIX = "_communication.c";
+    public static final String PORT_HEADER_SUFFIX = "_port.h";
+    public static final String PORT_SOURCE_SUFFIX = "_port.c";
+    public static final String VARIABLE_HEADER_SUFFIX = "_variable.h";
+    public static final String VARIABLE_SOURCE_SUFFIX = "_variable.c";
+    public static final String EVENT_HEADER_SUFFIX = "_event.h";
+    public static final String EVENT_SOURCE_SUFFIX = "_event.c";
+    public static final String RESOURCE_HEADER_SUFFIX = "_resource.h";
+    public static final String RESOURCE_SOURCE_SUFFIX = "_resource.c";
+    public static final String ACTION_HEADER_SUFFIX = "_action.h";
+    public static final String ACTION_SOURCE_SUFFIX = "_action.c";
+    public static final String TRANSITION_HEADER_SUFFIX = "_transition.h";
+    public static final String TRANSITION_SOURCE_SUFFIX = "_transition.c";
+    public static final String TEAM_HEADER_SUFFIX = "_team.h";
+    public static final String SERVICE_HEADER_SUFFIX = "_service.h";
+    public static final String SERVICE_SOURCE_SUFFIX = "_service.c";
+    public static final String TIMER_HEADER_SUFFIX = "_timer.h";
+    public static final String TIMER_SOURCE_SUFFIX = "_timer.c";
+    public static final String MODE_HEADER_SUFFIX = "_mode.h";
+    public static final String MODE_SOURCE_SUFFIX = "_mode.c";
+    public static final String GROUP_HEADER_SUFFIX = "_group.h";
+    public static final String GROUP_SOURCE_SUFFIX = "_group.c";
+    public static final String LEADER_HEADER_SUFFIX = "_leader.h";
+    public static final String LEADER_SOURCE_SUFFIX = "_leader.c";
+    public static final String LEADER_DATA_HEADER_SUFFIX = "_leader_data.h";
+    public static final String LEADER_DATA_SOURCE_SUFFIX = "_leader_data.c";
+    public static final String LISTEN_HEADER_SUFFIX = "_listen.h";
+    public static final String LISTEN_SOURCE_SUFFIX = "_listen.c";
+    public static final String LISTEN_TASK_SUFFIX = "_listen.cic";
+    public static final String REPORT_HEADER_SUFFIX = "_report.h";
+    public static final String REPORT_SOURCE_SUFFIX = "_report.c";
+    public static final String REPORT_TASK_SUFFIX = "_report.cic";
+    public static final String LEADER_LIBRARY_SOURCE_SUFFIX = "_leader_lib.cicl";
+    public static final String LEADER_LIBRARY_HEADER_SUFFIX = "_leader_lib.cicl.h";
+    public static final String SIMULATION_HEADER_SUFFIX = "_simulation.h";
+    public static final String MUTEX_HEADER = "UCThreadMutex.h";
+    public static final int MULTICAST_PACKET_HEADER_SIZE = 12;
+    public static final int GROUPING_PACKET_HEADER_SIZE = 16;
+    public static final int MULTICAST_SHARED_ROBOT_NUM_SIZE = 4;
+    public static final int MULTICAST_ROBOT_ID_SIZE = 4;
+    public static final int MULTICAST_TIME_SIZE = 8;
+
+    public static final String SIMULATION_HEADER = "semo_simulation.h";
+    public static final String SIMULATION_REMOTE_API_OBJECT_HEADER = "RemoteAPIObjects.h";
+    public static final String SIMULATION_REMOTE_API_CLIENT_HEADER = "RemoteAPIClient.h";
+    public static final String SIMULATION_REMOTE_API_CLIENT_WRAPPER_HEADER =
+            "semo_simulation_client.h";
+    public static final String SIMULATION_REMOTE_API_OBJECT_SOURCE = "RemoteAPIObjects.cpp";
+    public static final String SIMULATION_REMOTE_API_CLIENT_SOURCE = "RemoteAPIClient.cpp";
+    public static final String SIMULATION_REMOTE_API_CLIENT_WRAPPER_SOURCE =
+            "semo_simulation_client.cpp";
+}
