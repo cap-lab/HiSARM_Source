@@ -14,10 +14,9 @@ cp -rfp CodeGenerator/generator/dist/* {Your HiSARM Directory Path}/.
 ```
 
 ## Explanation of Subdirectories
-CodeGenerator: Generates or copies task code.
-DBManager: Access the database, assuming CouchDB in the current version.
-MetadataGenerator: Generates metadata files including algorithm.xml, architecture.xml, mapping.xml, and configuration.xml.
-ScriptParser: Parses mission scripts.
-Strategy: Maps abstract robots in mission scripts to actual robots.
-XMLParser: Provides a schema to parse task.xml, the task graph format used in HOPES (https://github.com/cap-lab/HOPES.git).
-
+- CodeGenerator: Generates or copies task code.
+- DBManager: Access the database, assuming CouchDB in the current version.
+- MetadataGenerator: Generates metadata files including algorithm.xml, architecture.xml, mapping.xml, and configuration.xml.
+- ScriptParser: Parses mission scripts.
+- Strategy: Maps abstract robots in mission scripts to actual robots.
+- XMLParser: Provides a schema to parse task.xml, the task graph format used in HOPES (https://github.com/cap-lab/HOPES.git).
